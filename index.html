@@ -8,7 +8,10 @@
 
 <h1>🔥 CRIMSON PLATFORM</h1>
 
-<div id="app"></div>
+<button id="loginBtn">Login with Google</button>
+<button id="logoutBtn" style="display:none;">Logout</button>
+
+<p id="info">Not logged in</p>
 
 <script type="module">
 
@@ -16,8 +19,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 import { 
   getAuth,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -28,7 +30,6 @@ const firebaseConfig = {
   authDomain: "crimson-platform-92f67.firebaseapp.com",
   projectId: "crimson-platform-92f67",
   storageBucket: "crimson-platform-92f67.firebasestorage.app",
-  messagingSenderId: "7775873440",
   appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
 };
 
@@ -37,40 +38,40 @@ const auth = getAuth(app);
 
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
-const appDiv = document.getElementById("app");
+/* BUTTONS */
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const info = document.getElementById("info");
 
 /* LOGIN */
-window.login = function(){
+loginBtn.onclick = async () => {
   const provider = new GoogleAuthProvider();
-  signInWithRedirect(auth, provider);
+  try {
+    await signInWithPopup(auth, provider);
+  } catch (e) {
+    alert(e.message);
+  }
 };
 
 /* LOGOUT */
-window.logout = function(){
+logoutBtn.onclick = () => {
   signOut(auth);
 };
 
-/* HANDLE REDIRECT RESULT (IMPORTANT) */
-getRedirectResult(auth).catch(() => {});
-
-/* STATE CONTROL (NO CRASH METHOD) */
+/* STATE */
 onAuthStateChanged(auth, (user) => {
 
   if(user){
     let role = (user.email === OWNER_EMAIL) ? "HEAD OWNER" : "USER";
 
-    appDiv.innerHTML = `
-      <h2>🔥 DASHBOARD</h2>
-      <p>👤 ${user.email}</p>
-      <p>Role: ${role}</p>
-      <button onclick="logout()">Logout</button>
-    `;
+    info.innerText = `Logged in: ${user.email} | Role: ${role}`;
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
   }
   else{
-    appDiv.innerHTML = `
-      <button onclick="login()">Login with Google</button>
-      <p>Not logged in</p>
-    `;
+    info.innerText = "Not logged in";
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
   }
 });
 
