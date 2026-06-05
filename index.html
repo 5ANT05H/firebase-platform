@@ -1,21 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON PLATFORM</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRIMSON FULL PLATFORM</title>
 </head>
 
-<body style="font-family: Arial; text-align:center; background:#111; color:white;">
+<body style="font-family: Arial; background:#111; color:white; text-align:center;">
 
-<h1>🔥 CRIMSON PLATFORM</h1>
+<h1>🔥 CRIMSON FULL PLATFORM</h1>
 
 <div id="app">
-  <button id="loginBtn">Login with Google</button>
+
+  <button id="loginBtn">Login</button>
   <button id="logoutBtn" style="display:none;">Logout</button>
 
   <p id="status">Not logged in</p>
 
-  <div id="dashboard"></div>
+  <div id="panel"></div>
+
+  <hr>
+
+  <h3>💬 CHAT</h3>
+  <input id="msg" placeholder="type message">
+  <button onclick="sendMsg()">Send</button>
+
+  <div id="chatBox"></div>
+
 </div>
 
 <script type="module">
@@ -29,76 +38,133 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-/* 🔥 FIREBASE CONFIG */
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  onSnapshot,
+  query,
+  orderBy
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
   authDomain: "crimson-platform-92f67.firebaseapp.com",
   projectId: "crimson-platform-92f67",
   storageBucket: "crimson-platform-92f67.firebasestorage.app",
+  messagingSenderId: "7775873440",
   appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 /* ROLES */
 const HEAD_OWNER = "tksantosh0@gmail.com";
+const ADMINS = [];
+const PREMIUM = [];
 
-/* ELEMENTS */
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const status = document.getElementById("status");
-const dashboard = document.getElementById("dashboard");
+let currentUser = null;
 
 /* LOGIN */
-loginBtn.onclick = async () => {
-  try {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  } catch (e) {
-    alert("Login Error: " + e.message);
-  }
+document.getElementById("loginBtn").onclick = async () => {
+  const provider = new GoogleAuthProvider();
+  await signInWithPopup(auth, provider);
 };
 
 /* LOGOUT */
-logoutBtn.onclick = () => {
+document.getElementById("logoutBtn").onclick = () => {
   signOut(auth);
 };
 
-/* AUTH STATE */
+/* AUTH */
 onAuthStateChanged(auth, (user) => {
 
+  currentUser = user;
+
   if(user){
+    document.getElementById("status").innerText = "Logged in ✔ " + user.email;
+    document.getElementById("loginBtn").style.display = "none";
+    document.getElementById("logoutBtn").style.display = "inline-block";
 
-    let role = "USER";
-
-    if(user.email === HEAD_OWNER){
-      role = "HEAD OWNER 👑";
-    }
-
-    status.innerText = "Logged in ✔";
-
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-
-    dashboard.innerHTML = `
-      <div style="margin-top:20px; padding:15px; border:1px solid white;">
-        <h2>👤 ${user.email}</h2>
-        <h3>Role: ${role}</h3>
-        <p>Status: ONLINE 🟢</p>
-      </div>
-    `;
+    loadPanel(user);
+    loadChat();
 
   } else {
-
-    status.innerText = "Not logged in";
-    loginBtn.style.display = "inline-block";
-    logoutBtn.style.display = "none";
-    dashboard.innerHTML = "";
-
+    document.getElementById("status").innerText = "Not logged in";
+    document.getElementById("panel").innerHTML = "";
+    document.getElementById("chatBox").innerHTML = "";
   }
 
 });
+
+/* PANEL */
+function loadPanel(user){
+
+  let role = "USER";
+
+  if(user.email === HEAD_OWNER) role = "HEAD OWNER";
+  else if(ADMINS.includes(user.email)) role = "ADMIN";
+
+  let premium = PREMIUM.includes(user.email);
+
+  document.getElementById("panel").innerHTML = `
+    <h3>👤 ${user.email}</h3>
+    <p>Role: ${role}</p>
+    <p>Premium: ${premium ? "💎 YES" : "NO"}</p>
+
+    ${role === "HEAD OWNER" ? `
+      <button onclick="addPremium()">Make Premium</button>
+    ` : ""}
+  `;
+}
+
+/* ADD PREMIUM (ADMIN FUNCTION) */
+window.addPremium = async function(){
+  let email = prompt("Enter email to make premium:");
+  if(email){
+    PREMIUM.push(email);
+    alert("Premium added (session only)");
+  }
+};
+
+/* CHAT */
+window.sendMsg = async function(){
+
+  let msg = document.getElementById("msg").value;
+
+  if(!msg || !currentUser) return;
+
+  await addDoc(collection(db, "chat"), {
+    text: msg,
+    email: currentUser.email,
+    time: Date.now()
+  });
+
+  document.getElementById("msg").value = "";
+};
+
+/* LOAD CHAT */
+function loadChat(){
+
+  const q = query(collection(db, "chat"), orderBy("time"));
+
+  onSnapshot(q, (snap) => {
+
+    let html = "";
+
+    snap.forEach(doc => {
+      let d = doc.data();
+      html += `<p><b>${d.email}:</b> ${d.text}</p>`;
+    });
+
+    document.getElementById("chatBox").innerHTML = html;
+
+  });
+
+}
 
 </script>
 
