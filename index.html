@@ -1,28 +1,35 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LOGIN FIX</title>
+  <title>CRIMSON PLATFORM</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
 <body style="font-family: Arial; text-align:center; background:#111; color:white;">
 
-<h1>🔥 LOGIN SYSTEM</h1>
+<h1>🔥 CRIMSON PLATFORM</h1>
 
-<button onclick="login()">Login with Google</button>
+<div id="app">
+  <button id="loginBtn">Login with Google</button>
+  <button id="logoutBtn" style="display:none;">Logout</button>
 
-<p id="status">Not logged in</p>
+  <p id="status">Not logged in</p>
+
+  <div id="dashboard"></div>
+</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { 
+import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-/* CONFIG */
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
   authDomain: "crimson-platform-92f67.firebaseapp.com",
@@ -34,24 +41,63 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+/* ROLES */
+const HEAD_OWNER = "tksantosh0@gmail.com";
+
+/* ELEMENTS */
+const loginBtn = document.getElementById("loginBtn");
+const logoutBtn = document.getElementById("logoutBtn");
+const status = document.getElementById("status");
+const dashboard = document.getElementById("dashboard");
+
 /* LOGIN */
-window.login = async function(){
-
-  const provider = new GoogleAuthProvider();
-
+loginBtn.onclick = async () => {
   try {
-    const result = await signInWithPopup(auth, provider);
-    document.getElementById("status").innerText = "LOGIN SUCCESS ✔ " + result.user.email;
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
   } catch (e) {
-    document.getElementById("status").innerText = "ERROR: " + e.message;
+    alert("Login Error: " + e.message);
   }
 };
 
-/* STATE CHECK */
+/* LOGOUT */
+logoutBtn.onclick = () => {
+  signOut(auth);
+};
+
+/* AUTH STATE */
 onAuthStateChanged(auth, (user) => {
+
   if(user){
-    document.getElementById("status").innerText = "LOGGED IN ✔ " + user.email;
+
+    let role = "USER";
+
+    if(user.email === HEAD_OWNER){
+      role = "HEAD OWNER 👑";
+    }
+
+    status.innerText = "Logged in ✔";
+
+    loginBtn.style.display = "none";
+    logoutBtn.style.display = "inline-block";
+
+    dashboard.innerHTML = `
+      <div style="margin-top:20px; padding:15px; border:1px solid white;">
+        <h2>👤 ${user.email}</h2>
+        <h3>Role: ${role}</h3>
+        <p>Status: ONLINE 🟢</p>
+      </div>
+    `;
+
+  } else {
+
+    status.innerText = "Not logged in";
+    loginBtn.style.display = "inline-block";
+    logoutBtn.style.display = "none";
+    dashboard.innerHTML = "";
+
   }
+
 });
 
 </script>
