@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON LOGIN</title>
+  <title>LOGIN FIX</title>
 </head>
 
 <body style="font-family: Arial; text-align:center; background:#111; color:white;">
@@ -10,7 +10,7 @@
 
 <button onclick="login()">Login with Google</button>
 
-<p id="status">Loading...</p>
+<p id="status">Not logged in</p>
 
 <script type="module">
 
@@ -18,8 +18,7 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 import { 
   getAuth,
   GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
+  signInWithPopup,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
@@ -36,23 +35,22 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /* LOGIN */
-window.login = function(){
+window.login = async function(){
+
   const provider = new GoogleAuthProvider();
-  signInWithRedirect(auth, provider);
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    document.getElementById("status").innerText = "LOGIN SUCCESS ✔ " + result.user.email;
+  } catch (e) {
+    document.getElementById("status").innerText = "ERROR: " + e.message;
+  }
 };
 
-/* HANDLE REDIRECT RESULT */
-getRedirectResult(auth).catch(() => {});
-
-/* STATE (SAFE) */
+/* STATE CHECK */
 onAuthStateChanged(auth, (user) => {
-
-  const status = document.getElementById("status");
-
   if(user){
-    status.innerText = "LOGIN SUCCESS ✔ " + user.email;
-  } else {
-    status.innerText = "Not logged in";
+    document.getElementById("status").innerText = "LOGGED IN ✔ " + user.email;
   }
 });
 
