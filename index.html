@@ -1,34 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>CRIMSON PLATFORM</title>
+</head>
+
+<body style="font-family: Arial; text-align:center; background:#111; color:white;">
+
+<h1>🔥 CRIMSON PLATFORM</h1>
+
+<div id="app">
+  <button onclick="login()">Login with Google</button>
+  <p id="status">Not logged in</p>
+</div>
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import { 
-  getAuth, 
-  GoogleAuthProvider, 
+  getAuth,
+  GoogleAuthProvider,
   signInWithPopup,
   signOut,
   onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-/* CONFIG */
+/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyAZHtBlagfvIDUOSkI_zi7WEKJFk6S_fCA",
-  authDomain: "crimsonseling.firebaseapp.com",
-  projectId: "crimsonseling",
-  storageBucket: "crimsonseling.firebasestorage.app",
-  appId: "1:937988013541:web:7ad4f06203d596e641430c"
+  apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
+  authDomain: "crimson-platform-92f67.firebaseapp.com",
+  projectId: "crimson-platform-92f67",
+  storageBucket: "crimson-platform-92f67.firebasestorage.app",
+  messagingSenderId: "7775873440",
+  appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
 };
 
+/* INIT */
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
+/* OWNER */
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
 /* LOGIN */
-window.login = function(){
+window.login = async function(){
   const provider = new GoogleAuthProvider();
 
-  signInWithPopup(auth, provider)
-  .catch(err => alert(err.message));
+  try {
+    const result = await signInWithPopup(auth, provider);
+    showUser(result.user);
+  } catch (e) {
+    alert("Login Error: " + e.message);
+  }
 };
 
 /* LOGOUT */
@@ -36,42 +58,31 @@ window.logout = function(){
   signOut(auth);
 };
 
-/* ONLY ONE RENDER SYSTEM */
-let rendered = false;
-
+/* STATE */
 onAuthStateChanged(auth, (user) => {
-
-  if(rendered) return;   // ❗ STOP LOOP
-  rendered = true;
-
   if(user){
-    showDashboard(user);
-  } else {
-    showLogin();
+    showUser(user);
   }
 });
 
-/* LOGIN UI */
-function showLogin(){
-  document.body.innerHTML = `
-    <h1>🔥 LOGIN SYSTEM</h1>
-    <button onclick="login()">Login with Google</button>
-  `;
-}
-
 /* DASHBOARD */
-function showDashboard(user){
+function showUser(user){
 
-  let role = (user.email === OWNER_EMAIL) ? "head_owner" : "user";
+  let role = (user.email === OWNER_EMAIL) ? "HEAD OWNER" : "USER";
 
   document.body.innerHTML = `
     <h1>🔥 DASHBOARD</h1>
 
-    <h2>👤 ${user.email}</h2>
-    <h3>Role: ${role}</h3>
+    <div style="border:1px solid white; padding:15px; margin:20px;">
+      <h2>👤 ${user.email}</h2>
+      <h3>Role: ${role}</h3>
+    </div>
 
     <button onclick="logout()">Logout</button>
   `;
 }
 
 </script>
+
+</body>
+</html>
