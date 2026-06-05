@@ -1,22 +1,65 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Fix Test</title>
+  <title>Firebase Login System</title>
 </head>
 
 <body>
 
-<h1>🔥 BUTTON TEST</h1>
+<h1>🔥 LOGIN SYSTEM</h1>
 
-<button onclick="login()">Login Button</button>
+<button onclick="login()">Login with Google</button>
 
-<p id="status"></p>
+<p id="status">Not logged in</p>
 
-<script>
-function login(){
-  document.getElementById("status").innerText = "CLICK WORKING ✔";
-  alert("Button Clicked ✔");
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, GoogleAuthProvider, signInWithPopup } 
+from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+/* 🔥 YOUR FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AIzaSyAZHtBlagfvIDUOSkI_zi7WEKJFk6S_fCA",
+  authDomain: "crimsonseling.firebaseapp.com",
+  projectId: "crimsonseling",
+  storageBucket: "crimsonseling.firebasestorage.app",
+  appId: "1:937988013541:web:7ad4f06203d596e641430c"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+
+/* 👑 HEAD OWNER */
+const OWNER_EMAIL = "tksantosh0@gmail.com";
+
+window.login = async function(){
+
+  const provider = new GoogleAuthProvider();
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
+
+    let role = "user";
+
+    if(user.email === OWNER_EMAIL){
+      role = "head_owner";
+    }
+
+    document.body.innerHTML = `
+      <h1>🔥 LOGIN SUCCESS</h1>
+      <h2>Email: ${user.email}</h2>
+      <h3>Role: ${role}</h3>
+
+      <button onclick="location.reload()">Logout</button>
+    `;
+
+  } catch (error) {
+    alert("Login Error: " + error.message);
+  }
 }
+
 </script>
 
 </body>
