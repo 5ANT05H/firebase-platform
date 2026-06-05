@@ -9,7 +9,7 @@ import {
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* FIREBASE CONFIG */
+/* CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAZHtBlagfvIDUOSkI_zi7WEKJFk6S_fCA",
   authDomain: "crimsonseling.firebaseapp.com",
@@ -24,33 +24,42 @@ const auth = getAuth(app);
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
 /* LOGIN */
-window.login = async function(){
-
+window.login = function(){
   const provider = new GoogleAuthProvider();
 
-  try {
-    const result = await signInWithPopup(auth, provider);
-    showUser(result.user);
-  } catch (e) {
-    alert("Login Error: " + e.message);
-  }
+  signInWithPopup(auth, provider)
+  .then((result) => {
+    renderDashboard(result.user);
+  })
+  .catch((error) => {
+    alert(error.message);
+  });
 };
 
 /* LOGOUT */
 window.logout = function(){
   signOut(auth);
-  location.reload();
 };
 
-/* AUTO CHECK LOGIN */
+/* FIXED STATE LISTENER */
 onAuthStateChanged(auth, (user) => {
   if(user){
-    showUser(user);
+    renderDashboard(user);
+  } else {
+    showLogin();
   }
 });
 
-/* DASHBOARD */
-function showUser(user){
+/* LOGIN UI */
+function showLogin(){
+  document.body.innerHTML = `
+    <h1>🔥 LOGIN SYSTEM</h1>
+    <button onclick="login()">Login with Google</button>
+  `;
+}
+
+/* DASHBOARD UI */
+function renderDashboard(user){
 
   let role = "user";
   if(user.email === OWNER_EMAIL){
@@ -66,5 +75,8 @@ function showUser(user){
     <button onclick="logout()">Logout</button>
   `;
 }
+
+/* START */
+showLogin();
 
 </script>
