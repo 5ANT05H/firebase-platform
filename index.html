@@ -1,71 +1,22 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON PLATFORM</title>
+  <title>TEST</title>
 </head>
 
-<body style="font-family: Arial; text-align:center; background:#111; color:white;">
+<body>
 
-<h1>🔥 CRIMSON PLATFORM</h1>
+<h1>TEST PAGE</h1>
 
-<button onclick="login()">Login with Google</button>
-<button onclick="logout()">Logout</button>
+<button onclick="test()">CLICK ME</button>
 
-<p id="info">Not logged in</p>
+<p id="msg"></p>
 
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-import { 
-  getAuth,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  getRedirectResult,
-  signOut,
-  onAuthStateChanged
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-
-/* CONFIG */
-const firebaseConfig = {
-  apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
-  authDomain: "crimson-platform-92f67.firebaseapp.com",
-  projectId: "crimson-platform-92f67",
-  storageBucket: "crimson-platform-92f67.firebasestorage.app",
-  appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-const OWNER_EMAIL = "tksantosh0@gmail.com";
-
-/* LOGIN */
-window.login = function(){
-  const provider = new GoogleAuthProvider();
-  signInWithRedirect(auth, provider);
-};
-
-/* LOGOUT */
-window.logout = function(){
-  signOut(auth);
-};
-
-/* HANDLE REDIRECT */
-getRedirectResult(auth).catch(() => {});
-
-/* STATE */
-onAuthStateChanged(auth, (user) => {
-
-  const info = document.getElementById("info");
-
-  if(user){
-    let role = (user.email === OWNER_EMAIL) ? "HEAD OWNER" : "USER";
-    info.innerText = user.email + " | " + role;
-  } else {
-    info.innerText = "Not logged in";
-  }
-});
-
+<script>
+function test(){
+  document.getElementById("msg").innerText = "JS WORKING ✔";
+  alert("BUTTON WORKING ✔");
+}
 </script>
 
 </body>
