@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON ULTRA PRO</title>
+  <title>CRIMSON FIXED PLATFORM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -48,7 +48,7 @@ const appDiv = document.getElementById("app");
 const HEAD_OWNER = "tksantosh0@gmail.com";
 
 /* CREATE USER */
-async function createUser(user){
+async function ensureUser(user){
 
   const ref = doc(db,"users",user.email);
   const snap = await getDoc(ref);
@@ -65,53 +65,118 @@ async function createUser(user){
   return (await getDoc(ref)).data();
 }
 
-/* ROLE */
-function getRole(user,data){
-
-  if(user.email === HEAD_OWNER) return "👑 HEAD OWNER";
-  if(data.role === "ADMIN") return "🛡️ ADMIN";
-  if(data.premium) return "💎 PREMIUM";
-  return "👤 USER";
-}
-
-/* MAIN UI */
+/* DASHBOARD UI */
 function loadUI(user,data){
 
+  let role = "USER";
+
+  if(user.email === HEAD_OWNER) role = "HEAD OWNER";
+  else if(data.role === "ADMIN") role = "ADMIN";
+
+  let premium = data.premium;
+
   appDiv.innerHTML = `
+    <h1>💀 CRIMSON PLATFORM</h1>
 
-    <h1>💀 ULTRA PRO PLATFORM</h1>
+    <h3>👤 ${user.email}</h3>
+    <h3>Role: ${role}</h3>
+    <h3>Premium: ${premium ? "💎 YES" : "NO"}</h3>
 
-    <h3>${user.email}</h3>
-    <h3>Role: ${getRole(user,data)}</h3>
-
-    <button onclick="showHome()">HOME</button>
-    <button onclick="showChat()">CHAT</button>
-    <button onclick="showAdmin()">ADMIN</button>
-    <button onclick="showPremium()">PREMIUM</button>
-    <button onclick="logout()">LOGOUT</button>
+    <button onclick="logout()">Logout</button>
 
     <hr>
 
-    <div id="screen"></div>
+    <h2>💬 CHAT</h2>
 
+    <input id="msg" placeholder="type message">
+    <button onclick="sendMsg()">Send</button>
+
+    <div id="chatBox"></div>
+
+    <hr>
+
+    <button onclick="makePremium()">💎 Make Premium</button>
+    <button onclick="makeAdmin()">🛡️ Make Admin</button>
   `;
 
-  showHome();
+  loadChat();
 }
 
-/* HOME */
-window.showHome = function(){
-  document.getElementById("screen").innerHTML = `
-    <h2>🏠 HOME</h2>
-    <p>Welcome to Ultra Pro System</p>
-  `;
+/* AUTH */
+onAuthStateChanged(auth, async (user)=>{
+
+  if(user){
+    const data = await ensureUser(user);
+    loadUI(user,data);
+  } else {
+    appDiv.innerHTML = "<h2>LOGIN REQUIRED</h2>";
+  }
+
+});
+
+/* LOGOUT */
+window.logout = function(){
+  signOut(auth);
 };
 
-/* CHAT */
-window.showChat = function(){
-  document.getElementById("screen").innerHTML = `
-    <h2>💬 CHAT ROOM</h2>
+/* SEND CHAT */
+window.sendMsg = async function(){
 
+  let msg = document.getElementById("msg").value;
+  if(!msg) return;
+
+  await addDoc(collection(db,"chat"),{
+    text:msg,
+    email:auth.currentUser.email,
+    time:Date.now()
+  });
+
+  document.getElementById("msg").value = "";
+};
+
+/* LOAD CHAT */
+function loadChat(){
+
+  const q = query(collection(db,"chat"),orderBy("time"));
+
+  onSnapshot(q,(snap)=>{
+
+    let html = "";
+
+    snap.forEach(d=>{
+      html += `<p><b>${d.data().email}:</b> ${d.data().text}</p>`;
+    });
+
+    document.getElementById("chatBox").innerHTML = html;
+
+  });
+
+}
+
+/* PREMIUM */
+window.makePremium = async function(){
+
+  await setDoc(doc(db,"users",auth.currentUser.email),{
+    premium:true
+  },{merge:true});
+
+  alert("Premium Activated ✔");
+};
+
+/* ADMIN */
+window.makeAdmin = async function(){
+
+  await setDoc(doc(db,"users",auth.currentUser.email),{
+    role:"ADMIN"
+  },{merge:true});
+
+  alert("Admin Activated ✔");
+};
+
+</script>
+
+</body>
+</html>
     <input id="msg" placeholder="type message">
     <button onclick="sendMsg()">Send</button>
 
