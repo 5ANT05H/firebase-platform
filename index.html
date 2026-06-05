@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>LOGIN TEST</title>
+  <title>CRIMSON LOGIN</title>
 </head>
 
 <body style="font-family: Arial; text-align:center; background:#111; color:white;">
 
-<h1>🔥 LOGIN TEST</h1>
+<h1>🔥 LOGIN SYSTEM</h1>
 
 <button onclick="login()">Login with Google</button>
 
-<p id="status">Not logged in</p>
+<p id="status">Loading...</p>
 
 <script type="module">
 
@@ -18,7 +18,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 import { 
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
@@ -35,18 +36,17 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
 /* LOGIN */
-window.login = async function(){
+window.login = function(){
   const provider = new GoogleAuthProvider();
-
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (e) {
-    alert("ERROR: " + e.message);
-  }
+  signInWithRedirect(auth, provider);
 };
 
-/* STATE */
+/* HANDLE REDIRECT RESULT */
+getRedirectResult(auth).catch(() => {});
+
+/* STATE (SAFE) */
 onAuthStateChanged(auth, (user) => {
+
   const status = document.getElementById("status");
 
   if(user){
