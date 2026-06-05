@@ -1,50 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON FULL PLATFORM</title>
+  <title>CRIMSON ULTRA PRO</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body style="font-family: Arial; background:#111; color:white; text-align:center;">
+<body style="margin:0;font-family:Arial;background:#0a0a0a;color:white;">
 
-<h1>🔥 CRIMSON FULL PLATFORM</h1>
-
-<div id="app">
-
-  <button id="loginBtn">Login</button>
-  <button id="logoutBtn" style="display:none;">Logout</button>
-
-  <p id="status">Not logged in</p>
-
-  <div id="panel"></div>
-
-  <hr>
-
-  <h3>💬 CHAT</h3>
-  <input id="msg" placeholder="type message">
-  <button onclick="sendMsg()">Send</button>
-
-  <div id="chatBox"></div>
-
-</div>
+<div id="app">Loading...</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
   getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  signOut,
-  onAuthStateChanged
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
 import {
   getFirestore,
+  doc,
+  getDoc,
+  setDoc,
   collection,
   addDoc,
-  onSnapshot,
   query,
-  orderBy
+  orderBy,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 /* FIREBASE */
@@ -53,7 +36,6 @@ const firebaseConfig = {
   authDomain: "crimson-platform-92f67.firebaseapp.com",
   projectId: "crimson-platform-92f67",
   storageBucket: "crimson-platform-92f67.firebasestorage.app",
-  messagingSenderId: "7775873440",
   appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
 };
 
@@ -61,57 +43,174 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-/* ROLES */
+const appDiv = document.getElementById("app");
+
 const HEAD_OWNER = "tksantosh0@gmail.com";
-const ADMINS = [];
-const PREMIUM = [];
 
-let currentUser = null;
+/* CREATE USER */
+async function createUser(user){
 
-/* LOGIN */
-document.getElementById("loginBtn").onclick = async () => {
-  const provider = new GoogleAuthProvider();
-  await signInWithPopup(auth, provider);
+  const ref = doc(db,"users",user.email);
+  const snap = await getDoc(ref);
+
+  if(!snap.exists()){
+    await setDoc(ref,{
+      email:user.email,
+      role:"USER",
+      premium:false,
+      createdAt:Date.now()
+    });
+  }
+
+  return (await getDoc(ref)).data();
+}
+
+/* ROLE */
+function getRole(user,data){
+
+  if(user.email === HEAD_OWNER) return "👑 HEAD OWNER";
+  if(data.role === "ADMIN") return "🛡️ ADMIN";
+  if(data.premium) return "💎 PREMIUM";
+  return "👤 USER";
+}
+
+/* MAIN UI */
+function loadUI(user,data){
+
+  appDiv.innerHTML = `
+
+    <h1>💀 ULTRA PRO PLATFORM</h1>
+
+    <h3>${user.email}</h3>
+    <h3>Role: ${getRole(user,data)}</h3>
+
+    <button onclick="showHome()">HOME</button>
+    <button onclick="showChat()">CHAT</button>
+    <button onclick="showAdmin()">ADMIN</button>
+    <button onclick="showPremium()">PREMIUM</button>
+    <button onclick="logout()">LOGOUT</button>
+
+    <hr>
+
+    <div id="screen"></div>
+
+  `;
+
+  showHome();
+}
+
+/* HOME */
+window.showHome = function(){
+  document.getElementById("screen").innerHTML = `
+    <h2>🏠 HOME</h2>
+    <p>Welcome to Ultra Pro System</p>
+  `;
 };
 
-/* LOGOUT */
-document.getElementById("logoutBtn").onclick = () => {
-  signOut(auth);
+/* CHAT */
+window.showChat = function(){
+  document.getElementById("screen").innerHTML = `
+    <h2>💬 CHAT ROOM</h2>
+
+    <input id="msg" placeholder="type message">
+    <button onclick="sendMsg()">Send</button>
+
+    <div id="chatBox"></div>
+  `;
+
+  loadChat();
+};
+
+/* PREMIUM */
+window.showPremium = function(){
+  document.getElementById("screen").innerHTML = `
+    <h2>💎 PREMIUM AREA</h2>
+    <p>Exclusive features unlocked here</p>
+  `;
+};
+
+/* ADMIN */
+window.showAdmin = function(){
+  document.getElementById("screen").innerHTML = `
+    <h2>🛡️ ADMIN PANEL</h2>
+
+    <button onclick="makeAdmin()">Make Admin</button>
+    <button onclick="makePremium()">Make Premium</button>
+
+    <p>Only owner/admin controls</p>
+  `;
 };
 
 /* AUTH */
-onAuthStateChanged(auth, (user) => {
-
-  currentUser = user;
+onAuthStateChanged(auth, async (user)=>{
 
   if(user){
-    document.getElementById("status").innerText = "Logged in ✔ " + user.email;
-    document.getElementById("loginBtn").style.display = "none";
-    document.getElementById("logoutBtn").style.display = "inline-block";
-
-    loadPanel(user);
-    loadChat();
-
+    const data = await createUser(user);
+    loadUI(user,data);
   } else {
-    document.getElementById("status").innerText = "Not logged in";
-    document.getElementById("panel").innerHTML = "";
-    document.getElementById("chatBox").innerHTML = "";
+    appDiv.innerHTML = "<h2>LOGIN REQUIRED</h2>";
   }
 
 });
 
-/* PANEL */
-function loadPanel(user){
+/* LOGOUT */
+window.logout = function(){
+  signOut(auth);
+};
 
-  let role = "USER";
+/* CHAT SEND */
+window.sendMsg = async function(){
 
-  if(user.email === HEAD_OWNER) role = "HEAD OWNER";
-  else if(ADMINS.includes(user.email)) role = "ADMIN";
+  let msg = document.getElementById("msg").value;
+  if(!msg) return;
 
-  let premium = PREMIUM.includes(user.email);
+  await addDoc(collection(db,"chat"),{
+    text:msg,
+    email:auth.currentUser.email,
+    time:Date.now()
+  });
 
-  document.getElementById("panel").innerHTML = `
-    <h3>👤 ${user.email}</h3>
+  document.getElementById("msg").value="";
+};
+
+/* CHAT LOAD */
+function loadChat(){
+
+  const q = query(collection(db,"chat"),orderBy("time"));
+
+  onSnapshot(q,(snap)=>{
+
+    let html="";
+
+    snap.forEach(d=>{
+      html += `<p><b>${d.data().email}:</b> ${d.data().text}</p>`;
+    });
+
+    document.getElementById("chatBox").innerHTML = html;
+
+  });
+
+}
+
+/* ADMIN ACTIONS */
+window.makePremium = async function(){
+  await setDoc(doc(db,"users",auth.currentUser.email),{
+    premium:true
+  },{merge:true});
+  alert("Premium ✔");
+};
+
+window.makeAdmin = async function(){
+  await setDoc(doc(db,"users",auth.currentUser.email),{
+    role:"ADMIN"
+  },{merge:true});
+  alert("Admin ✔");
+};
+
+</script>
+
+</body>
+</html>    <h3>👤 ${user.email}</h3>
     <p>Role: ${role}</p>
     <p>Premium: ${premium ? "💎 YES" : "NO"}</p>
 
