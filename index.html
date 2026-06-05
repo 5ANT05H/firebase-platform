@@ -1,30 +1,15 @@
-<!DOCTYPE html>
-<html>
-<head>
-  <title>CRIMSON PLATFORM</title>
-</head>
-
-<body style="font-family: Arial; text-align:center; background:#0f0f0f; color:white;">
-
-<h1>🔥 CRIMSON PLATFORM</h1>
-
-<div id="app">
-  <button onclick="login()">Login with Google</button>
-  <p id="status">Not logged in</p>
-</div>
-
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
 import { 
   getAuth, 
   GoogleAuthProvider, 
-  signInWithRedirect, 
-  getRedirectResult,
-  signOut
+  signInWithPopup,
+  signOut,
+  onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* 🔥 CONFIG */
+/* FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAZHtBlagfvIDUOSkI_zi7WEKJFk6S_fCA",
   authDomain: "crimsonseling.firebaseapp.com",
@@ -36,53 +21,50 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* 👑 OWNER */
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
 /* LOGIN */
-window.login = function(){
+window.login = async function(){
+
   const provider = new GoogleAuthProvider();
-  signInWithRedirect(auth, provider);
+
+  try {
+    const result = await signInWithPopup(auth, provider);
+    showUser(result.user);
+  } catch (e) {
+    alert("Login Error: " + e.message);
+  }
 };
 
 /* LOGOUT */
 window.logout = function(){
-  signOut(auth).then(() => {
-    location.reload();
-  });
+  signOut(auth);
+  location.reload();
 };
 
-/* AFTER LOGIN */
-getRedirectResult(auth).then((result) => {
-  if (result) {
-    const user = result.user;
-
-    let role = "user";
-    if(user.email === OWNER_EMAIL){
-      role = "head_owner";
-    }
-
-    document.body.innerHTML = `
-      <h1>🔥 DASHBOARD</h1>
-
-      <div style="border:1px solid white; padding:15px; margin:20px;">
-        <h2>👤 Profile</h2>
-        <p>Email: ${user.email}</p>
-        <p>Role: ${role}</p>
-      </div>
-
-      <div style="margin-top:20px;">
-        <button onclick="alert('Premium Area 🔒')">Premium</button>
-        <button onclick="alert('Admin Panel 🔐')">Admin</button>
-        <button onclick="logout()">Logout</button>
-      </div>
-
-      <p style="margin-top:20px;">🔥 Welcome to CRIMSON PLATFORM</p>
-    `;
+/* AUTO CHECK LOGIN */
+onAuthStateChanged(auth, (user) => {
+  if(user){
+    showUser(user);
   }
 });
 
-</script>
+/* DASHBOARD */
+function showUser(user){
 
-</body>
-</html>
+  let role = "user";
+  if(user.email === OWNER_EMAIL){
+    role = "head_owner";
+  }
+
+  document.body.innerHTML = `
+    <h1>🔥 DASHBOARD</h1>
+
+    <h2>👤 ${user.email}</h2>
+    <h3>Role: ${role}</h3>
+
+    <button onclick="logout()">Logout</button>
+  `;
+}
+
+</script>
