@@ -1,24 +1,30 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Firebase Login System</title>
+  <title>CRIMSON PLATFORM</title>
 </head>
 
-<body>
+<body style="font-family: Arial; text-align:center; background:#0f0f0f; color:white;">
 
-<h1>🔥 LOGIN SYSTEM</h1>
+<h1>🔥 CRIMSON PLATFORM</h1>
 
-<button onclick="login()">Login with Google</button>
-
-<p id="status">Not logged in</p>
+<div id="app">
+  <button onclick="login()">Login with Google</button>
+  <p id="status">Not logged in</p>
+</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getAuth, GoogleAuthProvider, signInWithPopup } 
-from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { 
+  getAuth, 
+  GoogleAuthProvider, 
+  signInWithRedirect, 
+  getRedirectResult,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-/* 🔥 YOUR FIREBASE CONFIG */
+/* 🔥 CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAZHtBlagfvIDUOSkI_zi7WEKJFk6S_fCA",
   authDomain: "crimsonseling.firebaseapp.com",
@@ -30,35 +36,51 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 
-/* 👑 HEAD OWNER */
+/* 👑 OWNER */
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
-window.login = async function(){
-
+/* LOGIN */
+window.login = function(){
   const provider = new GoogleAuthProvider();
+  signInWithRedirect(auth, provider);
+};
 
-  try {
-    const result = await signInWithPopup(auth, provider);
+/* LOGOUT */
+window.logout = function(){
+  signOut(auth).then(() => {
+    location.reload();
+  });
+};
+
+/* AFTER LOGIN */
+getRedirectResult(auth).then((result) => {
+  if (result) {
     const user = result.user;
 
     let role = "user";
-
     if(user.email === OWNER_EMAIL){
       role = "head_owner";
     }
 
     document.body.innerHTML = `
-      <h1>🔥 LOGIN SUCCESS</h1>
-      <h2>Email: ${user.email}</h2>
-      <h3>Role: ${role}</h3>
+      <h1>🔥 DASHBOARD</h1>
 
-      <button onclick="location.reload()">Logout</button>
+      <div style="border:1px solid white; padding:15px; margin:20px;">
+        <h2>👤 Profile</h2>
+        <p>Email: ${user.email}</p>
+        <p>Role: ${role}</p>
+      </div>
+
+      <div style="margin-top:20px;">
+        <button onclick="alert('Premium Area 🔒')">Premium</button>
+        <button onclick="alert('Admin Panel 🔐')">Admin</button>
+        <button onclick="logout()">Logout</button>
+      </div>
+
+      <p style="margin-top:20px;">🔥 Welcome to CRIMSON PLATFORM</p>
     `;
-
-  } catch (error) {
-    alert("Login Error: " + error.message);
   }
-}
+});
 
 </script>
 
