@@ -8,8 +8,8 @@
 
 <h1>🔥 CRIMSON PLATFORM</h1>
 
-<button id="loginBtn">Login with Google</button>
-<button id="logoutBtn" style="display:none;">Logout</button>
+<button onclick="login()">Login with Google</button>
+<button onclick="logout()">Logout</button>
 
 <p id="info">Not logged in</p>
 
@@ -19,7 +19,8 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/fireba
 import { 
   getAuth,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult,
   signOut,
   onAuthStateChanged
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -38,40 +39,30 @@ const auth = getAuth(app);
 
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
-/* BUTTONS */
-const loginBtn = document.getElementById("loginBtn");
-const logoutBtn = document.getElementById("logoutBtn");
-const info = document.getElementById("info");
-
 /* LOGIN */
-loginBtn.onclick = async () => {
+window.login = function(){
   const provider = new GoogleAuthProvider();
-  try {
-    await signInWithPopup(auth, provider);
-  } catch (e) {
-    alert(e.message);
-  }
+  signInWithRedirect(auth, provider);
 };
 
 /* LOGOUT */
-logoutBtn.onclick = () => {
+window.logout = function(){
   signOut(auth);
 };
+
+/* HANDLE REDIRECT */
+getRedirectResult(auth).catch(() => {});
 
 /* STATE */
 onAuthStateChanged(auth, (user) => {
 
+  const info = document.getElementById("info");
+
   if(user){
     let role = (user.email === OWNER_EMAIL) ? "HEAD OWNER" : "USER";
-
-    info.innerText = `Logged in: ${user.email} | Role: ${role}`;
-    loginBtn.style.display = "none";
-    logoutBtn.style.display = "inline-block";
-  }
-  else{
+    info.innerText = user.email + " | " + role;
+  } else {
     info.innerText = "Not logged in";
-    loginBtn.style.display = "inline-block";
-    logoutBtn.style.display = "none";
   }
 });
 
