@@ -28,12 +28,7 @@ window.login = function(){
   const provider = new GoogleAuthProvider();
 
   signInWithPopup(auth, provider)
-  .then((result) => {
-    renderDashboard(result.user);
-  })
-  .catch((error) => {
-    alert(error.message);
-  });
+  .catch(err => alert(err.message));
 };
 
 /* LOGOUT */
@@ -41,10 +36,16 @@ window.logout = function(){
   signOut(auth);
 };
 
-/* FIXED STATE LISTENER */
+/* ONLY ONE RENDER SYSTEM */
+let rendered = false;
+
 onAuthStateChanged(auth, (user) => {
+
+  if(rendered) return;   // ❗ STOP LOOP
+  rendered = true;
+
   if(user){
-    renderDashboard(user);
+    showDashboard(user);
   } else {
     showLogin();
   }
@@ -58,13 +59,10 @@ function showLogin(){
   `;
 }
 
-/* DASHBOARD UI */
-function renderDashboard(user){
+/* DASHBOARD */
+function showDashboard(user){
 
-  let role = "user";
-  if(user.email === OWNER_EMAIL){
-    role = "head_owner";
-  }
+  let role = (user.email === OWNER_EMAIL) ? "head_owner" : "user";
 
   document.body.innerHTML = `
     <h1>🔥 DASHBOARD</h1>
@@ -75,8 +73,5 @@ function renderDashboard(user){
     <button onclick="logout()">Logout</button>
   `;
 }
-
-/* START */
-showLogin();
 
 </script>
