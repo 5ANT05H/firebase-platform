@@ -1,384 +1,394 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON DEVIL WORLD</title>
+<title>CRIMSON DEVIL GOD MODE</title>
 
-  <style>
-    body{
-      margin:0;
-      font-family:Arial;
-      background:#0a0a0a;
-      color:white;
-    }
+<style>
+body{
+margin:0;
+font-family:Arial;
+background:#050505;
+color:white;
+}
 
-    /* INTRO */
-    #intro{
-      position:fixed;
-      width:100%;
-      height:100%;
-      background:radial-gradient(circle,#2a0000,#000);
-      display:flex;
-      flex-direction:column;
-      justify-content:center;
-      align-items:center;
-      z-index:10;
-    }
+/* TOP BAR */
+#topBar{
+background:#111;
+border-bottom:2px solid red;
+padding:6px;
+}
 
-    #intro h1{
-      color:red;
-      text-shadow:0 0 20px red;
-    }
+/* AUTH */
+#auth{
+display:flex;
+justify-content:center;
+align-items:center;
+height:100vh;
+}
 
-    /* AUTH SCREEN */
-    #auth{
-      display:none;
-      height:100vh;
-      justify-content:center;
-      align-items:center;
-    }
+.box{
+background:#111;
+padding:20px;
+width:320px;
+border:1px solid red;
+text-align:center;
+box-shadow:0 0 15px red;
+}
 
-    .box{
-      background:#111;
-      padding:20px;
-      border:1px solid red;
-      width:280px;
-      text-align:center;
-    }
+input,button{
+padding:10px;
+margin:5px;
+width:90%;
+}
 
-    input,button{
-      padding:10px;
-      margin:5px;
-      width:90%;
-    }
+button{
+background:red;
+color:white;
+border:none;
+cursor:pointer;
+}
 
-    button{
-      background:red;
-      color:white;
-      border:none;
-      cursor:pointer;
-    }
+/* APP */
+#app{
+display:none;
+}
 
-    /* APP */
-    #app{
-      display:none;
-      display:flex;
-    }
+/* SIDEBAR */
+#sidebar{
+width:70px;
+height:100vh;
+background:#111;
+position:fixed;
+left:0;
+top:0;
+border-right:1px solid red;
+display:flex;
+flex-direction:column;
+align-items:center;
+padding-top:10px;
+}
 
-    /* SIDEBAR */
-    #sidebar{
-      width:70px;
-      background:#111;
-      height:100vh;
-      border-right:1px solid red;
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      padding-top:10px;
-    }
+#sidebar button{
+width:45px;
+height:45px;
+margin:5px;
+background:black;
+color:red;
+border:1px solid red;
+cursor:pointer;
+transition:0.3s;
+}
 
-    #sidebar button{
-      width:45px;
-      height:45px;
-      margin:8px;
-      background:black;
-      color:red;
-      border:1px solid red;
-    }
+#sidebar button:hover{
+transform:scale(1.1);
+box-shadow:0 0 10px red;
+}
 
-    /* MAIN */
-    #main{
-      flex:1;
-      padding:10px;
-    }
+/* MAIN */
+#main{
+margin-left:80px;
+padding:10px;
+}
 
-    .chatBox{
-      height:250px;
-      overflow:auto;
-      border:1px solid red;
-      padding:10px;
-      background:#111;
-    }
+/* CHAT */
+.chatBox{
+height:250px;
+overflow:auto;
+border:1px solid red;
+padding:10px;
+background:#111;
+}
 
-    /* PROFILE */
-    #profile{
-      display:none;
-      position:fixed;
-      right:0;
-      top:0;
-      width:250px;
-      height:100%;
-      background:#111;
-      border-left:1px solid red;
-      padding:10px;
-    }
+/* PROFILE */
+#profile{
+display:none;
+position:fixed;
+right:0;
+top:0;
+width:300px;
+height:100%;
+background:#111;
+border-left:1px solid red;
+padding:10px;
+}
 
-    img{
-      width:80px;
-      height:80px;
-      border-radius:50%;
-      border:2px solid red;
-    }
-  </style>
+#avatarGrid img{
+width:60px;
+height:60px;
+margin:5px;
+border-radius:50%;
+border:2px solid red;
+cursor:pointer;
+transition:0.3s;
+}
+
+#avatarGrid img:hover{
+transform:scale(1.2);
+box-shadow:0 0 15px red;
+}
+
+/* STORE */
+.card{
+border:1px solid red;
+padding:10px;
+margin:5px;
+background:#0d0d0d;
+}
+</style>
+
 </head>
 
 <body>
 
-<!-- INTRO -->
-<div id="intro">
-  <h1>🔥 CRIMSON DEVIL WORLD 🔥</h1>
-  <p>Welcome to Dark System</p>
+<!-- TOP BAR -->
+<div id="topBar">
+<marquee scrollamount="6">
+🔥 GTA V 2.2 | PRICE $29.99 |
+👑 DEVIL UPDATE LIVE |
+💀 CRIMSON GOD MODE ACTIVE |
+🎮 NEW SYSTEM ONLINE |
+</marquee>
 </div>
 
 <!-- AUTH -->
 <div id="auth">
 
-  <div class="box">
+<div class="box">
 
-    <h2>SIGNUP</h2>
+<h2>REGISTER</h2>
+<input id="r_user" placeholder="username">
+<input id="r_pass" placeholder="password">
+<input id="r_cpass" placeholder="confirm password">
+<input id="r_email" placeholder="gmail">
+<button onclick="register()">REGISTER</button>
 
-    <input id="su_user" placeholder="username">
-    <input id="su_pass" placeholder="password">
+<hr>
 
-    <button onclick="signup()">SIGNUP</button>
+<h2>LOGIN</h2>
+<input id="l_user" placeholder="username">
+<input id="l_pass" type="password" placeholder="password">
+<button onclick="login()">LOGIN</button>
 
-    <hr>
-
-    <h2>LOGIN</h2>
-
-    <input id="li_user" placeholder="username">
-    <input id="li_pass" placeholder="password">
-
-    <button onclick="login()">LOGIN</button>
-
-  </div>
+</div>
 
 </div>
 
 <!-- APP -->
 <div id="app">
 
-  <div id="sidebar">
-    <button onclick="openChat('public')">P</button>
-    <button onclick="openChat('help')">H</button>
-    <button onclick="openChat('admin')">A</button>
-    <button onclick="openChat('owner')">O</button>
-    <button onclick="openChat('head')">👑</button>
-    <button onclick="toggleProfile()">👤</button>
-  </div>
+<div id="sidebar">
+<button onclick="openChat('public')">P</button>
+<button onclick="openChat('help')">H</button>
+<button onclick="openChat('admin')">A</button>
+<button onclick="openChat('owner')">O</button>
+<button onclick="openChat('head')">👑</button>
+<button onclick="openStore()">🛒</button>
+<button onclick="openProfile()">👤</button>
+<button onclick="openAdmin()">⚙</button>
+</div>
 
-  <div id="main">
-    <h3 id="userInfo"></h3>
-    <div id="chatArea"></div>
-  </div>
+<div id="main">
+<h3 id="userInfo"></h3>
+<div id="chatArea"></div>
+</div>
 
 </div>
 
 <!-- PROFILE -->
 <div id="profile">
-  <h3>PROFILE</h3>
-
-  <img id="avatar" src="https://i.imgur.com/0y0y0y0.png">
-
-  <input id="nameEdit" placeholder="name">
-  <input id="avatarEdit" placeholder="avatar url">
-
-  <button onclick="saveProfile()">SAVE</button>
+<h3>PROFILE</h3>
+<img id="avatar" src="https://i.imgur.com/0y0y0y0.png">
+<div id="avatarGrid"></div>
 </div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  onSnapshot
+getFirestore,
+doc,
+getDoc,
+setDoc,
+collection,
+addDoc,
+query,
+orderBy,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
-  authDomain: "crimson-platform-92f67.firebaseapp.com",
-  projectId: "crimson-platform-92f67",
-  storageBucket: "crimson-platform-92f67.firebasestorage.app",
-  appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
+const firebaseConfig={
+apiKey:"AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
+authDomain:"crimson-platform-92f67.firebaseapp.com",
+projectId:"crimson-platform-92f67"
 };
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+const app=initializeApp(firebaseConfig);
+const db=getFirestore(app);
 
-let currentUser = null;
+let currentUser=null;
 
-const HEAD_OWNER = "C4CRIMSON";
-const HEAD_PASS = "55479535@Sk";
+const HEAD="C4CRIMSON";
 
-/* INTRO FLOW */
-setTimeout(()=>{
-  document.getElementById("intro").style.display="none";
-  document.getElementById("auth").style.display="flex";
-},2500);
+/* REGISTER */
+window.register=async function(){
 
-/* SIGNUP */
-window.signup = async function(){
+if(r_pass.value!==r_cpass.value){
+alert("Password not match");
+return;
+}
 
-  let u = su_user.value;
-  let p = su_pass.value;
+await setDoc(doc(db,"users",r_user.value),{
+username:r_user.value,
+password:r_pass.value,
+email:r_email.value,
+role:"USER",
+avatar:"https://i.imgur.com/0y0y0y0.png"
+});
 
-  if(!u || !p) return alert("Fill fields");
-
-  let ref = doc(db,"users",u);
-  let snap = await getDoc(ref);
-
-  if(snap.exists()) return alert("User exists");
-
-  await setDoc(ref,{
-    username:u,
-    password:p,
-    role:"USER",
-    premium:false,
-    avatar:"https://i.imgur.com/0y0y0y0.png"
-  });
-
-  alert("Signup success ✔");
+alert("REGISTER DONE ✔");
 };
 
 /* LOGIN */
-window.login = async function(){
+window.login=async function(){
 
-  let u = li_user.value;
-  let p = li_pass.value;
+let snap=await getDoc(doc(db,"users",l_user.value));
 
-  // HEAD OWNER LOGIN
-  if(u === HEAD_OWNER && p === HEAD_PASS){
-    currentUser = {
-      username:u,
-      role:"HEAD OWNER",
-      premium:true
-    };
-    enterApp();
-    return;
-  }
-
-  let ref = doc(db,"users",u);
-  let snap = await getDoc(ref);
-
-  if(!snap.exists()) return alert("User not found");
-
-  let data = snap.data();
-
-  if(data.password !== p) return alert("Wrong password");
-
-  currentUser = data;
-
-  enterApp();
-};
-
-/* ENTER APP */
-function enterApp(){
-
-  document.getElementById("auth").style.display="none";
-  document.getElementById("app").style.display="flex";
-
-  document.getElementById("userInfo").innerText =
-    `👤 ${currentUser.username} | ${currentUser.role}`;
-
-  openChat("public");
+if(!snap.exists()){
+alert("User not found");
+return;
 }
 
-/* PROFILE */
-window.toggleProfile = function(){
-  let p = document.getElementById("profile");
-  p.style.display = p.style.display === "block" ? "none" : "block";
+let d=snap.data();
+
+if(d.password!==l_pass.value){
+alert("Wrong password");
+return;
+}
+
+currentUser=d;
+
+start();
 };
 
-window.saveProfile = async function(){
+/* START */
+function start(){
 
-  await setDoc(doc(db,"users",currentUser.username),{
-    username: nameEdit.value,
-    avatar: avatarEdit.value
-  },{merge:true});
+auth.style.display="none";
+app.style.display="block";
 
-  alert("Profile updated ✔");
-};
+userInfo.innerText=`👤 ${currentUser.username} | ${currentUser.role}`;
 
-/* PERMISSION */
-function check(type){
-
-  if(type === "head"){
-    if(currentUser.username !== HEAD_OWNER){
-      alert("HEAD LOCK 🔒");
-      return false;
-    }
-  }
-
-  if(type === "owner"){
-    if(!(currentUser.role === "OWNER" || currentUser.role === "ADMIN" || currentUser.username === HEAD_OWNER)){
-      alert("OWNER LOCK 🔒");
-      return false;
-    }
-  }
-
-  return true;
+loadAvatars();
+openChat('public');
 }
 
 /* CHAT */
-window.openChat = function(type){
+window.openChat=function(type){
 
-  if(!check(type)) return;
+chatArea.innerHTML=`
+<h3>${type.toUpperCase()}</h3>
+<input id="msg">
+<button onclick="send('${type}')">SEND</button>
+<div class="chatBox" id="box"></div>
+`;
 
-  document.getElementById("chatArea").innerHTML = `
-    <h3>${type.toUpperCase()} CHAT</h3>
-
-    <input id="msg">
-    <button onclick="send('${type}')">SEND</button>
-
-    <div class="chatBox" id="box"></div>
-  `;
-
-  load(type);
+load(type);
 };
 
-window.send = async function(type){
+window.send=async function(type){
 
-  let m = msg.value;
-  if(!m) return;
+await addDoc(collection(db,type),{
+text:msg.value,
+user:currentUser.username,
+role:currentUser.role,
+time:Date.now()
+});
 
-  await addDoc(collection(db,type),{
-    text:m,
-    user:currentUser.username,
-    role:currentUser.role,
-    time:Date.now()
-  });
-
-  msg.value="";
+msg.value="";
 };
 
 function load(type){
 
-  const q = query(collection(db,type),orderBy("time"));
+const q=query(collection(db,type),orderBy("time"));
 
-  onSnapshot(q,(snap)=>{
+onSnapshot(q,snap=>{
 
-    let html="";
+let html="";
 
-    snap.forEach(d=>{
-      let x = d.data();
+snap.forEach(d=>{
 
-      html += `
-        <p>
-          <b>${x.user}</b>
-          (${x.role}): ${x.text}
-        </p>
-      `;
-    });
+let x=d.data();
 
-    document.getElementById("box").innerHTML = html;
+html+=`<p><b>${x.user}</b> (${x.role}): ${x.text}</p>`;
 
-  });
+});
+
+box.innerHTML=html;
+
+});
+
+}
+
+/* STORE */
+window.openStore=function(){
+
+chatArea.innerHTML=`
+<div class="card">GTA V 2.2 - $29.99</div>
+<div class="card">PUBG MOD - $9.99</div>
+<div class="card">FREE FIRE ULTRA - $14.99</div>
+`;
+
+}
+
+/* PROFILE */
+window.openProfile=function(){
+
+profile.style.display="block";
+
+let avatars=[
+"https://i.imgur.com/1.png",
+"https://i.imgur.com/2.png",
+"https://i.imgur.com/3.png",
+"https://i.imgur.com/devil.gif"
+];
+
+let grid=document.getElementById("avatarGrid");
+grid.innerHTML="";
+
+avatars.forEach(a=>{
+
+let img=document.createElement("img");
+img.src=a;
+
+img.onclick=async()=>{
+
+avatar.src=a;
+
+await setDoc(doc(db,"users",currentUser.username),{
+avatar:a
+},{merge:true});
+
+};
+
+grid.appendChild(img);
+
+});
+
+}
+
+/* ADMIN */
+window.openAdmin=function(){
+
+if(currentUser.username!=="C4CRIMSON"){
+alert("HEAD ONLY");
+return;
+}
+
+let g=prompt("Game name");
+let p=prompt("Price");
+
+alert(g+" added with price "+p);
+
 }
 
 </script>
