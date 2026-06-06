@@ -59,18 +59,27 @@ function loginUI(){
 /* DASHBOARD */
 function dashboard(user){
 
+  let name = user.email.split("@")[0]; // Gmail hide
+
   appDiv.innerHTML = `
-    <h2>👤 ${user.email}</h2>
-    <button onclick="logout()">Logout</button>
+    <div style="padding:10px;">
 
-    <hr>
+      <h1>💀 CRIMSON CHAT</h1>
 
-    <h2>💬 LIVE CHAT</h2>
+      <h3>👤 User: ${name}</h3>
 
-    <input id="msg" placeholder="type message">
-    <button onclick="sendMsg()">Send</button>
+      <button onclick="logout()">Logout</button>
 
-    <div id="chatBox"></div>
+      <hr>
+
+      <h2>💬 LIVE CHAT</h2>
+
+      <input id="msg" placeholder="type message">
+      <button onclick="sendMsg()">Send</button>
+
+      <div id="chatBox"></div>
+
+    </div>
   `;
 
   loadChat();
