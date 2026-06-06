@@ -4,7 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRIMSON DEVIL WORLD</title>
+    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
         /* Modern Discord 2026 Style - Dark Theme (Black + Crimson Red) */
@@ -402,12 +404,14 @@
 </head>
 <body>
 
+    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <h2 style="color: var(--crimson); font-weight: 800;">CRIMSON DEVIL WORLD</h2>
         <p style="color: var(--text-muted); margin-top: 10px;">Connecting to servers...</p>
     </div>
 
+    <!-- Login Screen -->
     <div id="login-screen" class="hidden">
         <div class="login-box glass">
             <h1>Crimson Devil World</h1>
@@ -416,6 +420,7 @@
         </div>
     </div>
 
+    <!-- Banned Screen -->
     <div id="ban-screen" class="hidden">
         <div class="login-box glass" style="border-color: var(--crimson);">
             <i class="fas fa-ban" style="font-size: 50px; color: var(--crimson); margin-bottom: 20px;"></i>
@@ -424,7 +429,9 @@
         </div>
     </div>
 
+    <!-- Main Application -->
     <div id="app" class="hidden">
+        <!-- Sidebar Navigation -->
         <nav id="sidebar">
             <div class="sidebar-header">
                 <i class="fas fa-fire"></i> CRIMSON DEVIL
@@ -446,7 +453,9 @@
             </div>
         </nav>
 
+        <!-- Main Content Area -->
         <main id="content">
+            <!-- Home Page -->
             <section id="home" class="page active">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
@@ -461,6 +470,7 @@
                 </div>
             </section>
 
+            <!-- Public Chat -->
             <section id="chat" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
@@ -468,7 +478,8 @@
                 </div>
                 <div class="chat-container">
                     <div class="messages-area" id="public-messages">
-                        </div>
+                        <!-- Messages render here -->
+                    </div>
                     <div class="typing-indicator" id="public-typing"></div>
                     <div class="chat-input-area">
                         <input type="text" id="public-input" class="chat-input" placeholder="Message #public-chat...">
@@ -477,6 +488,7 @@
                 </div>
             </section>
 
+            <!-- Private DMs -->
             <section id="dms" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
@@ -488,14 +500,16 @@
                             <input type="text" id="dm-search" class="chat-input" style="width: 100%; padding: 10px;" placeholder="Search users...">
                         </div>
                         <div class="dm-list" id="dm-user-list">
-                            </div>
+                            <!-- DM users render here -->
+                        </div>
                     </div>
                     <div class="dm-chat hidden" id="dm-chat-area">
                         <div style="padding: 15px; border-bottom: 1px solid var(--glass-border); font-weight: 600;" id="dm-current-user-name">
                             Select a user to chat
                         </div>
                         <div class="messages-area" id="dm-messages">
-                            </div>
+                            <!-- DM messages render here -->
+                        </div>
                         <div class="chat-input-area">
                             <input type="text" id="dm-input" class="chat-input" placeholder="Send a direct message...">
                             <button id="send-dm" class="btn"><i class="fas fa-paper-plane"></i></button>
@@ -504,15 +518,18 @@
                 </div>
             </section>
 
+            <!-- Online Users -->
             <section id="users" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
                     <i class="fas fa-users"></i> Member List
                 </div>
                 <div class="grid-list" id="users-grid">
-                    </div>
+                    <!-- User cards render here -->
+                </div>
             </section>
 
+            <!-- Owner Panel -->
             <section id="owner" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
@@ -525,17 +542,4 @@
                     </div>
                     <div class="glass" style="padding: 20px; border-radius: var(--radius); flex: 1; text-align: center;">
                         <h3>Total Public Messages</h3>
-                        <p id="stat-total-msgs" style="font-size: 24px; font-weight: 800; color: var(--crimson);">0</p>
-                    </div>
-                </div>
-                <h3 style="margin-bottom: 15px;">Manage Users</h3>
-                <div class="grid-list" id="admin-users-grid">
-                    </div>
-            </section>
-
-            <section id="settings" class="page">
-                <div class="page-header">
-                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <i class="fas fa-cog"></i> Settings
-                </div>
-                <div class="glass" style="padding: 30px; bor
+                        <p id="stat-total-msgs" style
