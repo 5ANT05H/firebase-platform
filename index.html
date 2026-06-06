@@ -4,12 +4,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CRIMSON DEVIL WORLD</title>
-    <!-- FontAwesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
     <style>
-        /* Modern Discord 2026 Style - Dark Theme (Black + Crimson Red) */
+        /* Modern Discord Style - Dark Theme (Black + Crimson Red) */
         :root {
             --bg-base: #000000;
             --bg-sidebar: #0a0a0a;
@@ -31,13 +29,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Inter', sans-serif;
-            scrollbar-width: thin;
-            scrollbar-color: var(--bg-surface-hover) var(--bg-base);
         }
-
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: var(--bg-base); }
-        ::-webkit-scrollbar-thumb { background: var(--bg-surface-hover); border-radius: 4px; }
 
         body {
             background-color: var(--bg-base);
@@ -47,7 +39,6 @@
             overflow: hidden;
         }
 
-        /* Utility Classes */
         .hidden { display: none !important; }
         .glass {
             background: var(--glass-bg);
@@ -69,12 +60,10 @@
             text-align: center;
         }
 
-        /* Login Screen styling */
         .login-box {
             padding: 40px;
             border-radius: var(--radius);
             box-shadow: 0 0 30px var(--crimson-glow);
-            animation: fadeIn 1s ease-in-out;
         }
 
         .login-box h1 {
@@ -106,14 +95,9 @@
             transform: translateY(-2px);
         }
 
-        /* Main App Layout */
-        #app {
-            display: flex;
-            width: 100%;
-            height: 100%;
-        }
+        /* App Layout */
+        #app { display: flex; width: 100%; height: 100%; }
 
-        /* Sidebar Navigation */
         #sidebar {
             width: 260px;
             background-color: var(--bg-sidebar);
@@ -132,16 +116,15 @@
             text-shadow: 0 0 10px var(--crimson-glow);
             border-bottom: 1px solid var(--glass-border);
             text-align: center;
-            letter-spacing: 1px;
         }
 
         .nav-links {
             flex: 1;
             padding: 10px;
-            overflow-y: auto;
             display: flex;
             flex-direction: column;
             gap: 5px;
+            overflow-y: auto;
         }
 
         .nav-item {
@@ -161,9 +144,7 @@
             color: var(--text-main);
         }
 
-        .nav-item.active {
-            border-left: 4px solid var(--crimson);
-        }
+        .nav-item.active { border-left: 4px solid var(--crimson); }
 
         .badge-count {
             background: var(--crimson);
@@ -174,7 +155,6 @@
             margin-left: auto;
         }
 
-        /* Current User Profile in Sidebar */
         .current-user {
             padding: 15px;
             background-color: var(--bg-surface);
@@ -189,7 +169,6 @@
             height: 40px;
             border-radius: 50%;
             object-fit: cover;
-            border: 2px solid var(--bg-surface-hover);
         }
 
         .user-info { flex: 1; overflow: hidden; }
@@ -197,23 +176,9 @@
         .user-status { font-size: 12px; color: #10b981; display: flex; align-items: center; gap: 5px; }
         .status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; }
 
-        /* Main Content Area */
-        #content {
-            flex: 1;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            background-color: var(--bg-base);
-        }
+        #content { flex: 1; position: relative; display: flex; flex-direction: column; background-color: var(--bg-base); }
 
-        .page {
-            display: none;
-            flex-direction: column;
-            height: 100%;
-            padding: 20px;
-            animation: fadeIn 0.3s ease-in;
-        }
-
+        .page { display: none; flex-direction: column; height: 100%; padding: 20px; }
         .page.active { display: flex; }
 
         .page-header {
@@ -237,163 +202,48 @@
             border-radius: var(--radius);
         }
 
-        .messages-area {
-            flex: 1;
-            padding: 20px;
-            overflow-y: auto;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .message {
-            display: flex;
-            gap: 15px;
-            animation: slideIn 0.2s ease-out;
-        }
-
-        .message:hover .msg-actions { opacity: 1; }
-
-        .msg-content {
-            flex: 1;
-        }
-
-        .msg-header {
-            display: flex;
-            align-items: baseline;
-            gap: 10px;
-            margin-bottom: 5px;
-        }
-
+        .messages-area { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .message { display: flex; gap: 15px; }
+        .msg-content { flex: 1; }
+        .msg-header { display: flex; align-items: baseline; gap: 10px; margin-bottom: 5px; }
         .msg-author { font-weight: 600; color: var(--crimson); }
         .msg-time { font-size: 11px; color: var(--text-muted); }
-        .msg-text { color: var(--text-main); line-height: 1.5; word-wrap: break-word;}
+        .msg-text { color: var(--text-main); line-height: 1.5; word-wrap: break-word; }
 
-        .role-badge {
-            font-size: 10px;
-            padding: 2px 6px;
-            border-radius: 4px;
-            font-weight: 800;
-            text-transform: uppercase;
-        }
+        .role-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 800; text-transform: uppercase; }
         .badge-owner { background: #ffaa00; color: #000; }
         .badge-admin { background: #3b82f6; color: #fff; }
         .badge-user { background: var(--bg-surface-hover); color: var(--text-muted); border: 1px solid var(--glass-border); }
 
-        .msg-actions {
-            opacity: 0;
-            transition: var(--transition);
-            cursor: pointer;
-            color: var(--crimson);
-        }
+        .chat-input-area { padding: 15px; background-color: var(--bg-sidebar); display: flex; gap: 10px; align-items: center; }
+        .chat-input { flex: 1; background: var(--bg-surface-hover); border: none; padding: 15px; border-radius: var(--radius); color: var(--text-main); outline: none; font-size: 15px; }
 
-        .chat-input-area {
-            padding: 15px;
-            background-color: var(--bg-sidebar);
-            display: flex;
-            gap: 10px;
-            align-items: center;
-        }
-
-        .chat-input {
-            flex: 1;
-            background: var(--bg-surface-hover);
-            border: none;
-            padding: 15px;
-            border-radius: var(--radius);
-            color: var(--text-main);
-            outline: none;
-            font-size: 15px;
-        }
-
-        .typing-indicator {
-            font-size: 12px;
-            color: var(--text-muted);
-            padding: 0 20px 10px;
-            height: 20px;
-        }
-
-        /* Cards & Lists */
-        .grid-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 20px;
-            overflow-y: auto;
-        }
-
-        .user-card {
-            background: var(--bg-surface);
-            padding: 20px;
-            border-radius: var(--radius);
-            text-align: center;
-            border: 1px solid var(--glass-border);
-            transition: var(--transition);
-        }
-
-        .user-card:hover {
-            transform: translateY(-5px);
-            border-color: var(--crimson);
-            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.1);
-        }
-
+        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; overflow-y: auto; }
+        .user-card { background: var(--bg-surface); padding: 20px; border-radius: var(--radius); text-align: center; border: 1px solid var(--glass-border); }
         .user-card .avatar { width: 80px; height: 80px; margin-bottom: 10px; }
-        .action-btn {
-            background: var(--bg-surface-hover);
-            color: var(--text-main);
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 10px;
-            width: 100%;
-            transition: var(--transition);
-        }
+        .action-btn { background: var(--bg-surface-hover); color: var(--text-main); border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; margin-top: 10px; width: 100%; }
         .action-btn:hover { background: var(--crimson); color: white; }
 
-        /* DM Split View */
-        .dm-layout {
-            display: flex;
-            height: 100%;
-            gap: 20px;
-        }
-        .dm-sidebar {
-            width: 300px;
-            background: var(--bg-surface);
-            border-radius: var(--radius);
-            display: flex;
-            flex-direction: column;
-        }
-        .dm-list { flex: 1; overflow-y: auto; padding: 10px;}
-        .dm-item {
-            padding: 10px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            border-radius: 8px;
-            transition: var(--transition);
-        }
+        /* DM Layout */
+        .dm-layout { display: flex; height: 100%; gap: 20px; }
+        .dm-sidebar { width: 300px; background: var(--bg-surface); border-radius: var(--radius); display: flex; flex-direction: column; }
+        .dm-list { flex: 1; overflow-y: auto; padding: 10px; }
+        .dm-item { padding: 10px; display: flex; align-items: center; gap: 10px; cursor: pointer; border-radius: 8px; }
         .dm-item:hover, .dm-item.active { background: var(--bg-surface-hover); }
         .dm-chat { flex: 1; display: flex; flex-direction: column; background: var(--bg-surface); border-radius: var(--radius); }
 
-        /* Realtime Error Logger System */
         #debug-box {
-            background: rgba(220, 38, 38, 0.15);
+            background: rgba(220, 38, 38, 0.1);
             border: 1px dashed var(--crimson);
             color: #fca5a5;
-            padding: 15px;
+            padding: 12px;
             border-radius: 8px;
             margin-top: 15px;
             font-family: monospace;
-            font-size: 12px;
-            max-width: 90%;
-            word-break: break-all;
-            text-align: left;
+            font-size: 13px;
+            width: 85%;
         }
 
-        /* Animations */
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideIn { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
         .spinner {
             width: 40px; height: 40px;
             border: 4px solid var(--glass-border);
@@ -404,7 +254,6 @@
         }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* Mobile Responsive */
         .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
         
         @media (max-width: 768px) {
@@ -419,15 +268,12 @@
 </head>
 <body>
 
-    <!-- Loading Screen -->
     <div id="loading-screen">
         <div class="spinner"></div>
         <h2 style="color: var(--crimson); font-weight: 800;">CRIMSON DEVIL WORLD</h2>
-        <p style="color: var(--text-muted); margin-top: 10px;">Connecting to servers...</p>
-        <div id="debug-box">System Status: Waiting for Firebase core initialization...</div>
+        <div id="debug-box">Connecting to safe auth portal...</div>
     </div>
 
-    <!-- Login Screen -->
     <div id="login-screen" class="hidden">
         <div class="login-box glass">
             <h1>Crimson Devil World</h1>
@@ -436,67 +282,52 @@
         </div>
     </div>
 
-    <!-- Banned Screen -->
     <div id="ban-screen" class="hidden">
-        <div class="login-box glass" style="border-color: var(--crimson);">
+        <div class="login-box glass">
             <i class="fas fa-ban" style="font-size: 50px; color: var(--crimson); margin-bottom: 20px;"></i>
             <h1>YOU ARE BANNED</h1>
-            <p style="color: var(--text-muted);">You have been removed from Crimson Devil World.</p>
         </div>
     </div>
 
-    <!-- Main Application -->
     <div id="app" class="hidden">
-        <!-- Sidebar Navigation -->
         <nav id="sidebar">
-            <div class="sidebar-header">
-                <i class="fas fa-fire"></i> CRIMSON DEVIL
-            </div>
+            <div class="sidebar-header"><i class="fas fa-fire"></i> CRIMSON DEVIL</div>
             <div class="nav-links">
                 <div class="nav-item active" data-target="home"><i class="fas fa-home"></i> Home</div>
                 <div class="nav-item" data-target="chat"><i class="fas fa-hashtag"></i> Public Chat</div>
-                <div class="nav-item" data-target="dms"><i class="fas fa-envelope"></i> Private DMs <span id="dm-badge" class="badge-count hidden">0</span></div>
-                <div class="nav-item" data-target="users"><i class="fas fa-users"></i> Online Users <span id="online-count" class="badge-count">0</span></div>
+                <div class="nav-item" data-target="dms"><i class="fas fa-envelope"></i> Private DMs</div>
+                <div class="nav-item" data-target="users"><i class="fas fa-users"></i> Users <span id="online-count" class="badge-count">0</span></div>
                 <div class="nav-item hidden" id="nav-owner" data-target="owner"><i class="fas fa-crown" style="color: #ffaa00;"></i> Owner Panel</div>
                 <div class="nav-item" data-target="settings"><i class="fas fa-cog"></i> Settings</div>
             </div>
             <div class="current-user">
                 <img id="my-avatar" class="avatar" src="" alt="avatar">
                 <div class="user-info">
-                    <div id="my-name" class="user-name">User Name</div>
+                    <div id="my-name" class="user-name">User</div>
                     <div class="user-status"><div class="status-dot"></div> Online</div>
                 </div>
             </div>
         </nav>
 
-        <!-- Main Content Area -->
         <main id="content">
-            <!-- Home Page -->
             <section id="home" class="page active">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <i class="fas fa-home"></i> Welcome Home
+                    <i class="fas fa-home"></i> Welcome
                 </div>
                 <div class="glass" style="padding: 40px; border-radius: var(--radius); text-align: center; margin-top: 20px;">
                     <i class="fas fa-fire" style="font-size: 60px; color: var(--crimson); margin-bottom: 20px;"></i>
-                    <h1 style="margin-bottom: 15px;">Welcome to Crimson Devil World</h1>
-                    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6;">
-                        This is a secure, real-time communication platform. Respect the rules. The Head Owner oversees everything. Dive into Public Chat or send secure Private DMs to other members.
-                    </p>
+                    <h1>Welcome to Crimson Devil World</h1>
                 </div>
             </section>
 
-            <!-- Public Chat -->
             <section id="chat" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
                     <i class="fas fa-hashtag"></i> public-chat
                 </div>
                 <div class="chat-container">
-                    <div class="messages-area" id="public-messages">
-                        <!-- Messages render here -->
-                    </div>
-                    <div class="typing-indicator" id="public-typing"></div>
+                    <div class="messages-area" id="public-messages"></div>
                     <div class="chat-input-area">
                         <input type="text" id="public-input" class="chat-input" placeholder="Message #public-chat...">
                         <button id="send-public" class="btn"><i class="fas fa-paper-plane"></i></button>
@@ -504,7 +335,6 @@
                 </div>
             </section>
 
-            <!-- Private DMs -->
             <section id="dms" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
@@ -512,62 +342,45 @@
                 </div>
                 <div class="dm-layout">
                     <div class="dm-sidebar">
-                        <div style="padding: 15px; border-bottom: 1px solid var(--glass-border);">
-                            <input type="text" id="dm-search" class="chat-input" style="width: 100%; padding: 10px;" placeholder="Search users...">
-                        </div>
-                        <div class="dm-list" id="dm-user-list">
-                            <!-- DM users render here -->
-                        </div>
+                        <div class="dm-list" id="dm-user-list"></div>
                     </div>
                     <div class="dm-chat hidden" id="dm-chat-area">
-                        <div style="padding: 15px; border-bottom: 1px solid var(--glass-border); font-weight: 600;" id="dm-current-user-name">
-                            Select a user to chat
-                        </div>
-                        <div class="messages-area" id="dm-messages">
-                            <!-- DM messages render here -->
-                        </div>
+                        <div style="padding: 15px; border-bottom: 1px solid var(--glass-border);" id="dm-current-user-name">Select user</div>
+                        <div class="messages-area" id="dm-messages"></div>
                         <div class="chat-input-area">
-                            <input type="text" id="dm-input" class="chat-input" placeholder="Send a direct message...">
+                            <input type="text" id="dm-input" class="chat-input" placeholder="Send message...">
                             <button id="send-dm" class="btn"><i class="fas fa-paper-plane"></i></button>
                         </div>
                     </div>
                 </div>
             </section>
 
-            <!-- Online Users -->
             <section id="users" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <i class="fas fa-users"></i> Member List
+                    <i class="fas fa-users"></i> Members
                 </div>
-                <div class="grid-list" id="users-grid">
-                    <!-- User cards render here -->
-                </div>
+                <div class="grid-list" id="users-grid"></div>
             </section>
 
-            <!-- Owner Panel -->
             <section id="owner" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <i class="fas fa-crown" style="color: #ffaa00;"></i> Head Owner Terminal
+                    <i class="fas fa-crown" style="color: #ffaa00;"></i> Owner Control Panel
                 </div>
                 <div style="display: flex; gap: 20px; margin-bottom: 20px;">
                     <div class="glass" style="padding: 20px; border-radius: var(--radius); flex: 1; text-align: center;">
-                        <h3>Total Users</h3>
+                        <h3>Total Core Users</h3>
                         <p id="stat-total-users" style="font-size: 24px; font-weight: 800; color: var(--crimson);">0</p>
                     </div>
                     <div class="glass" style="padding: 20px; border-radius: var(--radius); flex: 1; text-align: center;">
-                        <h3>Total Public Messages</h3>
+                        <h3>Total Chat Database Logs</h3>
                         <p id="stat-total-msgs" style="font-size: 24px; font-weight: 800; color: var(--crimson);">0</p>
                     </div>
                 </div>
-                <h3 style="margin-bottom: 15px;">Manage Users</h3>
-                <div class="grid-list" id="admin-users-grid">
-                    <!-- Admin user management renders here -->
-                </div>
+                <div class="grid-list" id="admin-users-grid"></div>
             </section>
 
-            <!-- Settings -->
             <section id="settings" class="page">
                 <div class="page-header">
                     <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
@@ -582,39 +395,17 @@
                             <span id="settings-role" class="role-badge badge-user" style="display: inline-block; margin-top: 5px;">USER</span>
                         </div>
                     </div>
-                    <button id="logout-btn" class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--crimson); color: var(--crimson);">
-                        <i class="fas fa-sign-out-alt"></i> Disconnect
-                    </button>
+                    <button id="logout-btn" class="btn" style="width: 100%; justify-content: center; background: transparent; border: 1px solid var(--crimson); color: var(--crimson);">Logout</button>
                 </div>
             </section>
         </main>
     </div>
 
-    <!-- Firebase SDK (Modular v10) -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
-        import { 
-            getAuth, 
-            GoogleAuthProvider, 
-            signInWithRedirect, 
-            getRedirectResult,
-            onAuthStateChanged, 
-            signOut 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
-        import { 
-            getDatabase, 
-            ref, 
-            set, 
-            onValue, 
-            push, 
-            remove, 
-            update, 
-            onDisconnect, 
-            serverTimestamp, 
-            get 
-        } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+        import { getDatabase, ref, set, onValue, push, remove, update, onDisconnect, serverTimestamp, get } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-database.js";
 
-        // Configuration
         const firebaseConfig = {
             apiKey: "AIzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYkE",
             authDomain: "crimson-devil-world.firebaseapp.com",
@@ -625,23 +416,8 @@
             appId: "1:625125480692:web:6ceeb76175dc6a732c66a1"
         };
 
-        const debugBox = document.getElementById('debug-box');
-        function logDebug(msg, isError = false) {
-            console.log(msg);
-            if(debugBox) {
-                debugBox.innerText = msg;
-                if(isError) debugBox.style.color = "#ef4444";
-            }
-        }
-
-        // Global State
         const HEAD_OWNER_EMAIL = "tksantosh0@gmail.com";
-        let auth, db, provider;
-        let currentUser = null;
-        let currentUserData = null;
-        let allUsers = {};
-        let activeDMUser = null;
-        let typingTimeout = null;
+        let auth, db, provider, currentUser = null, currentUserData = null, allUsers = {}, activeDMUser = null;
 
         const screens = {
             loading: document.getElementById('loading-screen'),
@@ -651,105 +427,69 @@
         };
 
         function showScreen(screenName) {
-            Object.values(screens).forEach(s => { if (s) s.classList.add('hidden'); });
-            if(screens[screenName]) screens[screenName].classList.remove('hidden');
+            Object.values(screens).forEach(s => s?.classList.add('hidden'));
+            screens[screenName]?.classList.remove('hidden');
         }
 
-        // Execution Handler
+        // Direct Streamlined Init
         try {
-            logDebug("Initializing Firebase framework nodes...");
             const app = initializeApp(firebaseConfig);
             auth = getAuth(app);
             db = getDatabase(app);
             provider = new GoogleAuthProvider();
-            logDebug("Firebase ready. Checking redirection callbacks...");
 
-            // Process redirect tokens immediately
-            getRedirectResult(auth).then((result) => {
-                if (result?.user) {
-                    logDebug("Identity token verified. Synchronizing account profiles...");
-                    currentUser = result.user;
-                    initializeUserDB(result.user);
-                } else {
-                    logDebug("No pending session redirection token discovered.");
-                }
-            }).catch((error) => {
-                logDebug(`OAuth Error Code: ${error.code} | Message: ${error.message}`, true);
-                setTimeout(() => showScreen('login'), 1500);
-            });
-
-            // Standard Observer Pipeline
+            // Realtime State Sync
             onAuthStateChanged(auth, async (user) => {
                 if (user) {
-                    logDebug(`Authenticated as ${user.displayName || 'User'}. Reading structural records...`);
                     currentUser = user;
                     await initializeUserDB(user);
                 } else {
-                    logDebug("No active authorization context. Transferring to portal entry.");
                     showScreen('login');
                 }
             });
-
         } catch (e) {
-            logDebug(`Critical Crash: ${e.message}`, true);
-            setTimeout(() => showScreen('login'), 1500);
+            document.getElementById('debug-box').innerText = "Initialization Error: " + e.message;
+            showScreen('login');
         }
 
-        // Automated System Stall Fallback
-        setTimeout(() => {
-            const currentLoader = document.getElementById('loading-screen');
-            if (currentLoader && !currentLoader.classList.contains('hidden')) {
-                logDebug("Server handshakes timed out. Bypassing thread deadlock to unlock UI...", true);
-                showScreen('login');
-            }
-        }, 3500);
-
-        // Core Login Interface Controller
-        document.getElementById('login-btn').addEventListener('click', () => {
-            logDebug("Launching redirection secure overlay...");
+        // Safe Popup Strategy
+        document.getElementById('login-btn').addEventListener('click', async () => {
             try {
-                signInWithRedirect(auth, provider);
+                document.getElementById('debug-box').innerText = "Opening secure Google connection window...";
+                showScreen('loading');
+                const result = await signInWithPopup(auth, provider);
+                if(result.user) {
+                    currentUser = result.user;
+                    await initializeUserDB(result.user);
+                }
             } catch(err) {
-                logDebug(`Redirection Fault: ${err.message}`, true);
+                alert("Login dynamic popup closed or blocked. Please try again.");
+                showScreen('login');
             }
         });
 
         document.getElementById('logout-btn').addEventListener('click', () => {
-            if(currentUser) {
-                update(ref(db, `users/${currentUser.uid}`), { online: false });
-            }
+            if(currentUser) update(ref(db, `users/${currentUser.uid}`), { online: false });
             signOut(auth).then(() => { window.location.reload(); });
         });
 
-        // Initialize User Records
         async function initializeUserDB(user) {
             try {
                 const userRef = ref(db, `users/${user.uid}`);
-                logDebug("Attempting database synchronization sequence...");
-                
-                const snapshot = await get(userRef).catch(err => {
-                    throw new Error(`Database read restricted! (Check rules): ${err.message}`);
-                });
+                const snapshot = await get(userRef);
+                let role = "user", banned = false;
 
-                let role = "user";
-                let banned = false;
-
-                if (user.email === HEAD_OWNER_EMAIL) {
-                    role = "head_owner";
-                } else if (snapshot.exists()) {
+                if (user.email === HEAD_OWNER_EMAIL) { role = "head_owner"; }
+                else if (snapshot.exists()) {
                     role = snapshot.val().role || "user";
                     banned = snapshot.val().banned || false;
                 }
 
-                if (banned) {
-                    showScreen('ban');
-                    signOut(auth);
-                    return;
-                }
+                if (banned) { showScreen('ban'); signOut(auth); return; }
 
                 const userData = {
                     uid: user.uid,
-                    name: user.displayName || "Unknown Identity",
+                    name: user.displayName || "Unknown identity",
                     email: user.email,
                     photo: user.photoURL || "https://www.gravatar.com/avatar/?d=mp",
                     online: true,
@@ -757,358 +497,163 @@
                     lastSeen: serverTimestamp()
                 };
                 
-                if (!snapshot.exists()) {
-                    userData.joinDate = serverTimestamp();
-                }
-
+                if (!snapshot.exists()) userData.joinDate = serverTimestamp();
                 await set(userRef, userData);
                 currentUserData = userData;
 
-                const connectedRef = ref(db, ".info/connected");
-                onValue(connectedRef, (snap) => {
+                // Sync Presence Engine
+                onValue(ref(db, ".info/connected"), (snap) => {
                     if (snap.val() === true) {
-                        const myConnectionsRef = ref(db, `users/${user.uid}/online`);
-                        const lastSeenRef = ref(db, `users/${user.uid}/lastSeen`);
-                        onDisconnect(myConnectionsRef).set(false);
-                        onDisconnect(lastSeenRef).set(serverTimestamp());
-                        set(myConnectionsRef, true);
+                        onDisconnect(ref(db, `users/${user.uid}/online`)).set(false);
+                        set(ref(db, `users/${user.uid}/online`), true);
                     }
                 });
 
-                logDebug("Records matched. Allocating visual layout modules...");
                 setupAppUI();
             } catch(err) {
-                logDebug(`Security Error: ${err.message}`, true);
-                setTimeout(() => showScreen('login'), 2000);
+                showScreen('login');
             }
         }
 
         function setupAppUI() {
             showScreen('app');
-            
             document.getElementById('my-avatar').src = currentUserData.photo;
             document.getElementById('my-name').innerText = currentUserData.name;
-            
             document.getElementById('settings-avatar').src = currentUserData.photo;
             document.getElementById('settings-name').innerText = currentUserData.name;
             document.getElementById('settings-email').innerText = currentUserData.email;
             
-            const roleBadge = document.getElementById('settings-role');
-            roleBadge.innerText = currentUserData.role.replace('_', ' ').toUpperCase();
-            roleBadge.className = `role-badge badge-${currentUserData.role.split('_')[0]}`;
+            const badge = document.getElementById('settings-role');
+            badge.innerText = currentUserData.role.toUpperCase();
+            badge.className = `role-badge badge-${currentUserData.role.split('_')[0]}`;
 
-            if (currentUserData.role === 'head_owner') {
-                document.getElementById('nav-owner').classList.remove('hidden');
-            }
+            if (currentUserData.role === 'head_owner') document.getElementById('nav-owner').classList.remove('hidden');
 
             listenToUsers();
             listenToPublicChat();
-            listenToTyping();
         }
 
-        // SPA Navigation Core
+        // SPA Navigation Router
         const navItems = document.querySelectorAll('.nav-item');
         const pages = document.querySelectorAll('.page');
-        
         navItems.forEach(item => {
             item.addEventListener('click', () => {
-                if (item.classList.contains('hidden')) return;
-                
                 navItems.forEach(n => n.classList.remove('active'));
                 item.classList.add('active');
-                
-                const target = item.getAttribute('data-target');
-                pages.forEach(p => {
-                    p.classList.remove('active');
-                    if(p.id === target) p.classList.add('active');
-                });
-
-                if(window.innerWidth <= 768) {
-                    document.getElementById('sidebar').classList.remove('open');
-                }
+                pages.forEach(p => p.classList.remove('active'));
+                document.getElementById(item.getAttribute('data-target')).classList.add('active');
+                if(window.innerWidth <= 768) document.getElementById('sidebar').classList.remove('open');
             });
         });
 
         document.querySelectorAll('.mobile-menu-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.getElementById('sidebar').classList.toggle('open');
-            });
+            btn.addEventListener('click', () => document.getElementById('sidebar').classList.toggle('open'));
         });
 
-        function formatTime(timestamp) {
-            if (!timestamp) return '';
-            const date = new Date(timestamp);
-            return date.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-        }
+        function formatTime(t) { return t ? new Date(t).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : ''; }
+        function getRoleHTML(r) { return r === 'head_owner' ? '<span class="role-badge badge-owner">Head Owner</span>' : r === 'admin' ? '<span class="role-badge badge-admin">Admin</span>' : ''; }
 
-        function getRoleHTML(role) {
-            if(role === 'head_owner') return `<span class="role-badge badge-owner">Head Owner</span>`;
-            if(role === 'admin') return `<span class="role-badge badge-admin">Admin</span>`;
-            return '';
-        }
-
-        // Communication Pipeline
+        // Public Feeds
         const publicMessagesDiv = document.getElementById('public-messages');
         const publicInput = document.getElementById('public-input');
-        
+
         function listenToPublicChat() {
-            const chatRef = ref(db, 'public_chat');
-            onValue(chatRef, (snapshot) => {
+            onValue(ref(db, 'public_chat'), (snapshot) => {
                 publicMessagesDiv.innerHTML = '';
                 let msgCount = 0;
                 snapshot.forEach((child) => {
                     msgCount++;
                     const msg = child.val();
-                    const msgId = child.key;
-                    
                     const div = document.createElement('div');
                     div.className = 'message';
-                    
-                    const canDelete = currentUser.uid === msg.uid || currentUserData.role === 'head_owner' || currentUserData.role === 'admin';
-                    const delBtn = canDelete ? `<i class="fas fa-trash msg-actions" onclick="deletePublicMessage('${msgId}')" title="Delete"></i>` : '';
-
                     div.innerHTML = `
                         <img src="${msg.photo}" class="avatar" alt="avatar">
                         <div class="msg-content">
                             <div class="msg-header">
-                                <span class="msg-author">${msg.name}</span>
-                                ${getRoleHTML(msg.role)}
+                                <span class="msg-author">${msg.name}</span> ${getRoleHTML(msg.role)}
                                 <span class="msg-time">${formatTime(msg.timestamp)}</span>
-                                ${delBtn}
                             </div>
                             <div class="msg-text">${escapeHTML(msg.text)}</div>
                         </div>
                     `;
                     publicMessagesDiv.appendChild(div);
                 });
-                
                 document.getElementById('stat-total-msgs').innerText = msgCount;
                 publicMessagesDiv.scrollTop = publicMessagesDiv.scrollHeight;
             });
         }
 
-        document.getElementById('send-public').addEventListener('click', sendPublicMessage);
-        publicInput.addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendPublicMessage();
-            else updateTypingStatus(true);
-        });
-
-        function sendPublicMessage() {
+        document.getElementById('send-public').addEventListener('click', () => {
             const text = publicInput.value.trim();
             if(!text) return;
-            
-            push(ref(db, 'public_chat'), {
-                uid: currentUser.uid,
-                name: currentUser.displayName,
-                photo: currentUser.photoURL,
-                role: currentUserData.role,
-                text: text,
-                timestamp: serverTimestamp()
-            });
-            
+            push(ref(db, 'public_chat'), { uid: currentUser.uid, name: currentUser.displayName, photo: currentUser.photoURL, role: currentUserData.role, text: text, timestamp: serverTimestamp() });
             publicInput.value = '';
-            updateTypingStatus(false);
-        }
+        });
 
-        window.deletePublicMessage = function(msgId) {
-            remove(ref(db, `public_chat/${msgId}`));
-        };
-
-        function updateTypingStatus(isTyping) {
-            update(ref(db, `typing/${currentUser.uid}`), {
-                name: currentUser.displayName,
-                typing: isTyping
-            });
-            
-            if(isTyping) {
-                clearTimeout(typingTimeout);
-                typingTimeout = setTimeout(() => updateTypingStatus(false), 2000);
-            }
-        }
-
-        function listenToTyping() {
-            onValue(ref(db, 'typing'), (snapshot) => {
-                const typists = [];
-                snapshot.forEach(child => {
-                    if(child.key !== currentUser.uid && child.val().typing) {
-                        typists.push(child.val().name);
-                    }
-                });
-                
-                const indicator = document.getElementById('public-typing');
-                if(typists.length === 1) indicator.innerText = `${typists[0]} is typing...`;
-                else if(typists.length > 1) indicator.innerText = `Multiple people are typing...`;
-                else indicator.innerText = '';
-            });
-        }
-
+        // Pipeline Synchronization
         function listenToUsers() {
             onValue(ref(db, 'users'), (snapshot) => {
-                allUsers = {};
-                let onlineCount = 0;
-                let totalCount = 0;
-                
-                const usersGrid = document.getElementById('users-grid');
-                const adminGrid = document.getElementById('admin-users-grid');
-                const dmList = document.getElementById('dm-user-list');
-                const searchTerm = document.getElementById('dm-search').value.toLowerCase();
-                
-                if(usersGrid) usersGrid.innerHTML = '';
-                if(adminGrid) adminGrid.innerHTML = '';
-                if(dmList) dmList.innerHTML = '';
+                allUsers = {}; let onlineCount = 0; let totalCount = 0;
+                const usersGrid = document.getElementById('users-grid'), adminGrid = document.getElementById('admin-users-grid'), dmList = document.getElementById('dm-user-list');
+                if(usersGrid) usersGrid.innerHTML = ''; if(adminGrid) adminGrid.innerHTML = ''; if(dmList) dmList.innerHTML = '';
 
                 snapshot.forEach(child => {
-                    const u = child.val();
-                    if(u.banned) return;
-                    
-                    allUsers[u.uid] = u;
-                    totalCount++;
-                    if(u.online) onlineCount++;
+                    const u = child.val(); if(u.banned) return;
+                    allUsers[u.uid] = u; totalCount++; if(u.online) onlineCount++;
 
                     if (usersGrid) {
-                        const statusColor = u.online ? '#10b981' : '#6b7280';
-                        const statusText = u.online ? 'Online' : 'Offline';
-                        
-                        const card = document.createElement('div');
-                        card.className = 'user-card';
-                        card.innerHTML = `
-                            <img src="${u.photo}" class="avatar" style="margin: 0 auto 10px;" alt="avatar">
-                            <h3 style="font-size: 16px; margin-bottom: 5px;">${u.name}</h3>
-                            <div style="margin-bottom: 10px;">${getRoleHTML(u.role)}</div>
-                            <div style="font-size: 12px; color: ${statusColor};"><i class="fas fa-circle" style="font-size: 8px;"></i> ${statusText}</div>
-                            <button class="action-btn" onclick="openDM('${u.uid}')"><i class="fas fa-envelope"></i> Message</button>
-                        `;
-                        usersGrid.appendChild(card);
+                        const div = document.createElement('div'); div.className = 'user-card';
+                        div.innerHTML = `<img src="${u.photo}" class="avatar"><h3 style="font-size:16px;">${u.name}</h3><div>${getRoleHTML(u.role)}</div><button class="action-btn" onclick="openDM('${u.uid}')">Message</button>`;
+                        usersGrid.appendChild(div);
                     }
-
-                    if (dmList && u.uid !== currentUser.uid && u.name.toLowerCase().includes(searchTerm)) {
-                        const dmItem = document.createElement('div');
-                        dmItem.className = `dm-item ${activeDMUser === u.uid ? 'active' : ''}`;
-                        dmItem.onclick = () => openDM(u.uid);
-                        dmItem.innerHTML = `
-                            <img src="${u.photo}" class="avatar" style="width: 30px; height: 30px;" alt="avatar">
-                            <div style="flex:1; overflow:hidden;">
-                                <div style="font-size: 14px; white-space: nowrap; text-overflow: ellipsis;">${u.name}</div>
-                            </div>
-                            ${u.online ? '<div class="status-dot"></div>' : ''}
-                        `;
-                        dmList.appendChild(dmItem);
+                    if (dmList && u.uid !== currentUser.uid) {
+                        const div = document.createElement('div'); div.className = `dm-item ${activeDMUser === u.uid ? 'active' : ''}`;
+                        div.onclick = () => openDM(u.uid);
+                        div.innerHTML = `<img src="${u.photo}" class="avatar" style="width:30px;height:30px;"><div>${u.name}</div>`;
+                        dmList.appendChild(div);
                     }
-
                     if (adminGrid && currentUserData?.role === 'head_owner' && u.email !== HEAD_OWNER_EMAIL) {
-                        const adminCard = document.createElement('div');
-                        adminCard.className = 'user-card';
-                        
-                        let roleBtn = u.role === 'admin' 
-                            ? `<button class="action-btn" onclick="setRole('${u.uid}', 'user')">Remove Admin</button>`
-                            : `<button class="action-btn" onclick="setRole('${u.uid}', 'admin')" style="background: #3b82f6; color: #fff;">Make Admin</button>`;
-
-                        adminCard.innerHTML = `
-                            <img src="${u.photo}" class="avatar" style="margin: 0 auto 10px;" alt="avatar">
-                            <h3 style="font-size: 16px;">${u.name}</h3>
-                            <p style="font-size: 11px; color: var(--text-muted); margin-bottom: 10px;">${u.email}</p>
-                            <div style="margin-bottom: 10px;">${getRoleHTML(u.role)}</div>
-                            ${roleBtn}
-                            <button class="action-btn" onclick="banUser('${u.uid}')" style="background: var(--crimson-glow); color: var(--crimson); margin-top: 5px;">Ban User</button>
-                        `;
-                        adminGrid.appendChild(adminCard);
+                        const div = document.createElement('div'); div.className = 'user-card';
+                        div.innerHTML = `<img src="${u.photo}" class="avatar"><h3>${u.name}</h3><button class="action-btn" onclick="banUser('${u.uid}')" style="background:var(--crimson);">Ban User</button>`;
+                        adminGrid.appendChild(div);
                     }
                 });
-
-                const onlineCountBadge = document.getElementById('online-count');
-                const totalStatLabel = document.getElementById('stat-total-users');
-                if(onlineCountBadge) onlineCountBadge.innerText = onlineCount;
-                if(totalStatLabel) totalStatLabel.innerText = totalCount;
+                document.getElementById('online-count').innerText = onlineCount;
+                document.getElementById('stat-total-users').innerText = totalCount;
             });
         }
-
-        document.getElementById('dm-search').addEventListener('input', listenToUsers);
 
         let currentDMRef = null;
         window.openDM = function(targetUid) {
             activeDMUser = targetUid;
-            
-            navItems.forEach(n => n.classList.remove('active'));
-            pages.forEach(p => p.classList.remove('active'));
-            document.querySelector('[data-target="dms"]').classList.add('active');
-            document.getElementById('dms').classList.add('active');
-            
             document.getElementById('dm-chat-area').classList.remove('hidden');
-            document.getElementById('dm-current-user-name').innerText = `Chat with ${allUsers[targetUid]?.name || "User"}`;
-            listenToUsers();
-
-            const chatId = currentUser.uid < targetUid 
-                ? `${currentUser.uid}_${targetUid}` 
-                : `${targetUid}_${currentUser.uid}`;
-
+            document.getElementById('dm-current-user-name').innerText = `Chat with ${allUsers[targetUid]?.name}`;
+            
+            const chatId = currentUser.uid < targetUid ? `${currentUser.uid}_${targetUid}` : `${targetUid}_${currentUser.uid}`;
             if(currentDMRef) onValue(currentDMRef, null);
             currentDMRef = ref(db, `dms/${chatId}`);
             
             onValue(currentDMRef, (snapshot) => {
-                const dmDiv = document.getElementById('dm-messages');
-                dmDiv.innerHTML = '';
+                const dmDiv = document.getElementById('dm-messages'); dmDiv.innerHTML = '';
                 snapshot.forEach(child => {
                     const msg = child.val();
-                    const div = document.createElement('div');
-                    div.className = 'message';
-                    div.innerHTML = `
-                        <img src="${msg.photo}" class="avatar" alt="avatar">
-                        <div class="msg-content">
-                            <div class="msg-header">
-                                <span class="msg-author">${msg.name}</span>
-                                <span class="msg-time">${formatTime(msg.timestamp)}</span>
-                            </div>
-                            <div class="msg-text">${escapeHTML(msg.text)}</div>
-                        </div>
-                    `;
+                    const div = document.createElement('div'); div.className = 'message';
+                    div.innerHTML = `<img src="${msg.photo}" class="avatar"><div><div><b>${msg.name}</b></div><div>${escapeHTML(msg.text)}</div></div>`;
                     dmDiv.appendChild(div);
                 });
                 dmDiv.scrollTop = dmDiv.scrollHeight;
             });
         };
 
-        document.getElementById('send-dm').addEventListener('click', sendDMMessage);
-        document.getElementById('dm-input').addEventListener('keypress', (e) => {
-            if(e.key === 'Enter') sendDMMessage();
+        document.getElementById('send-dm').addEventListener('click', () => {
+            const input = document.getElementById('dm-input'); const text = input.value.trim(); if(!text || !activeDMUser) return;
+            const chatId = currentUser.uid < activeDMUser ? `${currentUser.uid}_${activeDMUser}` : `${activeDMUser}_${currentUser.uid}`;
+            push(ref(db, `dms/${chatId}`), { uid: currentUser.uid, name: currentUser.displayName, photo: currentUser.photoURL, text: text, timestamp: serverTimestamp() });
+            input.value = '';
         });
 
-        function sendDMMessage() {
-            if(!activeDMUser) return;
-            const text = document.getElementById('dm-input').value.trim();
-            if(!text) return;
-
-            const chatId = currentUser.uid < activeDMUser 
-                ? `${currentUser.uid}_${activeDMUser}` 
-                : `${activeDMUser}_${currentUser.uid}`;
-
-            push(ref(db, `dms/${chatId}`), {
-                uid: currentUser.uid,
-                name: currentUser.displayName,
-                photo: currentUser.photoURL,
-                text: text,
-                timestamp: serverTimestamp()
-            });
-
-            document.getElementById('dm-input').value = '';
-        }
-
-        window.setRole = function(targetUid, newRole) {
-            if (currentUserData?.role !== 'head_owner') return;
-            update(ref(db, `users/${targetUid}`), { role: newRole });
-        };
-
-        window.banUser = function(targetUid) {
-            if (currentUserData?.role !== 'head_owner') return;
-            if (confirm("Are you sure you want to ban this user?")) {
-                update(ref(db, `users/${targetUid}`), { banned: true, role: 'user' });
-            }
-        };
-
-        function escapeHTML(str) {
-            const div = document.createElement('div');
-            div.appendChild(document.createTextNode(str));
-            return div.innerHTML;
-        }
+        window.banUser = function(id) { if (confirm("Ban member?")) update(ref(db, `users/${id}`), { banned: true }); };
+        function escapeHTML(str) { const d = document.createElement('div'); d.appendChild(document.createTextNode(str)); return d.innerHTML; }
     </script>
 </body>
 </html>
