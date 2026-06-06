@@ -12,31 +12,24 @@
       overflow:hidden;
     }
 
-    /* DEVIL INTRO SCREEN */
+    /* INTRO */
     #intro{
       position:fixed;
       width:100%;
       height:100%;
-      background:radial-gradient(circle,#1a0000,#000);
+      background:radial-gradient(circle,#2a0000,#000);
       display:flex;
       flex-direction:column;
       justify-content:center;
       align-items:center;
-      animation:fadeOut 4s forwards;
-      animation-delay:3s;
+      z-index:10;
     }
 
-    h1{
-      font-size:40px;
+    #intro h1{
       color:red;
       text-shadow:0 0 20px red,0 0 40px darkred;
-      letter-spacing:3px;
+      font-size:30px;
       animation:glow 1s infinite alternate;
-    }
-
-    p{
-      color:#ff4444;
-      font-size:18px;
     }
 
     @keyframes glow{
@@ -44,12 +37,7 @@
       to{transform:scale(1.1);}
     }
 
-    @keyframes fadeOut{
-      0%{opacity:1;}
-      100%{opacity:0;visibility:hidden;}
-    }
-
-    /* LOGIN BOX */
+    /* APP */
     #app{
       display:none;
       height:100vh;
@@ -61,34 +49,53 @@
       background:#111;
       padding:20px;
       border:1px solid red;
-      box-shadow:0 0 20px red;
+      box-shadow:0 0 25px red;
       border-radius:10px;
       text-align:center;
+      width:280px;
     }
 
     input{
+      width:90%;
       padding:10px;
       margin:5px;
       background:black;
       border:1px solid red;
       color:white;
+      outline:none;
     }
 
     button{
       padding:10px;
-      margin-top:10px;
+      margin:5px;
+      width:100%;
       background:red;
       border:none;
       color:white;
       cursor:pointer;
       box-shadow:0 0 10px red;
     }
+
+    /* DASHBOARD */
+    #dashboard{
+      display:none;
+      padding:20px;
+    }
+
+    .chatBox{
+      height:200px;
+      overflow:auto;
+      border:1px solid red;
+      padding:10px;
+      margin-top:10px;
+      background:#111;
+    }
   </style>
 </head>
 
 <body>
 
-<!-- 🔥 INTRO -->
+<!-- INTRO -->
 <div id="intro">
   <h1>🔥 CRIMSON DEVIL WORLD 🔥</h1>
   <p>Welcome to Dark System</p>
@@ -97,16 +104,32 @@
 <!-- LOGIN -->
 <div id="app">
   <div class="box">
-    <h2>💀 LOGIN TO DEVIL WORLD</h2>
+    <h2>LOGIN</h2>
 
-    <input id="username" placeholder="username"><br>
-    <input id="password" type="password" placeholder="password"><br>
+    <input id="username" placeholder="username">
+    <input id="password" type="password" placeholder="password">
 
-    <button onclick="login()">ENTER</button>
+    <button onclick="login()">LOGIN</button>
     <button onclick="signup()">SIGNUP</button>
-
-    <div id="msg"></div>
   </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
+
+  <h2 id="userInfo"></h2>
+
+  <button onclick="logout()">LOGOUT</button>
+
+  <hr>
+
+  <h3>💬 CHAT</h3>
+
+  <input id="msg" placeholder="message">
+  <button onclick="sendMsg()">SEND</button>
+
+  <div class="chatBox" id="chatBox"></div>
+
 </div>
 
 <script type="module">
@@ -116,7 +139,12 @@ import {
   getFirestore,
   doc,
   getDoc,
-  setDoc
+  setDoc,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -132,30 +160,30 @@ const db = getFirestore(app);
 
 let currentUser = null;
 
-/* SHOW LOGIN AFTER INTRO */
+/* INTRO FIX */
 setTimeout(()=>{
   document.getElementById("intro").style.display="none";
   document.getElementById("app").style.display="flex";
-},3000);
+},2500);
+
+/* HEAD OWNER FIX */
+const HEAD_OWNER = {
+  username: "C4CRIMSON",
+  password: "55479535@Sk"
+};
 
 /* SIGNUP */
 window.signup = async function(){
 
-  let u = document.getElementById("username").value;
-  let p = document.getElementById("password").value;
+  let u = username.value;
+  let p = password.value;
 
-  if(!u || !p){
-    alert("Fill username & password");
-    return;
-  }
+  if(!u || !p) return alert("Fill fields");
 
   let ref = doc(db,"users",u);
   let snap = await getDoc(ref);
 
-  if(snap.exists()){
-    alert("User already exists");
-    return;
-  }
+  if(snap.exists()) return alert("User exists");
 
   await setDoc(ref,{
     username:u,
@@ -167,34 +195,87 @@ window.signup = async function(){
   alert("Signup success ✔");
 };
 
-
-/* LOGIN FIX */
+/* LOGIN */
 window.login = async function(){
 
-  let u = document.getElementById("username").value;
-  let p = document.getElementById("password").value;
+  let u = username.value;
+  let p = password.value;
 
-  if(!u || !p){
-    alert("Enter username & password");
+  if(u === HEAD_OWNER.username && p === HEAD_OWNER.password){
+    currentUser = {
+      username:u,
+      role:"HEAD OWNER"
+    };
+    openDashboard();
     return;
   }
 
   let ref = doc(db,"users",u);
   let snap = await getDoc(ref);
 
-  if(!snap.exists()){
-    alert("User not found");
-    return;
-  }
+  if(!snap.exists()) return alert("User not found");
 
   let data = snap.data();
 
-  if(data.password !== p){
-    alert("Wrong password");
-    return;
-  }
-
-  alert("WELCOME TO DEVIL WORLD 🔥");
+  if(data.password !== p) return alert("Wrong password");
 
   currentUser = data;
+
+  openDashboard();
 };
+
+/* DASHBOARD */
+function openDashboard(){
+
+  document.getElementById("app").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+
+  document.getElementById("userInfo").innerText =
+    `👤 ${currentUser.username} | ${currentUser.role || "USER"}`;
+
+  loadChat();
+}
+
+/* LOGOUT */
+window.logout = function(){
+  location.reload();
+};
+
+/* CHAT */
+window.sendMsg = async function(){
+
+  let m = msg.value;
+  if(!m) return;
+
+  await addDoc(collection(db,"chat"),{
+    text:m,
+    user:currentUser.username,
+    time:Date.now()
+  });
+
+  msg.value="";
+};
+
+/* LOAD CHAT */
+function loadChat(){
+
+  const q = query(collection(db,"chat"),orderBy("time"));
+
+  onSnapshot(q,(snap)=>{
+
+    let html="";
+
+    snap.forEach(d=>{
+      html += `<p><b>${d.data().user}:</b> ${d.data().text}</p>`;
+    });
+
+    document.getElementById("chatBox").innerHTML = html;
+
+  });
+
+}
+
+</script>
+
+</body>
+</html>
