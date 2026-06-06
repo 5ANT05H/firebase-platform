@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FIX LOGIN SYSTEM</title>
+  <title>STABLE LOGIN FIX</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
@@ -16,6 +16,8 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
+  setPersistence,
+  browserLocalPersistence,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -34,30 +36,34 @@ const auth = getAuth(app);
 
 const appDiv = document.getElementById("app");
 
-/* SHOW LOGIN */
-function showLogin(){
+/* 🔥 FORCE LOGIN PERSISTENCE */
+setPersistence(auth, browserLocalPersistence);
+
+/* LOGIN UI */
+function loginUI(){
+
   appDiv.innerHTML = `
-    <h1>🔥 LOGIN PAGE</h1>
+    <h1>🔥 LOGIN</h1>
 
-    <button id="loginBtn" style="padding:10px;">
-      Login with Google
-    </button>
+    <button id="loginBtn">Login with Google</button>
 
-    <p id="status">Not logged in</p>
+    <p>Click to login</p>
   `;
 
   document.getElementById("loginBtn").onclick = async () => {
+
     try {
       const provider = new GoogleAuthProvider();
       await signInWithPopup(auth, provider);
     } catch (e) {
       alert("Login Error: " + e.message);
     }
+
   };
 }
 
 /* DASHBOARD */
-function showDashboard(user){
+function dashboard(user){
 
   appDiv.innerHTML = `
     <h1>🔥 DASHBOARD</h1>
@@ -75,15 +81,15 @@ window.logout = function(){
   signOut(auth);
 };
 
-/* AUTH STATE FIX */
+/* AUTH STATE */
 onAuthStateChanged(auth, (user) => {
 
-  console.log("AUTH STATE:", user);
+  console.log("AUTH:", user);
 
   if(user){
-    showDashboard(user);
+    dashboard(user);
   } else {
-    showLogin();
+    loginUI();
   }
 
 });
