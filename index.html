@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CYBER DEVIL WORLD</title>
+<title>CRIMSON DEVIL WORLD FIX</title>
 
 <style>
 body{
@@ -12,14 +12,6 @@ background:#050505;
 color:white;
 }
 
-/* TOP BAR */
-#topBar{
-background:#111;
-border-bottom:2px solid red;
-padding:6px;
-}
-
-/* AUTH */
 #auth{
 display:flex;
 justify-content:center;
@@ -49,92 +41,13 @@ border:none;
 cursor:pointer;
 }
 
-/* APP */
-#app{
-display:none;
-}
-
-/* SIDEBAR */
-#sidebar{
-width:70px;
-height:100vh;
-background:#111;
-position:fixed;
-left:0;
-top:0;
-border-right:1px solid red;
-display:flex;
-flex-direction:column;
-align-items:center;
-padding-top:10px;
-}
-
-#sidebar button{
-width:45px;
-height:45px;
-margin:5px;
-background:black;
-color:red;
-border:1px solid red;
-cursor:pointer;
-}
-
-/* MAIN */
-#main{
-margin-left:80px;
-padding:10px;
-}
-
-/* CHAT */
-.chatBox{
-height:250px;
-overflow:auto;
-border:1px solid red;
-padding:10px;
-background:#111;
-}
-
-/* PROFILE */
-#profile{
-display:none;
-position:fixed;
-right:0;
-top:0;
-width:300px;
-height:100%;
-background:#111;
-border-left:1px solid red;
-padding:10px;
-}
-
-#avatarGrid img{
-width:60px;
-height:60px;
-margin:5px;
-border-radius:50%;
-border:2px solid red;
-cursor:pointer;
-transition:0.3s;
-}
-
-#avatarGrid img:hover{
-transform:scale(1.2);
-box-shadow:0 0 15px red;
-}
+#app{display:none}
 </style>
-
 </head>
 
 <body>
 
-<!-- TOP NEWS -->
-<div id="topBar">
-<marquee id="newsBar" scrollamount="6">
-💀 CYBER DEVIL WORLD ACTIVE
-</marquee>
-</div>
-
-<!-- AUTH SYSTEM -->
+<!-- AUTH -->
 <div id="auth">
 
 <!-- REGISTER -->
@@ -175,36 +88,17 @@ Create new account? REGISTER
 
 <!-- APP -->
 <div id="app">
-
-<div id="sidebar">
-<button onclick="openChat('public')">P</button>
-<button onclick="openChat('help')">H</button>
-<button onclick="openChat('admin')">A</button>
-<button onclick="openChat('owner')">O</button>
-<button onclick="openChat('head')">👑</button>
-<button onclick="openStore()">🛒</button>
-<button onclick="openProfile()">👤</button>
-</div>
-
-<div id="main">
-<h3 id="userInfo"></h3>
-<div id="chatArea"></div>
-</div>
-
-</div>
-
-<!-- PROFILE -->
-<div id="profile">
-<h3>PROFILE</h3>
-<img id="avatar" width="60" height="60">
-<div id="avatarGrid"></div>
+<h2 id="userInfo"></h2>
 </div>
 
 <script type="module">
 
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-getFirestore,doc,getDoc,setDoc,collection,addDoc,query,orderBy,onSnapshot
+getFirestore,
+doc,
+getDoc,
+setDoc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 const app=initializeApp({
@@ -216,17 +110,7 @@ const db=getFirestore(app);
 
 let currentUser=null;
 
-/* AVATARS */
-const avatars=[
-"https://i.imgur.com/1.png",
-"https://i.imgur.com/2.png",
-"https://i.imgur.com/3.png",
-"https://i.imgur.com/4.png",
-"https://i.imgur.com/5.png",
-"https://i.imgur.com/devil.gif"
-];
-
-/* SWITCH */
+/* SWITCH UI */
 window.showLogin=function(){
 registerBox.style.display="none";
 loginBox.style.display="block";
@@ -238,164 +122,70 @@ registerBox.style.display="block";
 };
 
 /* REGISTER */
-window.register = async function(){
+window.register=async function(){
 
-  if(!r_user.value || !r_pass.value){
-    alert("Fill all fields");
-    return;
-  }
+try{
 
-  if(r_pass.value !== r_cpass.value){
-    alert("Password not match");
-    return;
-  }
+if(!r_user.value || !r_pass.value){
+alert("Fill all fields");
+return;
+}
 
-  try{
+if(r_pass.value !== r_cpass.value){
+alert("Password not match");
+return;
+}
 
-    await setDoc(doc(db,"users",r_user.value),{
-      username:r_user.value,
-      password:r_pass.value,
-      email:r_email.value,
-      role:"USER",
-      avatar:"https://i.imgur.com/0y0y0y0.png"
-    });
+await setDoc(doc(db,"users",r_user.value),{
+username:r_user.value,
+password:r_pass.value,
+email:r_email.value,
+role:"USER"
+});
 
-    alert("REGISTER COMPLETE ✔");
+alert("REGISTER SUCCESS ✔");
 
-    // 🔥 AUTO SWITCH TO LOGIN
-    registerBox.style.display = "none";
-    loginBox.style.display = "block";
+showLogin();
 
-    // clear inputs
-    r_user.value="";
-    r_pass.value="";
-    r_cpass.value="";
-    r_email.value="";
-
-  }catch(err){
-    console.log(err);
-    alert("REGISTER FAILED");
-  }
+}catch(e){
+console.log(e);
+alert("REGISTER ERROR");
+}
 
 };
 
 /* LOGIN */
 window.login=async function(){
 
-let snap=await getDoc(doc(db,"users",l_user.value));
+try{
+
+let snap = await getDoc(doc(db,"users",l_user.value));
 
 if(!snap.exists()){
 alert("User not found");
 return;
 }
 
-let d=snap.data();
+let d = snap.data();
 
-if(d.password!==l_pass.value){
+if(d.password !== l_pass.value){
 alert("Wrong password");
 return;
 }
 
-currentUser=d;
+currentUser = d;
 
-startApp();
-};
+document.getElementById("auth").style.display="none";
+document.getElementById("app").style.display="block";
 
-/* START */
-function startApp(){
+userInfo.innerText = "👤 " + currentUser.username;
 
-auth.style.display="none";
-app.style.display="block";
-
-userInfo.innerText=`👤 ${currentUser.username} | ${currentUser.role}`;
-
-loadAvatars();
-openChat('public');
+}catch(e){
+console.log(e);
+alert("LOGIN ERROR");
 }
 
-/* CHAT */
-window.openChat=function(type){
-
-chatArea.innerHTML=`
-<h3>${type.toUpperCase()}</h3>
-<input id="msg">
-<button onclick="send('${type}')">SEND</button>
-<div class="chatBox" id="box"></div>
-`;
-
-loadChat(type);
 };
-
-window.send=async function(type){
-
-await addDoc(collection(db,type),{
-text:msg.value,
-user:currentUser.username,
-time:Date.now()
-});
-
-msg.value="";
-};
-
-function loadChat(type){
-
-const q=query(collection(db,type),orderBy("time"));
-
-onSnapshot(q,snap=>{
-
-let h="";
-
-snap.forEach(d=>{
-h+=`<p><b>${d.data().user}</b>: ${d.data().text}</p>`;
-});
-
-box.innerHTML=h;
-
-});
-
-}
-
-/* STORE */
-window.openStore=function(){
-
-chatArea.innerHTML=`
-<div style="border:1px solid red;padding:10px">
-GTA V 2.2 - $29.99<br>
-PUBG MOD - $9.99<br>
-FREE FIRE - $14.99
-</div>
-`;
-
-}
-
-/* PROFILE */
-window.openProfile=function(){
-
-profile.style.display="block";
-
-let grid=document.getElementById("avatarGrid");
-grid.innerHTML="";
-
-avatars.forEach(a=>{
-
-let i=document.createElement("img");
-i.src=a;
-
-i.onclick=async()=>{
-
-avatar.src=a;
-
-await setDoc(doc(db,"users",currentUser.username),{
-avatar:a
-},{merge:true});
-
-};
-
-grid.appendChild(i);
-
-});
-
-}
 
 </script>
 
