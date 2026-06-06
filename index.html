@@ -3,116 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRIMSON DEVIL WORLD</title>
+    <title>Crimson Dark Devil World</title>
     <style>
-        :root {
-            --bg-base: #000000;
-            --bg-sidebar: #0a0a0a;
-            --bg-surface: #121212;
-            --crimson: #dc143c;
-            --crimson-hover: #b91c1c;
-            --text-main: #f3f4f6;
-            --text-muted: #9ca3af;
+        /* =======================================================
+           STEP 1: HOME PAGE & BASIC THEME (डार्क और क्रिमसन थीम)
+           ======================================================= */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body { font-family: 'Inter', sans-serif; background-color: var(--bg-base); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+        body {
+            background-color: #0b0b0c;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
 
-        /* Login Screen */
-        #login-screen {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: var(--bg-base);
+        /* होम पेज स्टाइल */
+        .home-container {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            z-index: 1000;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+            background: radial-gradient(circle, #2a0808 0%, #0b0b0c 100%);
         }
-        .login-title { font-size: 2rem; color: var(--crimson); margin-bottom: 20px; text-transform: uppercase; font-weight: 800; }
-        .login-btn { padding: 15px 30px; background-color: var(--crimson); color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 1.1rem; text-transform: uppercase; font-weight: bold; transition: background-color 0.3s ease; }
-        .login-btn:hover { background-color: var(--crimson-hover); }
 
-        /* Dashboard (Hidden initially) */
-        #dashboard { display: none; width: 100%; height: 100%; display: flex; }
-
-        /* Sidebar */
-        .sidebar { width: 240px; background-color: var(--bg-sidebar); border-right: 1px solid #333; display: flex; flex-direction: column; }
-        .sidebar-header { padding: 20px; font-weight: 800; font-size: 1.2rem; color: var(--crimson); text-transform: uppercase; }
-        .nav-links { flex: 1; list-style: none; padding: 20px 0; }
-        .nav-links li { padding: 10px 20px; cursor: pointer; color: var(--text-muted); transition: all 0.3s ease; }
-        .nav-links li:hover, .nav-links li.active { color: var(--text-main); background-color: var(--bg-surface); border-left: 4px solid var(--crimson); }
-
-        /* Main Content */
-        .main-content { flex: 1; display: flex; flex-direction: column; position: relative; }
-
-        /* Top Scrolling Bar */
-        .marquee-container { background-color: var(--crimson); color: white; padding: 10px 0; overflow: hidden; white-space: nowrap; }
-        .marquee-text { display: inline-block; animation: scroll-left 15s linear infinite; }
-        @keyframes scroll-left { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* Chat Area */
-        .chat-area { flex: 1; display: flex; flex-direction: column; padding: 20px; overflow-y: auto; background-color: var(--bg-surface); }
-        .message-box { flex: 1; overflow-y: auto; margin-bottom: 20px; }
-
-        /* Input Area */
-        .input-area { padding: 20px; background-color: var(--bg-sidebar); display: flex; gap: 10px; }
-        input[type="text"] { flex: 1; padding: 12px; border: none; border-radius: 8px; background-color: #000; color: white; }
-        button { padding: 12px 20px; border: none; border-radius: 8px; background-color: var(--crimson); color: white; cursor: pointer; font-weight: bold; }
-        button:hover { background-color: var(--crimson-hover); }
-        
-        /* Right Panel */
-        .right-panel { width: 250px; background-color: var(--bg-sidebar); border-left: 1px solid #333; padding: 20px; display: flex; flex-direction: column; gap: 20px; }
-        .panel-heading { font-weight: bold; color: var(--crimson); text-transform: uppercase; font-size: 0.9rem; }
-    </style>
-</head>
-<body>
-
-    <!-- Login Screen -->
-    <div id="login-screen">
-        <div class="login-title">Crimson Devil World</div>
-        <button class="login-btn" onclick="startApp()">Login with Google</button>
-    </div>
-
-    <!-- Dashboard -->
-    <div id="dashboard">
-        <div class="sidebar">
-            <div class="sidebar-header">Crimson Devil</div>
-            <ul class="nav-links">
-                <li class="active">Home</li>
-                <li>Public Chat</li>
-                <li>Private DMs</li>
-                <li>Users</li>
-                <li>Owner Panel</li>
-                <li>Settings</li>
-            </ul>
-        </div>
-
-        <div class="main-content">
-            <div class="marquee-container">
-                <div class="marquee-text">Welcome to Crimson Devil World!</div>
-            </div>
-
-            <div class="chat-area">
-                <div class="message-box" id="message-box"></div>
-                <div class="input-area">
-                    <input type="text" id="message-input" placeholder="Type a message...">
-                    <button id="send-btn">Send</button>
-                </div>
-            </div>
-        </div>
-
-        <div class="right-panel">
-            <div class="panel-heading">Online Users</div>
-        </div>
-    </div>
-
-    <script>
-        function startApp() {
-            // यहाँ पर लॉग इन की प्रक्रिया पूरी होने के बाद डैशबोर्ड दिखाया जा रहा है
-            document.getElementById('login-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'flex';
+        .welcome-title {
+            font-size: 3rem;
+            color: #ff3333;
+            text-shadow: 0 0 20px rgba(255, 51, 51, 0.6);
+            margin-bottom: 20px;
+            font-weight: bold;
+            letter-spacing: 2px;
         }
-    </script>
-</body>
-</html>
+
+        /* मेन्यू की तरफ इशारा करने वाला एरो */
+        .menu-arrow {
+            font-size: 1.5rem;
+            color: #888;
+            margin-top: 20px;
+            animation: bounce 2s infinite;
+            cursor: pointer;
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(0); }
+            40% { transform: translateX(-10px); }
+            60% { transform: translateX(-5px); }
+        }
+
+        /* थ्री-लाइन (हम्बर्गर) बटन */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            font-size: 24px;
+            background: none;
+            border: none;
+            color: #ff3333;
+            cursor: pointer;
+            z-index: 100;
+            text-shadow: 0 0 10px rgba(255, 51, 51, 0.5);
+        }
