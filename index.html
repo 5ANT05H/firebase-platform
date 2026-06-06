@@ -1,331 +1,541 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>DISCORD 3.0 PRO</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CRIMSON DEVIL WORLD</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+    <style>
+        /* Modern Discord 2026 Style - Dark Theme (Black + Crimson Red) */
+        :root {
+            --bg-base: #000000;
+            --bg-sidebar: #0a0a0a;
+            --bg-surface: #121212;
+            --bg-surface-hover: #1f1f1f;
+            --crimson: #dc2626;
+            --crimson-hover: #b91c1c;
+            --crimson-glow: rgba(220, 38, 38, 0.4);
+            --text-main: #f3f4f6;
+            --text-muted: #9ca3af;
+            --glass-bg: rgba(18, 18, 18, 0.7);
+            --glass-border: rgba(255, 255, 255, 0.05);
+            --radius: 12px;
+            --transition: 0.3s ease;
+        }
 
-<style>
-body{
-  margin:0;
-  font-family:Arial;
-  background:#0b0b0b;
-  color:white;
-  overflow:hidden;
-}
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+            scrollbar-width: thin;
+            scrollbar-color: var(--bg-surface-hover) var(--bg-base);
+        }
 
-/* LAYOUT */
-.container{
-  display:flex;
-  height:100vh;
-}
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-base); }
+        ::-webkit-scrollbar-thumb { background: var(--bg-surface-hover); border-radius: 4px; }
 
-/* SIDEBAR */
-.left{
-  width:240px;
-  background:#151515;
-  padding:10px;
-}
+        body {
+            background-color: var(--bg-base);
+            color: var(--text-main);
+            height: 100vh;
+            display: flex;
+            overflow: hidden;
+        }
 
-.menu{
-  padding:10px;
-  margin:6px 0;
-  background:#1e1e1e;
-  border-radius:6px;
-  cursor:pointer;
-  transition:0.3s;
-}
+        /* Utility Classes */
+        .hidden { display: none !important; }
+        .glass {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid var(--glass-border);
+        }
 
-.menu:hover{
-  background:red;
-  transform:scale(1.05);
-}
+        /* Screens */
+        #loading-screen, #login-screen, #ban-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--bg-base);
+            z-index: 1000;
+            text-align: center;
+        }
 
-/* MAIN */
-.main{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-}
+        /* Login Screen styling */
+        .login-box {
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: 0 0 30px var(--crimson-glow);
+            animation: fadeIn 1s ease-in-out;
+        }
 
-.topbar{
-  padding:12px;
-  background:#111;
-  border-bottom:1px solid #333;
-}
+        .login-box h1 {
+            color: var(--crimson);
+            margin-bottom: 20px;
+            font-weight: 800;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
 
-/* PAGES */
-.page{
-  flex:1;
-  display:none;
-  padding:10px;
-  overflow:auto;
-  animation:fade 0.4s ease;
-}
+        .btn {
+            background-color: var(--crimson);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+        }
 
-.active{display:block;}
+        .btn:hover {
+            background-color: var(--crimson-hover);
+            box-shadow: 0 0 15px var(--crimson-glow);
+            transform: translateY(-2px);
+        }
 
-@keyframes fade{
-  from{opacity:0; transform:translateY(10px);}
-  to{opacity:1; transform:translateY(0);}
-}
+        /* Main App Layout */
+        #app {
+            display: flex;
+            width: 100%;
+            height: 100%;
+        }
 
-/* CHAT */
-.msg{
-  background:#1a1a1a;
-  margin:6px 0;
-  padding:8px;
-  border-left:3px solid red;
-  border-radius:6px;
-}
+        /* Sidebar Navigation */
+        #sidebar {
+            width: 260px;
+            background-color: var(--bg-sidebar);
+            display: flex;
+            flex-direction: column;
+            border-right: 1px solid var(--glass-border);
+            transition: var(--transition);
+            z-index: 100;
+        }
 
-/* INPUT */
-.inputBox{
-  display:flex;
-  padding:10px;
-  background:#111;
-}
+        .sidebar-header {
+            padding: 20px;
+            font-size: 18px;
+            font-weight: 800;
+            color: var(--crimson);
+            text-shadow: 0 0 10px var(--crimson-glow);
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+            letter-spacing: 1px;
+        }
 
-input{
-  flex:1;
-  padding:12px;
-  border:none;
-  outline:none;
-  background:#000;
-  color:white;
-}
+        .nav-links {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
 
-button{
-  padding:12px;
-  background:red;
-  border:none;
-  color:white;
-  cursor:pointer;
-}
+        .nav-item {
+            padding: 12px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: var(--text-muted);
+            transition: var(--transition);
+            font-weight: 600;
+        }
 
-/* USERS */
-.right{
-  width:220px;
-  background:#151515;
-  padding:10px;
-}
+        .nav-item:hover, .nav-item.active {
+            background-color: var(--bg-surface-hover);
+            color: var(--text-main);
+        }
 
-.user{
-  padding:8px;
-  margin:5px 0;
-  background:#1e1e1e;
-  border-radius:6px;
-  cursor:pointer;
-}
+        .nav-item.active {
+            border-left: 4px solid var(--crimson);
+        }
 
-/* LOGIN */
-#login{
-  position:absolute;
-  width:100%;
-  height:100%;
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  flex-direction:column;
-}
-</style>
+        .badge-count {
+            background: var(--crimson);
+            color: white;
+            font-size: 12px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            margin-left: auto;
+        }
+
+        /* Current User Profile in Sidebar */
+        .current-user {
+            padding: 15px;
+            background-color: var(--bg-surface);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid var(--glass-border);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+            border: 2px solid var(--bg-surface-hover);
+        }
+
+        .user-info { flex: 1; overflow: hidden; }
+        .user-name { font-weight: 600; font-size: 14px; white-space: nowrap; text-overflow: ellipsis; overflow: hidden; }
+        .user-status { font-size: 12px; color: #10b981; display: flex; align-items: center; gap: 5px; }
+        .status-dot { width: 8px; height: 8px; background: #10b981; border-radius: 50%; }
+
+        /* Main Content Area */
+        #content {
+            flex: 1;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            background-color: var(--bg-base);
+        }
+
+        .page {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        .page.active { display: flex; }
+
+        .page-header {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        /* Chat Layout */
+        .chat-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            background-color: var(--bg-surface);
+            border-radius: var(--radius);
+        }
+
+        .messages-area {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            display: flex;
+            gap: 15px;
+            animation: slideIn 0.2s ease-out;
+        }
+
+        .message:hover .msg-actions { opacity: 1; }
+
+        .msg-content {
+            flex: 1;
+        }
+
+        .msg-header {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+
+        .msg-author { font-weight: 600; color: var(--crimson); }
+        .msg-time { font-size: 11px; color: var(--text-muted); }
+        .msg-text { color: var(--text-main); line-height: 1.5; word-wrap: break-word;}
+
+        .role-badge {
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+        .badge-owner { background: #ffaa00; color: #000; }
+        .badge-admin { background: #3b82f6; color: #fff; }
+        .badge-user { background: var(--bg-surface-hover); color: var(--text-muted); border: 1px solid var(--glass-border); }
+
+        .msg-actions {
+            opacity: 0;
+            transition: var(--transition);
+            cursor: pointer;
+            color: var(--crimson);
+        }
+
+        .chat-input-area {
+            padding: 15px;
+            background-color: var(--bg-sidebar);
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            background: var(--bg-surface-hover);
+            border: none;
+            padding: 15px;
+            border-radius: var(--radius);
+            color: var(--text-main);
+            outline: none;
+            font-size: 15px;
+        }
+
+        .typing-indicator {
+            font-size: 12px;
+            color: var(--text-muted);
+            padding: 0 20px 10px;
+            height: 20px;
+        }
+
+        /* Cards & Lists (Users, Owner Panel) */
+        .grid-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            overflow-y: auto;
+        }
+
+        .user-card {
+            background: var(--bg-surface);
+            padding: 20px;
+            border-radius: var(--radius);
+            text-align: center;
+            border: 1px solid var(--glass-border);
+            transition: var(--transition);
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--crimson);
+            box-shadow: 0 5px 15px rgba(220, 38, 38, 0.1);
+        }
+
+        .user-card .avatar { width: 80px; height: 80px; margin-bottom: 10px; }
+        .action-btn {
+            background: var(--bg-surface-hover);
+            color: var(--text-main);
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            width: 100%;
+            transition: var(--transition);
+        }
+        .action-btn:hover { background: var(--crimson); color: white; }
+
+        /* DM Split View */
+        .dm-layout {
+            display: flex;
+            height: 100%;
+            gap: 20px;
+        }
+        .dm-sidebar {
+            width: 300px;
+            background: var(--bg-surface);
+            border-radius: var(--radius);
+            display: flex;
+            flex-direction: column;
+        }
+        .dm-list { flex: 1; overflow-y: auto; padding: 10px;}
+        .dm-item {
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+            border-radius: 8px;
+            transition: var(--transition);
+        }
+        .dm-item:hover, .dm-item.active { background: var(--bg-surface-hover); }
+        .dm-chat { flex: 1; display: flex; flex-direction: column; background: var(--bg-surface); border-radius: var(--radius); }
+
+        /* Animations */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideIn { from { transform: translateX(-10px); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 4px solid var(--glass-border);
+            border-top: 4px solid var(--crimson);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Mobile Responsive */
+        .mobile-menu-btn { display: none; background: none; border: none; color: var(--text-main); font-size: 24px; cursor: pointer; }
+        
+        @media (max-width: 768px) {
+            .mobile-menu-btn { display: block; margin-right: 15px; }
+            #sidebar { position: absolute; height: 100%; transform: translateX(-100%); }
+            #sidebar.open { transform: translateX(0); }
+            .dm-layout { flex-direction: column; }
+            .dm-sidebar { width: 100%; height: 30%; }
+            .dm-chat { height: 70%; }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- LOGIN SCREEN -->
-<div id="login">
-  <h1>🔐 Google Login Required</h1>
-  <button onclick="login()">Login with Google</button>
-</div>
+    <div id="loading-screen">
+        <div class="spinner"></div>
+        <h2 style="color: var(--crimson); font-weight: 800;">CRIMSON DEVIL WORLD</h2>
+        <p style="color: var(--text-muted); margin-top: 10px;">Connecting to servers...</p>
+    </div>
 
-<div class="container" id="app" style="display:none">
+    <div id="login-screen" class="hidden">
+        <div class="login-box glass">
+            <h1>Crimson Devil World</h1>
+            <p style="margin-bottom: 30px; color: var(--text-muted);">Enter the sanctuary.</p>
+            <button id="login-btn" class="btn"><i class="fab fa-google"></i> Login with Google</button>
+        </div>
+    </div>
 
-<!-- LEFT -->
-<div class="left">
-  <div class="menu" onclick="show('home')">🏠 Home</div>
-  <div class="menu" onclick="show('chat')">💬 Chat</div>
-  <div class="menu" onclick="show('dm')">💌 DM</div>
-  <div class="menu" onclick="show('owner')">👑 Owner Panel</div>
-  <div class="menu" onclick="show('online')">🟢 Online</div>
-</div>
+    <div id="ban-screen" class="hidden">
+        <div class="login-box glass" style="border-color: var(--crimson);">
+            <i class="fas fa-ban" style="font-size: 50px; color: var(--crimson); margin-bottom: 20px;"></i>
+            <h1>YOU ARE BANNED</h1>
+            <p style="color: var(--text-muted);">You have been removed from Crimson Devil World.</p>
+        </div>
+    </div>
 
-<!-- MAIN -->
-<div class="main">
+    <div id="app" class="hidden">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <i class="fas fa-fire"></i> CRIMSON DEVIL
+            </div>
+            <div class="nav-links">
+                <div class="nav-item active" data-target="home"><i class="fas fa-home"></i> Home</div>
+                <div class="nav-item" data-target="chat"><i class="fas fa-hashtag"></i> Public Chat</div>
+                <div class="nav-item" data-target="dms"><i class="fas fa-envelope"></i> Private DMs <span id="dm-badge" class="badge-count hidden">0</span></div>
+                <div class="nav-item" data-target="users"><i class="fas fa-users"></i> Online Users <span id="online-count" class="badge-count">0</span></div>
+                <div class="nav-item hidden" id="nav-owner" data-target="owner"><i class="fas fa-crown" style="color: #ffaa00;"></i> Owner Panel</div>
+                <div class="nav-item" data-target="settings"><i class="fas fa-cog"></i> Settings</div>
+            </div>
+            <div class="current-user">
+                <img id="my-avatar" class="avatar" src="" alt="avatar">
+                <div class="user-info">
+                    <div id="my-name" class="user-name">User Name</div>
+                    <div class="user-status"><div class="status-dot"></div> Online</div>
+                </div>
+            </div>
+        </nav>
 
-<div class="topbar">🔥 DISCORD 3.0 PRO</div>
+        <main id="content">
+            <section id="home" class="page active">
+                <div class="page-header">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <i class="fas fa-home"></i> Welcome Home
+                </div>
+                <div class="glass" style="padding: 40px; border-radius: var(--radius); text-align: center; margin-top: 20px;">
+                    <i class="fas fa-fire" style="font-size: 60px; color: var(--crimson); margin-bottom: 20px;"></i>
+                    <h1 style="margin-bottom: 15px;">Welcome to Crimson Devil World</h1>
+                    <p style="color: var(--text-muted); max-width: 600px; margin: 0 auto; line-height: 1.6;">
+                        This is a secure, real-time communication platform. Respect the rules. The Head Owner oversees everything. Dive into Public Chat or send secure Private DMs to other members.
+                    </p>
+                </div>
+            </section>
 
-<!-- HOME -->
-<div id="home" class="page active">
-  <h2>Welcome 👋</h2>
-</div>
+            <section id="chat" class="page">
+                <div class="page-header">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <i class="fas fa-hashtag"></i> public-chat
+                </div>
+                <div class="chat-container">
+                    <div class="messages-area" id="public-messages">
+                        </div>
+                    <div class="typing-indicator" id="public-typing"></div>
+                    <div class="chat-input-area">
+                        <input type="text" id="public-input" class="chat-input" placeholder="Message #public-chat...">
+                        <button id="send-public" class="btn"><i class="fas fa-paper-plane"></i></button>
+                    </div>
+                </div>
+            </section>
 
-<!-- CHAT -->
-<div id="chat" class="page">
-  <div id="box"></div>
-  <div class="inputBox">
-    <input id="text" placeholder="message...">
-    <button onclick="sendMsg()">Send</button>
-  </div>
-</div>
+            <section id="dms" class="page">
+                <div class="page-header">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <i class="fas fa-envelope"></i> Direct Messages
+                </div>
+                <div class="dm-layout">
+                    <div class="dm-sidebar">
+                        <div style="padding: 15px; border-bottom: 1px solid var(--glass-border);">
+                            <input type="text" id="dm-search" class="chat-input" style="width: 100%; padding: 10px;" placeholder="Search users...">
+                        </div>
+                        <div class="dm-list" id="dm-user-list">
+                            </div>
+                    </div>
+                    <div class="dm-chat hidden" id="dm-chat-area">
+                        <div style="padding: 15px; border-bottom: 1px solid var(--glass-border); font-weight: 600;" id="dm-current-user-name">
+                            Select a user to chat
+                        </div>
+                        <div class="messages-area" id="dm-messages">
+                            </div>
+                        <div class="chat-input-area">
+                            <input type="text" id="dm-input" class="chat-input" placeholder="Send a direct message...">
+                            <button id="send-dm" class="btn"><i class="fas fa-paper-plane"></i></button>
+                        </div>
+                    </div>
+                </div>
+            </section>
 
-<!-- DM -->
-<div id="dm" class="page">
-  <h3>💌 Private DM</h3>
-  <div id="dmBox"></div>
-</div>
+            <section id="users" class="page">
+                <div class="page-header">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <i class="fas fa-users"></i> Member List
+                </div>
+                <div class="grid-list" id="users-grid">
+                    </div>
+            </section>
 
-<!-- OWNER -->
-<div id="owner" class="page">
-  <h3>👑 Owner Panel</h3>
-  <button onclick="clearChat()">Clear Chat</button>
-</div>
+            <section id="owner" class="page">
+                <div class="page-header">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <i class="fas fa-crown" style="color: #ffaa00;"></i> Head Owner Terminal
+                </div>
+                <div style="display: flex; gap: 20px; margin-bottom: 20px;">
+                    <div class="glass" style="padding: 20px; border-radius: var(--radius); flex: 1; text-align: center;">
+                        <h3>Total Users</h3>
+                        <p id="stat-total-users" style="font-size: 24px; font-weight: 800; color: var(--crimson);">0</p>
+                    </div>
+                    <div class="glass" style="padding: 20px; border-radius: var(--radius); flex: 1; text-align: center;">
+                        <h3>Total Public Messages</h3>
+                        <p id="stat-total-msgs" style="font-size: 24px; font-weight: 800; color: var(--crimson);">0</p>
+                    </div>
+                </div>
+                <h3 style="margin-bottom: 15px;">Manage Users</h3>
+                <div class="grid-list" id="admin-users-grid">
+                    </div>
+            </section>
 
-<!-- ONLINE -->
-<div id="online" class="page">
-  <h3>🟢 Online Users</h3>
-  <div id="users"></div>
-</div>
-
-</div>
-
-<!-- RIGHT -->
-<div class="right">
-  <h3>Users</h3>
-  <div id="userList"></div>
-</div>
-
-</div>
-
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-
-<script>
-const firebaseConfig = {
-  apiKey: "AlzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYKE",
-  authDomain: "crimson-devil-world.firebaseapp.com",
-  databaseURL: "https://crimson-devil-world-default-rtdb.firebaseio.com",
-  projectId: "crimson-devil-world",
-  storageBucket: "crimson-devil-world.appspot.com",
-  messagingSenderId: "625125480692",
-  appId: "1:625125480692:web:fcf6202469371862c66a1"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.database();
-const auth = firebase.auth();
-
-let user=null;
-let dmUser=null;
-
-/* LOGIN */
-function login(){
-  let provider = new firebase.auth.GoogleAuthProvider();
-  auth.signInWithPopup(provider).then(res=>{
-    user=res.user;
-    document.getElementById("login").style.display="none";
-    document.getElementById("app").style.display="flex";
-    goOnline();
-    loadChat();
-    loadUsers();
-  });
-}
-
-/* TAB SYSTEM */
-function show(id){
-  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
-  document.getElementById(id).classList.add("active");
-}
-
-/* CHAT */
-function sendMsg(){
-  let text=document.getElementById("text").value;
-  if(text=="") return;
-
-  db.ref("messages").push({
-    uid:user.uid,
-    name:user.displayName,
-    text:text,
-    time:Date.now()
-  });
-
-  document.getElementById("text").value="";
-}
-
-/* LIVE CHAT */
-function loadChat(){
-  db.ref("messages").on("value", snap=>{
-    let box=document.getElementById("box");
-    box.innerHTML="";
-    snap.forEach(c=>{
-      let d=c.val();
-      let div=document.createElement("div");
-      div.className="msg";
-      div.innerHTML=`<b>${d.name}</b><br>${d.text}
-      <button onclick="openDM('${d.uid}','${d.name}')">DM</button>`;
-      box.appendChild(div);
-    });
-  });
-}
-
-/* ONLINE */
-function loadUsers(){
-  db.ref("online").on("value", snap=>{
-    let u=document.getElementById("users");
-    u.innerHTML="";
-    snap.forEach(c=>{
-      let d=c.val();
-      let div=document.createElement("div");
-      div.className="user";
-      div.innerHTML=d.name;
-      u.appendChild(div);
-    });
-  });
-}
-
-/* DM */
-function openDM(uid,name){
-  dmUser=uid;
-  show('dm');
-  db.ref("dms/"+user.uid+"_"+uid).on("value", snap=>{
-    let box=document.getElementById("dmBox");
-    box.innerHTML="";
-    snap.forEach(c=>{
-      let d=c.val();
-      let div=document.createElement("div");
-      div.className="msg";
-      div.innerHTML=`${d.from}: ${d.text}`;
-      box.appendChild(div);
-    });
-  });
-}
-
-/* SEND DM */
-function sendDM(text){
-  db.ref("dms/"+user.uid+"_"+dmUser).push({
-    from:user.displayName,
-    text:text,
-    time:Date.now()
-  });
-}
-
-/* ONLINE STATUS */
-function goOnline(){
-  db.ref("online/"+user.uid).set({
-    name:user.displayName,
-    time:Date.now()
-  });
-}
-setInterval(()=>{if(user)goOnline();},5000);
-
-/* OWNER CLEAR */
-function clearChat(){
-  db.ref("messages").remove();
-}
-</script>
-
-</body>
-</html>
+            <section id="settings" class="page">
+                <div class="page-header">
+                    <button class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <i class="fas fa-cog"></i> Settings
+                </div>
+                <div class="glass" style="padding: 30px; bor
