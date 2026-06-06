@@ -238,23 +238,45 @@ registerBox.style.display="block";
 };
 
 /* REGISTER */
-window.register=async function(){
+window.register = async function(){
 
-if(r_pass.value!==r_cpass.value){
-alert("Password not match");
-return;
-}
+  if(!r_user.value || !r_pass.value){
+    alert("Fill all fields");
+    return;
+  }
 
-await setDoc(doc(db,"users",r_user.value),{
-username:r_user.value,
-password:r_pass.value,
-email:r_email.value,
-role:"USER",
-avatar:avatars[0]
-});
+  if(r_pass.value !== r_cpass.value){
+    alert("Password not match");
+    return;
+  }
 
-alert("REGISTER DONE ✔");
-showLogin();
+  try{
+
+    await setDoc(doc(db,"users",r_user.value),{
+      username:r_user.value,
+      password:r_pass.value,
+      email:r_email.value,
+      role:"USER",
+      avatar:"https://i.imgur.com/0y0y0y0.png"
+    });
+
+    alert("REGISTER COMPLETE ✔");
+
+    // 🔥 AUTO SWITCH TO LOGIN
+    registerBox.style.display = "none";
+    loginBox.style.display = "block";
+
+    // clear inputs
+    r_user.value="";
+    r_pass.value="";
+    r_cpass.value="";
+    r_email.value="";
+
+  }catch(err){
+    console.log(err);
+    alert("REGISTER FAILED");
+  }
+
 };
 
 /* LOGIN */
