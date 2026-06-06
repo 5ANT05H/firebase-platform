@@ -3,223 +3,323 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crimson 404</title>
+    <title>Crimson 404 - Ultimate Edition</title>
     <style>
-        /* Basic Reset and Theme Setup */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        /* =========================================
+           1. CSS VARIABLES & RESET
+        ========================================= */
+        :root {
+            --bg-main: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-card: #1e1e1e;
+            --crimson-dark: #550000;
+            --crimson-main: #800000;
+            --crimson-light: #dc143c;
+            --text-main: #ffffff;
+            --text-muted: #aaaaaa;
+            --border-color: #333333;
         }
-        body {
-            background-color: #121212; /* Dark background */
-            color: #ffffff;
-        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        /* Top Header */
+        body { background-color: var(--bg-main); color: var(--text-main); overflow-x: hidden; }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: var(--bg-main); }
+        ::-webkit-scrollbar-thumb { background: var(--crimson-main); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--crimson-light); }
+
+        /* =========================================
+           2. HEADER & NAVIGATION
+        ========================================= */
         header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background-color: #800000; /* Crimson Red */
-            padding: 15px 20px;
+            display: flex; justify-content: space-between; align-items: center;
+            background: linear-gradient(to right, #400000, var(--crimson-main));
+            padding: 15px 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.8);
+            position: sticky; top: 0; z-index: 1000;
         }
 
-        /* Menu Icon (Double Line) */
-        .menu-icon {
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-            z-index: 1000;
-        }
-        .menu-icon div {
-            width: 30px;
-            height: 3px;
-            background-color: white;
-            transition: 0.3s;
-        }
-        /* Menu Icon Animation to X */
-        .menu-icon.active div:nth-child(1) {
-            transform: rotate(-45deg) translate(-5px, 6px);
-        }
-        .menu-icon.active div:nth-child(2) {
-            transform: rotate(45deg) translate(-5px, -6px);
-        }
+        .menu-icon { cursor: pointer; display: flex; flex-direction: column; gap: 6px; z-index: 1001; }
+        .menu-icon div { width: 35px; height: 3px; background-color: white; transition: all 0.4s ease; }
+        .menu-icon.active div:nth-child(1) { transform: rotate(-45deg) translate(-6px, 6px); background: #ff4444; }
+        .menu-icon.active div:nth-child(2) { transform: rotate(45deg) translate(-6px, -6px); background: #ff4444; }
 
-        /* Logo and Profile */
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: white;
-            text-shadow: 2px 2px 4px #000;
-        }
-        .profile {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .profile img {
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            border: 2px solid white;
-            cursor: pointer;
-        }
+        .logo { font-size: 28px; font-weight: 900; letter-spacing: 2px; text-shadow: 2px 2px 10px #000; cursor: pointer; }
+        
+        .profile { display: flex; align-items: center; gap: 15px; }
+        .points-badge { background: rgba(0,0,0,0.5); padding: 5px 15px; border-radius: 20px; border: 1px solid var(--crimson-light); font-weight: bold; }
+        .profile img { width: 45px; height: 45px; border-radius: 50%; border: 2px solid var(--crimson-light); cursor: pointer; transition: 0.3s; }
+        .profile img:hover { transform: scale(1.1); box-shadow: 0 0 15px var(--crimson-light); }
 
-        /* Scrolling Banner (Top 30% width style as requested, but placed below header for visibility) */
-        .scrolling-banner {
-            background-color: #2a0000;
-            color: #ffcccc;
-            padding: 10px;
-            border-bottom: 2px solid #dc143c;
-            font-weight: bold;
-            width: 100%;
-        }
+        .scrolling-banner { background-color: #1a0000; color: #ffcccc; padding: 12px; border-bottom: 1px solid var(--crimson-light); font-weight: bold; letter-spacing: 1px; }
 
-        /* Left Side Menu */
+        /* =========================================
+           3. SIDEBAR
+        ========================================= */
         .sidebar {
-            position: fixed;
-            left: -300px; /* Hidden by default */
-            top: 0;
-            width: 250px;
-            height: 100%;
-            background-color: #1a1a1a;
-            border-right: 2px solid #dc143c;
-            padding-top: 80px;
-            transition: 0.3s;
-            overflow-y: auto;
-            z-index: 999;
+            position: fixed; left: -320px; top: 0; width: 300px; height: 100%;
+            background-color: var(--bg-secondary); border-right: 2px solid var(--crimson-main);
+            padding-top: 90px; transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            overflow-y: auto; z-index: 999; box-shadow: 5px 0 20px rgba(0,0,0,0.9);
         }
-        .sidebar.active {
-            left: 0;
-        }
-        .sidebar ul {
-            list-style: none;
-        }
+        .sidebar.active { left: 0; }
+        .sidebar ul { list-style: none; }
         .sidebar ul li a {
-            display: block;
-            padding: 15px 20px;
-            color: #fff;
-            text-decoration: none;
-            border-bottom: 1px solid #333;
-            transition: 0.2s;
+            display: flex; align-items: center; padding: 18px 25px; color: var(--text-main);
+            text-decoration: none; border-bottom: 1px solid var(--border-color);
+            transition: 0.3s; cursor: pointer; font-size: 16px; font-weight: 500;
         }
-        .sidebar ul li a:hover {
-            background-color: #dc143c;
-        }
+        .sidebar ul li a:hover { background-color: rgba(220, 20, 60, 0.2); padding-left: 35px; border-left: 4px solid var(--crimson-light); color: var(--crimson-light); }
 
-        /* Main Content - 3 Columns in one line */
-        .main-content {
-            padding: 20px;
-            display: flex;
-            justify-content: space-between;
-            gap: 20px;
-            margin-top: 20px;
-        }
-        .feedback-card {
-            flex: 1;
-            background-color: #1e1e1e;
-            border: 1px solid #dc143c;
-            border-radius: 8px;
-            padding: 20px;
-            text-align: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-        .feedback-card:hover {
-            transform: translateY(-5px);
-            background-color: #2a2a2a;
-        }
-        .feedback-card h3 {
-            color: #dc143c;
-            margin-bottom: 10px;
-        }
+        /* =========================================
+           4. MAIN CONTENT & SECTIONS
+        ========================================= */
+        .content-section { display: none; padding: 40px 20px; animation: slideUp 0.5s ease forwards; opacity: 0; transform: translateY(20px); min-height: 85vh; }
+        .content-section.active-section { display: block; }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-content {
-                flex-direction: column;
-            }
+        @keyframes slideUp { to { opacity: 1; transform: translateY(0); } }
+
+        .page-title { color: var(--crimson-light); border-bottom: 2px solid var(--crimson-dark); padding-bottom: 15px; margin-bottom: 30px; text-transform: uppercase; letter-spacing: 3px; font-size: 2em; text-align: center; }
+
+        /* Home Page specific */
+        #home-section {
+            background: linear-gradient(rgba(10,10,10,0.9), rgba(10,10,10,0.9)), url('https://images.unsplash.com/photo-1542751371-adc38448a05e?q=80&w=2000') no-repeat center;
+            background-size: cover;
         }
+        .glitch-title { text-align: center; color: var(--crimson-light); font-size: 4em; font-weight: 900; text-shadow: 3px 3px 0px #000; margin-bottom: 40px; letter-spacing: 5px; }
+
+        .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .action-card {
+            background: var(--bg-card); border: 1px solid var(--crimson-dark); border-radius: 12px;
+            padding: 30px; text-align: center; cursor: pointer; transition: all 0.3s ease; position: relative; overflow: hidden;
+        }
+        .action-card::before { content: ''; position: absolute; top: 0; left: -100%; width: 100%; height: 100%; background: linear-gradient(90deg, transparent, rgba(220, 20, 60, 0.2), transparent); transition: 0.5s; }
+        .action-card:hover::before { left: 100%; }
+        .action-card:hover { transform: translateY(-10px); border-color: var(--crimson-light); box-shadow: 0 10px 20px rgba(220, 20, 60, 0.2); }
+        .action-card h3 { color: var(--crimson-light); font-size: 1.5em; margin-bottom: 15px; }
+
+        /* =========================================
+           5. FORMS & INPUTS
+        ========================================= */
+        .crimson-form { background: var(--bg-secondary); padding: 30px; border-radius: 12px; border: 1px solid var(--crimson-main); max-width: 600px; margin: 0 auto; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+        .form-group { margin-bottom: 20px; text-align: left; }
+        .form-group label { display: block; color: var(--text-muted); margin-bottom: 8px; font-weight: bold; }
+        .crimson-input { width: 100%; padding: 15px; background: var(--bg-main); border: 1px solid var(--border-color); color: white; border-radius: 6px; font-size: 16px; transition: 0.3s; }
+        .crimson-input:focus { border-color: var(--crimson-light); outline: none; box-shadow: 0 0 10px rgba(220, 20, 60, 0.3); }
+        .crimson-btn { background: var(--crimson-main); color: white; border: none; padding: 15px 30px; font-size: 16px; cursor: pointer; font-weight: bold; border-radius: 6px; width: 100%; transition: 0.3s; text-transform: uppercase; letter-spacing: 1px; }
+        .crimson-btn:hover { background: var(--crimson-light); box-shadow: 0 0 15px var(--crimson-light); }
+
+        /* =========================================
+           6. CHAT UI SYSTEM
+        ========================================= */
+        .chat-container { max-width: 800px; margin: 0 auto; background: var(--bg-secondary); border: 1px solid var(--crimson-dark); border-radius: 12px; display: flex; flex-direction: column; height: 600px; }
+        .chat-header { background: var(--crimson-main); padding: 15px; text-align: center; font-weight: bold; border-radius: 12px 12px 0 0; }
+        .chat-messages { flex: 1; padding: 20px; overflow-y: auto; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 70%; padding: 12px 15px; border-radius: 8px; font-size: 15px; line-height: 1.4; }
+        .msg.received { background: var(--bg-card); align-self: flex-start; border-left: 3px solid var(--crimson-light); }
+        .msg.sent { background: #3a0000; align-self: flex-end; border-right: 3px solid var(--crimson-light); }
+        .msg .sender { font-size: 12px; color: var(--crimson-light); margin-bottom: 5px; font-weight: bold; }
+        .chat-input-area { padding: 15px; background: var(--bg-main); border-top: 1px solid var(--border-color); display: flex; gap: 10px; border-radius: 0 0 12px 12px; }
+        .chat-input-area input { flex: 1; border-radius: 20px; padding: 10px 20px; }
+        .chat-input-area button { border-radius: 20px; width: 100px; }
+
+        /* =========================================
+           7. TABLES & MISC
+        ========================================= */
+        .crimson-table { width: 100%; max-width: 800px; margin: 0 auto; border-collapse: collapse; background: var(--bg-secondary); border-radius: 8px; overflow: hidden; }
+        .crimson-table th, .crimson-table td { padding: 15px; text-align: center; border-bottom: 1px solid var(--border-color); }
+        .crimson-table th { background: var(--crimson-main); color: white; text-transform: uppercase; font-size: 14px; }
+        .crimson-table tr:hover { background: rgba(220, 20, 60, 0.1); }
+
+        /* Toast Notification */
+        #toast { visibility: hidden; min-width: 250px; background-color: var(--crimson-light); color: #fff; text-align: center; border-radius: 4px; padding: 16px; position: fixed; z-index: 2000; right: 30px; bottom: 30px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        #toast.show { visibility: visible; animation: fadein 0.5s, fadeout 0.5s 2.5s; }
+        @keyframes fadein { from {bottom: 0; opacity: 0;} to {bottom: 30px; opacity: 1;} }
+        @keyframes fadeout { from {bottom: 30px; opacity: 1;} to {bottom: 0; opacity: 0;} }
     </style>
 </head>
 <body>
 
     <header>
-        <div class="menu-icon" id="menuToggle" onclick="toggleMenu()">
-            <div></div>
-            <div></div>
-        </div>
-        
-        <div class="logo">Crimson 404</div>
-
+        <div class="menu-icon" id="menuToggle" onclick="toggleMenu()"><div></div><div></div></div>
+        <div class="logo" onclick="switchSection('home-section')">CRIMSON 404</div>
         <div class="profile">
-            <span>Points: <strong>1000</strong></span> <img src="https://via.placeholder.com/40" alt="Avatar" title="Head Owner Avatar">
+            <span class="points-badge">Points: <span id="userPointsDisplay">1000</span></span>
+            <img src="https://via.placeholder.com/45" alt="Avatar" title="Head Owner">
         </div>
     </header>
 
     <div class="scrolling-banner">
-        <marquee behavior="scroll" direction="left" scrollamount="6">
-            📢 Announcement: Premium Members get 50 Points on Purchase! | 🚀 Daily Login gets you 1 Point! | 🛡️ Secure & Safe Platform - 24/7 Service Available!
+        <marquee behavior="scroll" direction="left" scrollamount="8">
+            🚨 SYSTEM ONLINE: Welcome to the Crimson World | Protect your parameters | New Premium Mods Available Now! 🚨
         </marquee>
     </div>
 
     <nav class="sidebar" id="sidebar">
         <ul>
-            <li><a href="#">1. Home</a></li>
-            <li><a href="#">2. Head Owner Chat</a></li>
-            <li><a href="#">3. Owner Chat</a></li>
-            <li><a href="#">4. Admin Chat</a></li>
-            <li><a href="#">5. Premium Chat</a></li>
-            <li><a href="#">6. Public Chat</a></li>
-            <li><a href="#">7. Premium Trial</a></li>
-            <li><a href="#">8. Public Trial</a></li>
-            <li><a href="#">9. Leaderboard</a></li>
-            <li><a href="#">10. About Us</a></li>
-            <li><a href="#">11. 24/7 Service Available</a></li>
-            <li><a href="#">12. Settings</a></li>
-            <li><a href="#">13. Security Disclaimer (100% Safe)</a></li>
+            <li><a onclick="switchSection('home-section')">🏠 1. Dashboard Home</a></li>
+            <li><a onclick="switchSection('head-owner-section')">👑 2. Head Owner Chat</a></li>
+            <li><a onclick="switchSection('owner-section')">🛡️ 3. Owner Chat</a></li>
+            <li><a onclick="switchSection('admin-section')">⚙️ 4. Admin Chat</a></li>
+            <li><a onclick="switchSection('premium-chat-section')">💎 5. Premium Chat</a></li>
+            <li><a onclick="switchSection('public-chat-section')">💬 6. Public Chat</a></li>
+            <li><a onclick="switchSection('leaderboard-section')">🏆 7. Live Leaderboard</a></li>
+            <li><a onclick="switchSection('settings-section')">🔧 8. System Settings</a></li>
+            <li><a onclick="switchSection('security-section')">🔒 9. Security Logs</a></li>
         </ul>
     </nav>
 
-    <div class="main-content">
-        <div class="feedback-card" onclick="alert('Access Restricted: Head Owner & Owner Only')">
-            <h3>All Feedback</h3>
-            <p>View all general feedback submitted by users.</p>
-        </div>
-        
-        <div class="feedback-card" onclick="alert('Access Restricted: Head Owner & Owner Only')">
-            <h3>Purchase Proof</h3>
-            <p>View screenshots and payment proofs from users.</p>
-        </div>
-        
-        <div class="feedback-card" onclick="alert('Access Restricted: Head Owner & Owner Only')">
-            <h3>Gaming Feedback</h3>
-            <p>Feedback specifically related to mods, loaders, and gameplay.</p>
+    <div id="home-section" class="content-section active-section">
+        <h1 class="glitch-title">CRIMSON SYSTEM</h1>
+        <div class="cards-grid">
+            <div class="action-card" onclick="switchSection('feedback-form-section')">
+                <h3>General Feedback</h3>
+                <p>Submit your thoughts, suggestions, and feature requests directly to the Firebase database.</p>
+            </div>
+            <div class="action-card" onclick="switchSection('proof-form-section')">
+                <h3>Payment Proof</h3>
+                <p>Upload your transaction IDs and screenshots for manual verification by Admins.</p>
+            </div>
+            <div class="action-card" onclick="switchSection('gaming-form-section')">
+                <h3>Gaming Feedback</h3>
+                <p>Report bugs, mod performance, and loader statistics securely.</p>
+            </div>
         </div>
     </div>
 
-    <script>
-        function toggleMenu() {
-            const menuIcon = document.getElementById('menuToggle');
-            const sidebar = document.getElementById('sidebar');
-            
-            // Toggle classes for animation and showing menu
-            menuIcon.classList.toggle('active');
-            sidebar.classList.toggle('active');
-        }
+    <div id="feedback-form-section" class="content-section">
+        <h2 class="page-title">Submit General Feedback</h2>
+        <div class="crimson-form">
+            <div class="form-group">
+                <label>Username / IGN</label>
+                <input type="text" id="fbUser" class="crimson-input" placeholder="Enter your name">
+            </div>
+            <div class="form-group">
+                <label>Your Message</label>
+                <textarea id="fbText" class="crimson-input" rows="5" placeholder="Write detailed feedback..."></textarea>
+            </div>
+            <button class="crimson-btn" onclick="submitData('feedbacks', 'fbUser', 'fbText')">Transmit Data</button>
+        </div>
+    </div>
 
-        // Example animation trigger for 1000 points
-        window.onload = function() {
-            let userPoints = 1000; 
-            if(userPoints >= 1000) {
-                console.log("Animation Triggered: Congratulations! You hit 1000 points. DM sent to Head Owner.");
-                // Here is where the actual JS animation and API call for DM would go
-            }
+    <div id="public-chat-section" class="content-section">
+        <h2 class="page-title">Public Global Chat</h2>
+        <div class="chat-container">
+            <div class="chat-header">Global Server - 404</div>
+            <div class="chat-messages" id="publicChatBox">
+                <div class="msg received"><div class="sender">System_Bot</div>Welcome to Crimson Public Chat. Be respectful.</div>
+                <div class="msg sent"><div class="sender">You</div>Hello everyone!</div>
+            </div>
+            <div class="chat-input-area">
+                <input type="text" id="chatInput" class="crimson-input" placeholder="Type a message...">
+                <button class="crimson-btn" onclick="sendMockMessage()">Send</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-section" class="content-section">
+        <h2 class="page-title">User Settings</h2>
+        <div class="crimson-form">
+            <div class="form-group"><label>Change Display Name</label><input type="text" class="crimson-input" value="Head Owner"></div>
+            <div class="form-group"><label>Update UID</label><input type="text" class="crimson-input" value="CRIMSON-999-XYZ" disabled></div>
+            <button class="crimson-btn" onclick="showToast('Settings Saved Successfully!')">Save Preferences</button>
+        </div>
+    </div>
+
+    <div id="head-owner-section" class="content-section"><h2 class="page-title">Head Owner Chat</h2><p style="text-align:center; color: var(--text-muted)">Secure encrypted channel. Access granted.</p></div>
+    <div id="owner-section" class="content-section"><h2 class="page-title">Owner Chat</h2><p style="text-align:center; color: var(--text-muted)">Level 2 Clearance Room.</p></div>
+    <div id="admin-section" class="content-section"><h2 class="page-title">Admin Chat</h2><p style="text-align:center; color: var(--text-muted)">Moderator discussion area.</p></div>
+    <div id="premium-chat-section" class="content-section"><h2 class="page-title">Premium Chat</h2><p style="text-align:center; color: var(--text-muted)">VIP members only.</p></div>
+    <div id="security-section" class="content-section"><h2 class="page-title">Security Logs</h2><p style="text-align:center; color: var(--text-muted)">No recent breaches detected. System is 100% Safe.</p></div>
+
+    <div id="leaderboard-section" class="content-section">
+        <h2 class="page-title">Live Leaderboard</h2>
+        <table class="crimson-table">
+            <thead><tr><th>Rank</th><th>Player IGN</th><th>Crimson Points</th></tr></thead>
+            <tbody id="leaderboard-data">
+                <tr><td>1</td><td style="color:#dc143c; font-weight:bold;">Devil_King</td><td>9,500</td></tr>
+                <tr><td>2</td><td>Shadow_Ninja</td><td>8,200</td></tr>
+                <tr><td>3</td><td>Ghost_Rider</td><td>7,150</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="toast">Message here</div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
+
+        // Your Firebase Configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYkE",
+            authDomain: "crimson-devil-world.firebaseapp.com",
+            databaseURL: "https://crimson-devil-world-default-rtdb.firebaseio.com",
+            projectId: "crimson-devil-world",
+            storageBucket: "crimson-devil-world.firebasestorage.app",
+            messagingSenderId: "625125480692",
+            appId: "1:625125480692:web:cf7dc8b4a8d7cac82c66a1"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Global function to submit forms securely to Firebase
+        window.submitData = function(nodeName, userFieldId, contentFieldId) {
+            const user = document.getElementById(userFieldId).value.trim();
+            const content = document.getElementById(contentFieldId).value.trim();
+
+            if(!user || !content) { window.showToast("Error: Fill all required fields!"); return; }
+
+            const newEntryRef = push(ref(db, nodeName));
+            set(newEntryRef, { username: user, data: content, timestamp: Date.now() })
+            .then(() => {
+                window.showToast("Data Transmitted Securely to Firebase!");
+                document.getElementById(userFieldId).value = "";
+                document.getElementById(contentFieldId).value = "";
+                setTimeout(() => window.switchSection('home-section'), 1500);
+            }).catch(err => window.showToast("System Error: " + err.message));
         };
     </script>
 
+    <script>
+        // UI Interaction Functions
+        function toggleMenu() {
+            document.getElementById('menuToggle').classList.toggle('active');
+            document.getElementById('sidebar').classList.toggle('active');
+        }
+
+        function switchSection(sectionId) {
+            document.querySelectorAll('.content-section').forEach(sec => sec.classList.remove('active-section'));
+            document.getElementById(sectionId).classList.add('active-section');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            
+            // Auto close menu on mobile
+            document.getElementById('menuToggle').classList.remove('active');
+            document.getElementById('sidebar').classList.remove('active');
+        }
+
+        function showToast(message) {
+            const toast = document.getElementById("toast");
+            toast.innerText = message;
+            toast.className = "show";
+            setTimeout(() => { toast.className = toast.className.replace("show", ""); }, 3000);
+        }
+
+        // Mock Chat function to show how UI works
+        function sendMockMessage() {
+            const input = document.getElementById('chatInput');
+            const box = document.getElementById('publicChatBox');
+            if(input.value.trim() === "") return;
+
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'msg sent';
+            msgDiv.innerHTML = `<div class="sender">You</div>${input.value}`;
+            box.appendChild(msgDiv);
+            input.value = '';
+            box.scrollTop = box.scrollHeight; // Auto scroll to bottom
+        }
+    </script>
 </body>
 </html>
