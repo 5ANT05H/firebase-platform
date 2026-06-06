@@ -1,34 +1,124 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON CHAT SYSTEM</title>
+  <title>CRIMSON DEVIL WORLD</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family:Arial;
+      background:black;
+      color:white;
+      overflow:hidden;
+    }
+
+    /* DEVIL INTRO SCREEN */
+    #intro{
+      position:fixed;
+      width:100%;
+      height:100%;
+      background:radial-gradient(circle,#1a0000,#000);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      align-items:center;
+      animation:fadeOut 4s forwards;
+      animation-delay:3s;
+    }
+
+    h1{
+      font-size:40px;
+      color:red;
+      text-shadow:0 0 20px red,0 0 40px darkred;
+      letter-spacing:3px;
+      animation:glow 1s infinite alternate;
+    }
+
+    p{
+      color:#ff4444;
+      font-size:18px;
+    }
+
+    @keyframes glow{
+      from{transform:scale(1);}
+      to{transform:scale(1.1);}
+    }
+
+    @keyframes fadeOut{
+      0%{opacity:1;}
+      100%{opacity:0;visibility:hidden;}
+    }
+
+    /* LOGIN BOX */
+    #app{
+      display:none;
+      height:100vh;
+      justify-content:center;
+      align-items:center;
+    }
+
+    .box{
+      background:#111;
+      padding:20px;
+      border:1px solid red;
+      box-shadow:0 0 20px red;
+      border-radius:10px;
+      text-align:center;
+    }
+
+    input{
+      padding:10px;
+      margin:5px;
+      background:black;
+      border:1px solid red;
+      color:white;
+    }
+
+    button{
+      padding:10px;
+      margin-top:10px;
+      background:red;
+      border:none;
+      color:white;
+      cursor:pointer;
+      box-shadow:0 0 10px red;
+    }
+  </style>
 </head>
 
-<body style="margin:0;background:#0a0a0a;color:white;font-family:Arial;">
+<body>
 
-<div id="app">Loading...</div>
+<!-- 🔥 INTRO -->
+<div id="intro">
+  <h1>🔥 CRIMSON DEVIL WORLD 🔥</h1>
+  <p>Welcome to Dark System</p>
+</div>
+
+<!-- LOGIN -->
+<div id="app">
+  <div class="box">
+    <h2>💀 LOGIN TO DEVIL WORLD</h2>
+
+    <input id="username" placeholder="username"><br>
+    <input id="password" type="password" placeholder="password"><br>
+
+    <button onclick="login()">ENTER</button>
+    <button onclick="signup()">SIGNUP</button>
+
+    <div id="msg"></div>
+  </div>
+</div>
 
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup,
-  onAuthStateChanged,
-  signOut
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-
-import {
   getFirestore,
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  onSnapshot
+  doc,
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
   authDomain: "crimson-platform-92f67.firebaseapp.com",
@@ -38,103 +128,56 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
 const db = getFirestore(app);
 
-const appDiv = document.getElementById("app");
+let currentUser = null;
+
+/* SHOW LOGIN AFTER INTRO */
+setTimeout(()=>{
+  document.getElementById("intro").style.display="none";
+  document.getElementById("app").style.display="flex";
+},3000);
+
+/* SIGNUP */
+window.signup = async function(){
+
+  let u = username.value;
+  let p = password.value;
+
+  if(!u||!p) return alert("fill fields");
+
+  let ref = doc(db,"users",u);
+  let snap = await getDoc(ref);
+
+  if(snap.exists()) return alert("User exists");
+
+  await setDoc(ref,{
+    username:u,
+    password:p,
+    role:"USER",
+    premium:false
+  });
+
+  alert("Signup success ✔");
+};
 
 /* LOGIN */
-function loginUI(){
-  appDiv.innerHTML = `
-    <h1>🔥 LOGIN</h1>
-    <button id="loginBtn">Login with Google</button>
-  `;
+window.login = async function(){
 
-  document.getElementById("loginBtn").onclick = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
-  };
-}
+  let u = username.value;
+  let p = password.value;
 
-/* DASHBOARD */
-function dashboard(user){
+  let ref = doc(db,"users",u);
+  let snap = await getDoc(ref);
 
-  let name = user.email.split("@")[0]; // Gmail hide
+  if(!snap.exists()) return alert("User not found");
 
-  appDiv.innerHTML = `
-    <div style="padding:10px;">
+  let data = snap.data();
 
-      <h1>💀 CRIMSON CHAT</h1>
+  if(data.password !== p) return alert("Wrong password");
 
-      <h3>👤 User: ${name}</h3>
-
-      <button onclick="logout()">Logout</button>
-
-      <hr>
-
-      <h2>💬 LIVE CHAT</h2>
-
-      <input id="msg" placeholder="type message">
-      <button onclick="sendMsg()">Send</button>
-
-      <div id="chatBox"></div>
-
-    </div>
-  `;
-
-  loadChat();
-}
-
-/* SEND MESSAGE */
-window.sendMsg = async function(){
-
-  let msg = document.getElementById("msg").value;
-  if(!msg) return;
-
-  await addDoc(collection(db,"chat"),{
-    text:msg,
-    email:auth.currentUser.email,
-    time:Date.now()
-  });
-
-  document.getElementById("msg").value = "";
+  alert("WELCOME TO DEVIL WORLD 🔥");
 };
-
-/* LOAD CHAT (REAL TIME) */
-function loadChat(){
-
-  const q = query(collection(db,"chat"),orderBy("time"));
-
-  onSnapshot(q,(snap)=>{
-
-    let html = "";
-
-    snap.forEach(doc=>{
-      let d = doc.data();
-      html += `<p><b>${d.email}:</b> ${d.text}</p>`;
-    });
-
-    document.getElementById("chatBox").innerHTML = html;
-
-  });
-
-}
-
-/* LOGOUT */
-window.logout = function(){
-  signOut(auth);
-};
-
-/* AUTH STATE */
-onAuthStateChanged(auth, (user)=>{
-
-  if(user){
-    dashboard(user);
-  } else {
-    loginUI();
-  }
-
-});
 
 </script>
 
