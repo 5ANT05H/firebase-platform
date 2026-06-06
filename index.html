@@ -1,73 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>CRIMSON DEVIL WORLD</title>
+
+<style>
+body{
+margin:0;
+background:black;
+color:white;
+font-family:Arial;
+text-align:center;
+}
+
+#auth{
+height:100vh;
+display:flex;
+justify-content:center;
+align-items:center;
+flex-direction:column;
+}
+
+button{
+padding:12px;
+margin:10px;
+width:220px;
+background:red;
+color:white;
+border:none;
+cursor:pointer;
+}
+
+.card{
+background:#111;
+margin:10px;
+padding:15px;
+border:1px solid red;
+display:inline-block;
+}
+</style>
+</head>
+
+<body>
+
+<!-- AUTH -->
+<div id="auth">
+<h1>💀 DEVIL WORLD LOGIN</h1>
+<button onclick="login()">LOGIN WITH GOOGLE</button>
+</div>
+
+<!-- DASHBOARD -->
+<div id="app" style="display:none">
+
+<h2 id="userInfo"></h2>
+
+<div class="card">
+<h3>🔥 POST SYSTEM</h3>
+<p>Devil System Active</p>
+
+<button onclick="voteUp()">👍 LIKE</button>
+<button onclick="voteDown()">👎 DISLIKE</button>
+
+<p id="votes">Likes: 0 | Dislikes: 0</p>
+</div>
+
+</div>
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-  getAuth,
-  GoogleAuthProvider,
-  signInWithPopup
+getAuth,
+GoogleAuthProvider,
+signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-/* ✅ YOUR FIREBASE CONFIG (FIXED) */
+/* YOUR FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
-  authDomain: "crimson-platform-92f67.firebaseapp.com",
-  projectId: "crimson-platform-92f67",
-  storageBucket: "crimson-platform-92f67.firebasestorage.app",
-  messagingSenderId: "7775873440",
-  appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
+apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
+authDomain: "crimson-platform-92f67.firebaseapp.com",
+projectId: "crimson-platform-92f67"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-/* 💀 SAFE LOGIN (NO BLACK SCREEN) */
-window.login = async function () {
+/* HEAD OWNER */
+const OWNER_EMAIL = "tksantosh0@gmail.com";
 
-  try {
+/* LOGIN */
+window.login = async function(){
 
-    // loading state (prevents blank screen)
-    document.getElementById("auth").innerHTML =
-      "<h2 style='color:red'>💀 Logging in...</h2>";
+try{
 
-    const result = await signInWithPopup(auth, provider);
-    const user = result.user;
+const result = await signInWithPopup(auth, provider);
+const user = result.user;
 
-    console.log("LOGIN SUCCESS:", user.email);
+let role = "USER";
 
-    // SAFE UI SWITCH
-    document.body.innerHTML = `
-      <div style="
-        background:black;
-        color:red;
-        height:100vh;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        flex-direction:column;
-        font-family:Arial;
-      ">
-        <h1>💀 DEVIL WORLD</h1>
-        <h2>Welcome ${user.displayName}</h2>
-        <p>${user.email}</p>
-      </div>
-    `;
+if(user.email === OWNER_EMAIL){
+role = "HEAD OWNER 👑";
+}
 
-  } catch (e) {
+document.getElementById("auth").style.display="none";
+document.getElementById("app").style.display="block";
 
-    console.log(e);
+document.getElementById("userInfo").innerText =
+"👤 " + user.displayName + " | " + role;
 
-    // ❌ NO BLACK SCREEN FIX
-    document.getElementById("auth").innerHTML = `
-      <h2 style="color:red">Login Failed</h2>
-      <button onclick="location.reload()"
-        style="padding:10px;background:red;color:white;border:none;">
-        RETRY
-      </button>
-    `;
-
-  }
+}catch(e){
+console.log(e);
+alert("Login Failed");
+}
 
 };
 
+/* VOTE SYSTEM (LOCAL DEMO) */
+let likes = 0;
+let dislikes = 0;
+
+window.voteUp = function(){
+likes++;
+updateVotes();
+};
+
+window.voteDown = function(){
+dislikes++;
+updateVotes();
+};
+
+function updateVotes(){
+document.getElementById("votes").innerText =
+"Likes: " + likes + " | Dislikes: " + dislikes;
+}
+
 </script>
+
+</body>
+</html>
