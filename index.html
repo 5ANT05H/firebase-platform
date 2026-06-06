@@ -2,17 +2,19 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>DISCORD 2.0 CRIMSON</title>
+<title>DISCORD 3.0 PRO</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background:#0c0c0c;
+  background:#0b0b0b;
   color:white;
+  overflow:hidden;
 }
 
+/* LAYOUT */
 .container{
   display:flex;
   height:100vh;
@@ -21,41 +23,64 @@ body{
 /* SIDEBAR */
 .left{
   width:240px;
-  background:#1a1a1a;
+  background:#151515;
   padding:10px;
 }
 
 .menu{
   padding:10px;
   margin:6px 0;
-  background:#111;
+  background:#1e1e1e;
+  border-radius:6px;
   cursor:pointer;
+  transition:0.3s;
 }
-.menu:hover{background:#ff0000;}
 
-/* CHAT */
-.chat{
+.menu:hover{
+  background:red;
+  transform:scale(1.05);
+}
+
+/* MAIN */
+.main{
   flex:1;
   display:flex;
   flex-direction:column;
 }
 
-#box{
-  flex:1;
-  overflow:auto;
-  padding:10px;
-  background:#0b0b0b;
+.topbar{
+  padding:12px;
+  background:#111;
+  border-bottom:1px solid #333;
 }
 
+/* PAGES */
+.page{
+  flex:1;
+  display:none;
+  padding:10px;
+  overflow:auto;
+  animation:fade 0.4s ease;
+}
+
+.active{display:block;}
+
+@keyframes fade{
+  from{opacity:0; transform:translateY(10px);}
+  to{opacity:1; transform:translateY(0);}
+}
+
+/* CHAT */
 .msg{
+  background:#1a1a1a;
   margin:6px 0;
   padding:8px;
-  background:#111;
   border-left:3px solid red;
+  border-radius:6px;
 }
 
 /* INPUT */
-.input{
+.inputBox{
   display:flex;
   padding:10px;
   background:#111;
@@ -63,110 +88,127 @@ body{
 
 input{
   flex:1;
-  padding:10px;
+  padding:12px;
+  border:none;
+  outline:none;
+  background:#000;
+  color:white;
 }
 
 button{
-  padding:10px;
+  padding:12px;
   background:red;
-  color:white;
   border:none;
+  color:white;
+  cursor:pointer;
 }
 
-/* RIGHT */
+/* USERS */
 .right{
-  width:240px;
-  background:#1a1a1a;
+  width:220px;
+  background:#151515;
   padding:10px;
 }
 
 .user{
   padding:8px;
-  margin:5px;
-  background:#111;
+  margin:5px 0;
+  background:#1e1e1e;
+  border-radius:6px;
+  cursor:pointer;
 }
 
-/* DM BOX */
-.dmBox{
-  position:fixed;
-  bottom:10px;
-  right:10px;
-  width:250px;
-  height:300px;
-  background:#111;
-  border:1px solid red;
-  display:none;
-  flex-direction:column;
-}
-
-.dmHeader{
-  padding:6px;
+/* LOGIN */
+#login{
+  position:absolute;
+  width:100%;
+  height:100%;
   background:#000;
-}
-
-.dmMessages{
-  flex:1;
-  overflow:auto;
-  padding:5px;
-}
-
-.dmInput{
   display:flex;
+  align-items:center;
+  justify-content:center;
+  flex-direction:column;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- LOGIN SCREEN -->
+<div id="login">
+  <h1>🔐 Google Login Required</h1>
+  <button onclick="login()">Login with Google</button>
+</div>
+
+<div class="container" id="app" style="display:none">
 
 <!-- LEFT -->
 <div class="left">
-<h3>MENU</h3>
-<div class="menu">🏠 Home</div>
-<div class="menu">💬 Chat</div>
-<div class="menu">💬 DM</div>
-<div class="menu">👑 Owner Panel</div>
-<div class="menu">🟢 Online</div>
+  <div class="menu" onclick="show('home')">🏠 Home</div>
+  <div class="menu" onclick="show('chat')">💬 Chat</div>
+  <div class="menu" onclick="show('dm')">💌 DM</div>
+  <div class="menu" onclick="show('owner')">👑 Owner Panel</div>
+  <div class="menu" onclick="show('online')">🟢 Online</div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+<div class="topbar">🔥 DISCORD 3.0 PRO</div>
+
+<!-- HOME -->
+<div id="home" class="page active">
+  <h2>Welcome 👋</h2>
 </div>
 
 <!-- CHAT -->
-<div class="chat">
-<div id="box"></div>
-
-<div class="input">
-<input id="text">
-<button onclick="sendMsg()">Send</button>
+<div id="chat" class="page">
+  <div id="box"></div>
+  <div class="inputBox">
+    <input id="text" placeholder="message...">
+    <button onclick="sendMsg()">Send</button>
+  </div>
 </div>
+
+<!-- DM -->
+<div id="dm" class="page">
+  <h3>💌 Private DM</h3>
+  <div id="dmBox"></div>
+</div>
+
+<!-- OWNER -->
+<div id="owner" class="page">
+  <h3>👑 Owner Panel</h3>
+  <button onclick="clearChat()">Clear Chat</button>
+</div>
+
+<!-- ONLINE -->
+<div id="online" class="page">
+  <h3>🟢 Online Users</h3>
+  <div id="users"></div>
+</div>
+
 </div>
 
 <!-- RIGHT -->
 <div class="right">
-<h3>🟢 ONLINE</h3>
-<div id="users"></div>
+  <h3>Users</h3>
+  <div id="userList"></div>
 </div>
 
 </div>
 
-<!-- DM SYSTEM -->
-<div class="dmBox" id="dmBox">
-  <div class="dmHeader">💬 Private Chat</div>
-  <div class="dmMessages" id="dmMsgs"></div>
-  <div class="dmInput">
-    <input id="dmText">
-    <button onclick="sendDM()">Send</button>
-  </div>
-</div>
-
+<!-- FIREBASE -->
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
 
 <script>
 const firebaseConfig = {
   apiKey: "YOUR_KEY",
   authDomain: "crimson-devil-world.firebaseapp.com",
-  projectId: "crimson-devil-world",
   databaseURL: "https://crimson-devil-world-default-rtdb.firebaseio.com",
+  projectId: "crimson-devil-world",
   storageBucket: "crimson-devil-world.appspot.com",
   messagingSenderId: "625125480692",
   appId: "YOUR_APP_ID"
@@ -174,15 +216,29 @@ const firebaseConfig = {
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
+const auth = firebase.auth();
 
-/* USER */
-let currentUser = {
-  uid: Math.random().toString(36).substr(2,9),
-  name: "Santosh",
-  role: "owner"
-};
+let user=null;
+let dmUser=null;
 
-let chatUser = null;
+/* LOGIN */
+function login(){
+  let provider = new firebase.auth.GoogleAuthProvider();
+  auth.signInWithPopup(provider).then(res=>{
+    user=res.user;
+    document.getElementById("login").style.display="none";
+    document.getElementById("app").style.display="flex";
+    goOnline();
+    loadChat();
+    loadUsers();
+  });
+}
+
+/* TAB SYSTEM */
+function show(id){
+  document.querySelectorAll(".page").forEach(p=>p.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
 /* CHAT */
 function sendMsg(){
@@ -190,8 +246,8 @@ function sendMsg(){
   if(text=="") return;
 
   db.ref("messages").push({
-    uid:currentUser.uid,
-    name:currentUser.name,
+    uid:user.uid,
+    name:user.displayName,
     text:text,
     time:Date.now()
   });
@@ -200,61 +256,74 @@ function sendMsg(){
 }
 
 /* LIVE CHAT */
-db.ref("messages").on("value", snap=>{
-  let box=document.getElementById("box");
-  box.innerHTML="";
-
-  snap.forEach(c=>{
-    let d=c.val();
-    let div=document.createElement("div");
-    div.className="msg";
-
-    div.innerHTML=`<b>${d.name}</b><br>${d.text}
-    <button onclick="openDM('${d.uid}','${d.name}')">DM</button>`;
-
-    box.appendChild(div);
+function loadChat(){
+  db.ref("messages").on("value", snap=>{
+    let box=document.getElementById("box");
+    box.innerHTML="";
+    snap.forEach(c=>{
+      let d=c.val();
+      let div=document.createElement("div");
+      div.className="msg";
+      div.innerHTML=`<b>${d.name}</b><br>${d.text}
+      <button onclick="openDM('${d.uid}','${d.name}')">DM</button>`;
+      box.appendChild(div);
+    });
   });
-});
+}
 
 /* ONLINE */
-db.ref("online").on("value", snap=>{
-  let u=document.getElementById("users");
-  u.innerHTML="";
-  snap.forEach(c=>{
-    let d=c.val();
-    let div=document.createElement("div");
-    div.className="user";
-    div.innerHTML=`${d.name} <button onclick="openDM('${d.uid}','${d.name}')">DM</button>`;
-    u.appendChild(div);
+function loadUsers(){
+  db.ref("online").on("value", snap=>{
+    let u=document.getElementById("users");
+    u.innerHTML="";
+    snap.forEach(c=>{
+      let d=c.val();
+      let div=document.createElement("div");
+      div.className="user";
+      div.innerHTML=d.name;
+      u.appendChild(div);
+    });
   });
-});
+}
 
-/* ONLINE UPDATE */
-setInterval(()=>{
-  db.ref("online/"+currentUser.uid).set({
-    name:currentUser.name,
-    time:Date.now()
-  });
-},5000);
-
-/* DM OPEN */
+/* DM */
 function openDM(uid,name){
-  chatUser=uid;
-  document.getElementById("dmBox").style.display="flex";
+  dmUser=uid;
+  show('dm');
+  db.ref("dms/"+user.uid+"_"+uid).on("value", snap=>{
+    let box=document.getElementById("dmBox");
+    box.innerHTML="";
+    snap.forEach(c=>{
+      let d=c.val();
+      let div=document.createElement("div");
+      div.className="msg";
+      div.innerHTML=`${d.from}: ${d.text}`;
+      box.appendChild(div);
+    });
+  });
 }
 
 /* SEND DM */
-function sendDM(){
-  let text=document.getElementById("dmText").value;
-  if(text=="") return;
-
-  db.ref("dms/"+currentUser.uid+"_"+chatUser).push({
-    from:currentUser.name,
+function sendDM(text){
+  db.ref("dms/"+user.uid+"_"+dmUser).push({
+    from:user.displayName,
     text:text,
     time:Date.now()
   });
+}
 
-  document.getElementById("dmText").value="";
+/* ONLINE STATUS */
+function goOnline(){
+  db.ref("online/"+user.uid).set({
+    name:user.displayName,
+    time:Date.now()
+  });
+}
+setInterval(()=>{if(user)goOnline();},5000);
+
+/* OWNER CLEAR */
+function clearChat(){
+  db.ref("messages").remove();
 }
 </script>
 
