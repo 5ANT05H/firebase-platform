@@ -2,279 +2,55 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Crimson 404</title>
+    <title>Crimson 404 - Premium Dashboard</title>
     <style>
-        /* =========================================
-           1. Global Styles & Devil Background 
-           (Background only applies to .home-page)
-        ========================================= */
-        body {
-            margin: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #0f0f0f;
-            color: #ffffff;
-        }
-
-        body.home-page {
-            /* Replace the URL with your actual Crimson Devil image */
-            background: url('https://images.unsplash.com/photo-1509248961158-e54f6934749c?q=80&w=2000&auto=format&fit=crop') no-repeat center center fixed;
-            background-size: cover;
-            /* Dark overlay to make text readable but keep the red/devil vibe */
-            background-color: rgba(30, 0, 0, 0.85);
-            background-blend-mode: overlay;
-        }
-
-        /* =========================================
-           2. Announcement Banner (Made Smaller)
-        ========================================= */
-        .announcement-banner {
-            background-color: #aa0000;
-            color: white;
-            height: 25px; /* Small height */
-            line-height: 25px;
-            font-size: 14px;
-            font-weight: bold;
-            overflow: hidden;
-            white-space: nowrap;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.5);
-        }
-
-        /* =========================================
-           3. Menu with Emojis
-        ========================================= */
-        .nav-menu {
-            display: flex;
-            justify-content: center;
-            gap: 25px;
-            background: rgba(0, 0, 0, 0.9);
-            padding: 15px;
-            border-bottom: 2px solid #550000;
-        }
-        .nav-menu a {
-            color: #ffcccc;
-            text-decoration: none;
-            font-size: 16px;
-            font-weight: bold;
-            transition: color 0.3s;
-        }
-        .nav-menu a:hover { color: #ff0000; }
-
-        /* =========================================
-           4. Crimson 404 Title (Bigger & Bloody)
-        ========================================= */
-        .header-section {
-            text-align: center;
-            padding: 30px 20px;
-        }
-        .crimson-title {
-            font-size: 4.5em;
-            margin: 0;
-            text-transform: uppercase;
-            font-weight: 900;
-            /* Bloody red gradient and shadow */
-            background: linear-gradient(to bottom, #ff0000 0%, #550000 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            text-shadow: 2px 5px 10px rgba(255, 0, 0, 0.4), 0px -2px 2px rgba(255, 255, 255, 0.2);
-            letter-spacing: 5px;
-        }
-
-        /* =========================================
-           5. Sliding Promo Banner (Auto Carousel)
-        ========================================= */
-        .slider-container {
-            width: 85%;
-            max-width: 800px;
-            margin: 10px auto 30px auto;
-            height: 80px; /* Big enough to catch attention */
-            background: rgba(20, 0, 0, 0.9);
-            border: 2px solid #ff0000;
-            border-radius: 8px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(255, 0, 0, 0.3);
-        }
-        .slide {
-            width: 100%;
-            height: 100%;
-            display: none; /* Hidden by default */
-            align-items: center;
-            justify-content: center;
-            font-size: 22px;
-            font-weight: bold;
-            text-align: center;
-            position: absolute;
-            color: #fff;
-        }
-        .slide.active {
-            display: flex;
-            animation: slideIn 0.5s ease-in-out;
-        }
-        @keyframes slideIn {
-            from { opacity: 0; transform: scale(0.9); }
-            to { opacity: 1; transform: scale(1); }
-        }
-
-        /* =========================================
-           6. Purchase Proof Section
-        ========================================= */
-        .purchase-proof {
-            text-align: center;
-            padding: 15px;
-            background: rgba(0, 0, 0, 0.6);
-            border-top: 1px dashed #ff0000;
-            border-bottom: 1px dashed #ff0000;
-        }
-
-        /* =========================================
-           7. Profile Section (Points inside)
-        ========================================= */
-        .profile-container {
-            width: 320px;
-            margin: 40px auto;
-            background: rgba(15, 0, 0, 0.95);
-            padding: 25px;
-            border-radius: 12px;
-            border: 1px solid #ff0000;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.8);
-        }
-        .avatar {
-            width: 90px;
-            height: 90px;
-            background-color: #333;
-            border: 3px solid #ff0000;
-            border-radius: 50%;
-            margin: 0 auto 15px auto;
-            display: block;
-            object-fit: cover;
-        }
-        .points-box {
-            background: #2a0000;
-            padding: 10px;
-            border-radius: 6px;
-            font-size: 22px;
-            color: #ff3333;
-            font-weight: bold;
-            border: 1px solid #ff0000;
-            margin-top: 15px;
-        }
-
-        /* =========================================
-           8. Feedback Cards (Single Row)
-        ========================================= */
-        .feedback-wrapper {
-            margin: 40px 20px;
-        }
-        .feedback-title {
-            color: #ff3333;
-            border-left: 4px solid #ff0000;
-            padding-left: 10px;
-        }
-        .feedback-container {
-            display: flex;
-            flex-direction: row;
-            gap: 20px;
-            overflow-x: auto; /* Enables horizontal scrolling if many cards */
-            padding: 15px 0;
-            scrollbar-width: thin;
-            scrollbar-color: #ff0000 #222;
-        }
-        .feedback-card {
-            min-width: 260px;
-            background: rgba(30, 30, 30, 0.9);
-            padding: 20px;
-            border-radius: 8px;
-            border-top: 3px solid #ff0000;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.5);
-        }
+        /* CSS सेक्शन: यहाँ आप 500+ लाइन्स का स्टाइल लिख सकते हैं */
+        body { background: #050505; color: #ff0000; font-family: 'Courier New', Courier, monospace; margin: 0; }
         
-        /* Custom Scrollbar for Feedback Row */
-        .feedback-container::-webkit-scrollbar { height: 8px; }
-        .feedback-container::-webkit-scrollbar-track { background: #111; }
-        .feedback-container::-webkit-scrollbar-thumb { background: #ff0000; border-radius: 4px; }
+        /* ब्लडी टाइटल इफ़ेक्ट */
+        .bloody-title { text-align: center; font-size: 80px; text-shadow: 2px 2px 5px red; animation: drip 2s infinite; }
+        @keyframes drip { 0% { opacity: 1; } 50% { opacity: 0.8; } 100% { opacity: 1; } }
+
+        /* नेविगेशन */
+        .nav-menu { background: #110000; padding: 20px; display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; }
+        .nav-btn { color: white; cursor: pointer; padding: 10px; border: 1px solid #ff0000; transition: 0.3s; }
+        .nav-btn:hover { background: #ff0000; color: black; }
+
+        /* फीडबैक कार्ड्स */
+        .feedback-grid { display: flex; justify-content: space-between; padding: 50px; }
+        .card { width: 30%; border: 2px solid #550000; padding: 20px; text-align: center; background: #0a0000; }
+        
+        /* चैट और बाकी सेक्शन्स के लिए स्टाइल... */
     </style>
 </head>
-<body class="home-page">
-
-    <div class="announcement-banner">
-        <marquee scrollamount="6">🚨 ANNOUNCEMENT: Welcome to Crimson 404! | Server Maintenance at 12:00 AM 🚨</marquee>
-    </div>
+<body>
 
     <div class="nav-menu">
-        <a href="#">🏠 Home</a>
-        <a href="#">🏆 Leaderboard</a>
-        <a href="#">👤 Profile</a>
-        <a href="#">⚙️ Menu</a>
+        <div class="nav-btn" onclick="show('home')">HOME</div>
+        <div class="nav-btn" onclick="show('head-owner')">HEAD OWNER</div>
+        <div class="nav-btn" onclick="show('owner')">OWNER</div>
+        <div class="nav-btn" onclick="show('admin')">ADMIN</div>
+        <div class="nav-btn" onclick="show('premium')">PREMIUM CHAT</div>
+        <div class="nav-btn" onclick="show('public')">PUBLIC CHAT</div>
+        <div class="nav-btn" onclick="show('leaderboard')">LEADERBOARD</div>
+        <div class="nav-btn" onclick="show('about')">ABOUT</div>
+        <div class="nav-btn" onclick="show('contact')">CONTACT US</div>
+        <div class="nav-btn" onclick="show('support')">SUPPORT</div>
     </div>
 
-    <div class="header-section">
-        <h1 class="crimson-title">CRIMSON 404</h1>
-    </div>
-
-    <div class="slider-container" id="promo-slider">
-        <div class="slide active" style="color: #ffcccc;">🚀 New Game Launch: Demon Slayer RPG!</div>
-        <div class="slide" style="color: #ffff00;">🔥 Special Offer Price: Flat 50% OFF Today!</div>
-        <div class="slide" style="color: #00ffcc;">💎 Top-up now and get 500 Extra Points!</div>
-    </div>
-
-    <div class="purchase-proof">
-        <p>🟢 <b>Recent Purchase:</b> User <i>DevilKing99</i> just bought the Premium Bundle!</p>
-    </div>
-
-    <div class="profile-container">
-        <h2>My Profile</h2>
-        <img src="https://via.placeholder.com/90/ff0000/000000?text=Avatar" class="avatar" alt="User Avatar">
-        <div style="font-size: 18px;">Welcome back, <b>Player_One</b></div>
-        
-        <div class="points-box">
-            💀 Points: 8,450
-        </div>
-    </div>
-
-    <div class="feedback-wrapper">
-        <h2 class="feedback-title">Recent Feedback</h2>
-        <div class="feedback-container">
-            <div class="feedback-card">
-                <p>"The new game launch was super smooth! Loving the UI."</p>
-                <small>- @GamerX</small>
-            </div>
-            <div class="feedback-card">
-                <p>"Points system inside the profile makes so much sense now."</p>
-                <small>- @ShadowNinja</small>
-            </div>
-            <div class="feedback-card">
-                <p>"That sliding banner caught my eye instantly. Great offers!"</p>
-                <small>- @Nightmare22</small>
-            </div>
-            <div class="feedback-card">
-                <p>"Best platform for gamers. 10/10."</p>
-                <small>- @ProPlayer</small>
-            </div>
+    <div id="home" class="content">
+        <h1 class="bloody-title">CRIMSON 404</h1>
+        <div class="feedback-grid">
+            <div class="card"><h3>FEEDBACK</h3><p>Upload here...</p></div>
+            <div class="card"><h3>PAYMENT PROOF</h3><p>Upload here...</p></div>
+            <div class="card"><h3>GAMING FEEDBACK</h3><p>Upload here...</p></div>
         </div>
     </div>
 
     <script>
-        // Set the delay (in milliseconds). 3000ms = 3 seconds
-        const slideDelay = 3000; 
-        let currentSlide = 0;
-        const slides = document.querySelectorAll('.slide');
-
-        function showNextSlide() {
-            // Remove active class from current
-            slides[currentSlide].classList.remove('active');
-            
-            // Move to next slide, loop back to 0 if at the end
-            currentSlide = (currentSlide + 1) % slides.length;
-            
-            // Add active class to new
-            slides[currentSlide].classList.add('active');
-        }
-
-        // Start the automated slider
-        if(slides.length > 0) {
-            setInterval(showNextSlide, slideDelay);
+        function show(id) {
+            // यहाँ 200+ लाइन का JavaScript लॉजिक (Access Control) लिख सकते हैं
+            console.log("Navigating to: " + id);
         }
     </script>
 </body>
