@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chat App & Leaderboard</title>
+    <title>Crimson Devil World</title>
     <style>
         /* बेसिक स्टाइलिंग */
         body { font-family: Arial, sans-serif; background-color: #1e1e1e; color: #fff; margin: 0; padding: 20px; }
@@ -28,8 +28,6 @@
         th, td { padding: 10px; border-bottom: 1px solid #444; text-align: left; }
         th { background-color: #333; }
     </style>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 </head>
 <body>
 
@@ -41,21 +39,21 @@
         <input type="text" id="login-username" placeholder="Enter Username">
         <label>Password:</label>
         <input type="password" id="login-password" placeholder="Enter Password">
-        <button onclick="loginWithUsername()">Login</button>
+        <button id="btn-login">Login</button>
         <p id="login-error" style="color: red; display: none;">Invalid Username or Password</p>
     </div>
 
     <div id="dashboard-section" class="hidden">
         <div class="nav-bar">
-            <button onclick="showTab('chat-tab')">Chats</button>
-            <button onclick="showTab('leaderboard-tab')">Leaderboard</button>
-            <button onclick="showTab('settings-tab')">Settings</button>
-            <button onclick="logout()" style="background-color: #dc3545;">Logout</button>
+            <button id="tab-chat">Chats</button>
+            <button id="tab-leaderboard">Leaderboard</button>
+            <button id="tab-settings">Settings</button>
+            <button id="btn-logout" style="background-color: #dc3545;">Logout</button>
         </div>
 
         <div id="chat-tab">
             <h3>Select Chat Room</h3>
-            <select id="chat-room-select" onchange="loadChatRoom()">
+            <select id="chat-room-select">
                 <option value="public_chat">Public Chat</option>
                 <option value="admin_chat">Admin Chat</option>
                 <option value="premium_chat">Premium Chat</option>
@@ -66,8 +64,7 @@
             <p id="access-denied-msg" style="color: red; display: none;">You do not have permission to view this chat.</p>
             
             <div id="chat-interface">
-                <div class="chat-box" id="chat-messages">
-                    </div>
+                <div class="chat-box" id="chat-messages"></div>
                 <div class="controls-row">
                     <button id="btn-emoji" style="flex: 1;">😀 Emoji</button>
                     <button id="btn-photo" style="flex: 1;">📷 Photo</button>
@@ -75,7 +72,7 @@
                 </div>
                 <div class="controls-row" style="margin-top: 5px;">
                     <input type="text" id="chat-input" placeholder="Type a message..." style="flex: 4;">
-                    <button onclick="sendMessage()" style="flex: 1;">Send</button>
+                    <button id="btn-send" style="flex: 1;">Send</button>
                 </div>
             </div>
         </div>
@@ -90,8 +87,7 @@
                         <th>CRIMSON POINTS</th>
                     </tr>
                 </thead>
-                <tbody id="leaderboard-body">
-                    </tbody>
+                <tbody id="leaderboard-body"></tbody>
             </table>
         </div>
 
@@ -99,33 +95,36 @@
             <h3>User Settings</h3>
             <label>Update Username:</label>
             <input type="text" id="new-username" placeholder="Enter new username">
-            <button onclick="updateSettingsUsername()">Save Username</button>
+            <button id="btn-save-settings">Save Username</button>
             <p id="settings-msg" style="color: lightgreen; display: none;">Username updated successfully!</p>
         </div>
     </div>
 </div>
 
-<script>
-    // 1. FIREBASE SETUP (यहाँ अपनी डिटेल्स डालें)
-    const firebaseConfig = {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-        databaseURL: "https://YOUR_PROJECT_ID-default-rtdb.firebaseio.com",
-        projectId: "YOUR_PROJECT_ID",
-        storageBucket: "YOUR_PROJECT_ID.appspot.com",
-        messagingSenderId: "YOUR_SENDER_ID",
-        appId: "YOUR_APP_ID"
-    };
-    // Firebase Initialize करें (अगर कॉन्फ़िगरेशन डाली है)
-    if(firebaseConfig.apiKey !== "YOUR_API_KEY") {
-        firebase.initializeApp(firebaseConfig);
-    }
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+    import { getDatabase, ref, set, update, get, orderByChild, equalTo, query, limitToLast, onValue } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-database.js";
 
-    // करंट यूजर का डेटा स्टोर करने के लिए
-    let currentUser = null; 
+    // आपकी दी हुई Firebase कॉन्फ़िगरेशन
+    const firebaseConfig = {
+        apiKey: "AIzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYkE",
+        authDomain: "crimson-devil-world.firebaseapp.com",
+        databaseURL: "https://crimson-devil-world-default-rtdb.firebaseio.com",
+        projectId: "crimson-devil-world",
+        storageBucket: "crimson-devil-world.firebasestorage.app",
+        messagingSenderId: "625125480692",
+        appId: "1:625125480692:web:cf7dc8b4a8d7cac82c66a1",
+        measurementId: "G-RGE649JWLV"
+    };
+
+    // Firebase Initialize करें
+    const app = initializeApp(firebaseConfig);
+    const database = getDatabase(app);
+
+    // ग्लोबल स्टेट वेरिएबल्स
+    let currentUser = null;
     let currentUserKey = null;
 
-    // रोल्स की लिस्ट
     const roles = {
         HEAD_OWNER: 'head_owner',
         OWNER: 'owner',
@@ -134,58 +133,87 @@
         USER: 'user'
     };
 
-    // 2. LOGIN LOGIC (Username based)
-    function loginWithUsername() {
-        const usernameInput = document.getElementById('login-username').val();
-        const passwordInput = document.getElementById('login-password').val();
+    // DOM एलिमेंट्स को कैप्चर करना
+    const loginBtn = document.getElementById('btn-login');
+    const logoutBtn = document.getElementById('btn-logout');
+    const sendBtn = document.getElementById('btn-send');
+    const saveSettingsBtn = document.getElementById('btn-save-settings');
+    const chatRoomSelect = document.getElementById('chat-room-select');
 
-        // डमी लॉगिन टेस्ट करने के लिए (बिना Firebase के कोड रन करने के लिए)
-        if(firebaseConfig.apiKey === "YOUR_API_KEY") {
-            alert("Firebase config missing! Running in Demo Mode as Head Owner.");
-            currentUser = { username: usernameInput || "DemoUser", role: roles.HEAD_OWNER };
-            showDashboard();
+    // टैब बटन्स
+    document.getElementById('tab-chat').addEventListener('click', () => showTab('chat-tab'));
+    document.getElementById('tab-leaderboard').addEventListener('click', () => showTab('leaderboard-tab'));
+    document.getElementById('tab-settings').addEventListener('click', () => showTab('settings-tab'));
+
+    // इवेंट लिस्टनर्स जोड़ना
+    loginBtn.addEventListener('click', loginWithUsername);
+    logoutBtn.addEventListener('click', logout);
+    sendBtn.addEventListener('click', sendMessage);
+    saveSettingsBtn.addEventListener('click', updateSettingsUsername);
+    chatRoomSelect.addEventListener('change', loadChatRoom);
+
+    // 1. LOGIN LOGIC (Firebase v12 Query)
+    async function loginWithUsername() {
+        const usernameInput = document.getElementById('login-username').value.trim();
+        const passwordInput = document.getElementById('login-password').value;
+        const errorMsg = document.getElementById('login-error');
+
+        if (!usernameInput || !passwordInput) {
+            alert("Please fill in all fields.");
             return;
         }
 
-        const usersRef = firebase.database().ref('users');
-        usersRef.orderByChild('username').equalTo(usernameInput).once('value', (snapshot) => {
+        try {
+            const usersRef = ref(database, 'users');
+            // यूजरनेम के आधार पर क्वेरी बनाना
+            const userQuery = query(usersRef, orderByChild('username'), equalTo(usernameInput));
+            const snapshot = await get(userQuery);
+
             if (snapshot.exists()) {
+                let passwordMatch = false;
+                
                 snapshot.forEach((childSnapshot) => {
                     const userData = childSnapshot.val();
                     if (userData.password === passwordInput) {
                         currentUser = userData;
                         currentUserKey = childSnapshot.key;
+                        passwordMatch = true;
                         showDashboard();
-                    } else {
-                        showError();
                     }
                 });
-            } else {
-                showError();
-            }
-        });
-    }
 
-    function showError() {
-        document.getElementById('login-error').style.display = 'block';
+                if (!passwordMatch) {
+                    errorMsg.style.display = 'block';
+                }
+            } else {
+                errorMsg.style.display = 'block';
+            }
+        } catch (error) {
+            console.error("Login Error: ", error);
+            alert("Database Error. Check your console log.");
+        }
     }
 
     function showDashboard() {
         document.getElementById('login-section').classList.add('hidden');
         document.getElementById('dashboard-section').classList.remove('hidden');
         document.getElementById('app-title').innerText = "Dashboard - Welcome " + currentUser.username;
-        loadChatRoom(); // डिफ़ॉल्ट चैट लोड करें
-        fetchLiveLeaderboard(); // लीडरबोर्ड इनिशियलाइज़ करें
+        document.getElementById('login-error').style.display = 'none';
+        loadChatRoom(); 
+        fetchLiveLeaderboard(); 
     }
 
     function logout() {
         currentUser = null;
+        currentUserKey = null;
         document.getElementById('dashboard-section').classList.add('hidden');
         document.getElementById('login-section').classList.remove('hidden');
         document.getElementById('app-title').innerText = "Login to System";
+        document.getElementById('login-username').value = '';
+        document.getElementById('login-password').value = '';
     }
 
-    // 3. TAB NAVIGATION LOGIC
+    // 2. TAB NAVIGATION
     function showTab(tabId) {
         document.getElementById('chat-tab').classList.add('hidden');
         document.getElementById('leaderboard-tab').classList.add('hidden');
@@ -193,15 +221,14 @@
         document.getElementById(tabId).classList.remove('hidden');
     }
 
-    // 4. CHAT PERMISSIONS & MEDIA RULES LOGIC
+    // 3. CHAT PERMISSIONS & MEDIA RULES
     function loadChatRoom() {
-        const room = document.getElementById('chat-room-select').value;
+        const room = chatRoomSelect.value;
         const interfaceDiv = document.getElementById('chat-interface');
         const deniedMsg = document.getElementById('access-denied-msg');
         
-        // एक्सेस चेक करना
         let hasAccess = false;
-        const userRole = currentUser.role;
+        const userRole = currentUser.role || 'user';
 
         switch (room) {
             case 'head_owner_chat':
@@ -209,7 +236,7 @@
             case 'owner_chat':
                 hasAccess = [roles.HEAD_OWNER, roles.OWNER, roles.ADMIN].includes(userRole); break;
             case 'admin_chat':
-                hasAccess = true; break; // सभी कर सकते हैं
+                hasAccess = true; break; 
             case 'premium_chat':
                 hasAccess = [roles.HEAD_OWNER, roles.OWNER, roles.ADMIN, roles.PREMIUM].includes(userRole); break;
             case 'public_chat':
@@ -231,7 +258,6 @@
         const fileBtn = document.getElementById('btn-file');
         const allowedFileChats = ['head_owner_chat', 'owner_chat', 'admin_chat'];
         
-        // फोटो और इमोजी बाय डिफ़ॉल्ट सब में ऑन हैं, बस फाइल का बटन शो/हाइड करना है
         if (allowedFileChats.includes(room)) {
             fileBtn.style.display = 'block';
         } else {
@@ -249,17 +275,18 @@
         }
     }
 
-    // 5. LIVE LEADERBOARD LOGIC
+    // 4. LIVE LEADERBOARD (Top 100 Auto-Update Logic)
     function fetchLiveLeaderboard() {
-        if(firebaseConfig.apiKey === "YOUR_API_KEY") return; // डेमो मोड में स्किप करें
-
-        const leaderboardRef = firebase.database().ref('users');
-        leaderboardRef.orderByChild('crimson_points').limitToLast(100).on('value', (snapshot) => {
+        const usersRef = ref(database, 'users');
+        const leaderboardQuery = query(usersRef, orderByChild('crimson_points'), limitToLast(100));
+        
+        // onValue लाइव डेटा ट्रैक करता रहेगा अपने आप चेंज होने पर
+        onValue(leaderboardQuery, (snapshot) => {
             let data = [];
             snapshot.forEach((child) => {
                 data.push(child.val());
             });
-            data.reverse(); // ज्यादा पॉइंट्स वाले ऊपर
+            data.reverse(); 
             
             const tbody = document.getElementById('leaderboard-body');
             tbody.innerHTML = '';
@@ -267,32 +294,39 @@
             data.forEach((user, index) => {
                 const row = `<tr>
                     <td>#${index + 1}</td>
-                    <td>${user.username}</td>
-                    <td>${user.crimson_points}</td>
+                    <td>${user.username || 'Unknown'}</td>
+                    <td>${user.crimson_points || 0}</td>
                 </tr>`;
                 tbody.innerHTML += row;
             });
         });
     }
 
-    // 6. SETTINGS (UPDATE USERNAME)
-    function updateSettingsUsername() {
-        const newName = document.getElementById('new-username').value;
-        if (newName.trim() === '') return;
+    // 5. SETTINGS (UPDATE USERNAME)
+    async function updateSettingsUsername() {
+        const newName = document.getElementById('new-username').value.trim();
+        const settingsMsg = document.getElementById('settings-msg');
+        
+        if (newName === '') {
+            alert("Please enter a valid username.");
+            return;
+        }
 
-        if(firebaseConfig.apiKey !== "YOUR_API_KEY" && currentUserKey) {
-            firebase.database().ref('users/' + currentUserKey).update({
-                username: newName
-            }).then(() => {
+        if (currentUserKey) {
+            try {
+                const userRef = ref(database, 'users/' + currentUserKey);
+                await update(userRef, { username: newName });
+                
                 currentUser.username = newName;
-                document.getElementById('settings-msg').style.display = 'block';
                 document.getElementById('app-title').innerText = "Dashboard - Welcome " + currentUser.username;
-            });
-        } else {
-            // डेमो मोड के लिए
-            currentUser.username = newName;
-            document.getElementById('settings-msg').style.display = 'block';
-            document.getElementById('app-title').innerText = "Dashboard - Welcome " + currentUser.username;
+                settingsMsg.style.display = 'block';
+                document.getElementById('new-username').value = '';
+                
+                setTimeout(() => { settingsMsg.style.display = 'none'; }, 3000);
+            } catch (error) {
+                console.error("Error updating username: ", error);
+                alert("Failed to update username in database.");
+            }
         }
     }
 </script>
