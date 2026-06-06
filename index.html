@@ -141,15 +141,21 @@ setTimeout(()=>{
 /* SIGNUP */
 window.signup = async function(){
 
-  let u = username.value;
-  let p = password.value;
+  let u = document.getElementById("username").value;
+  let p = document.getElementById("password").value;
 
-  if(!u||!p) return alert("fill fields");
+  if(!u || !p){
+    alert("Fill username & password");
+    return;
+  }
 
   let ref = doc(db,"users",u);
   let snap = await getDoc(ref);
 
-  if(snap.exists()) return alert("User exists");
+  if(snap.exists()){
+    alert("User already exists");
+    return;
+  }
 
   await setDoc(ref,{
     username:u,
@@ -161,25 +167,34 @@ window.signup = async function(){
   alert("Signup success ✔");
 };
 
-/* LOGIN */
+
+/* LOGIN FIX */
 window.login = async function(){
 
-  let u = username.value;
-  let p = password.value;
+  let u = document.getElementById("username").value;
+  let p = document.getElementById("password").value;
+
+  if(!u || !p){
+    alert("Enter username & password");
+    return;
+  }
 
   let ref = doc(db,"users",u);
   let snap = await getDoc(ref);
 
-  if(!snap.exists()) return alert("User not found");
+  if(!snap.exists()){
+    alert("User not found");
+    return;
+  }
 
   let data = snap.data();
 
-  if(data.password !== p) return alert("Wrong password");
+  if(data.password !== p){
+    alert("Wrong password");
+    return;
+  }
 
   alert("WELCOME TO DEVIL WORLD 🔥");
+
+  currentUser = data;
 };
-
-</script>
-
-</body>
-</html>
