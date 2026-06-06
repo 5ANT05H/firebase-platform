@@ -1,151 +1,73 @@
-<!DOCTYPE html>
-<html>
-<head>
-<meta charset="utf-8">
-<title>DEVIL LOGIN ANIMATION</title>
-
-<style>
-body{
-margin:0;
-background:black;
-color:white;
-font-family:Arial;
-overflow:hidden;
-}
-
-/* LOGIN BOX */
-#auth{
-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-}
-
-.box{
-padding:30px;
-border:2px solid red;
-box-shadow:0 0 25px red;
-text-align:center;
-background:#0a0a0a;
-border-radius:10px;
-}
-
-button{
-padding:12px;
-width:250px;
-background:red;
-border:none;
-color:white;
-cursor:pointer;
-font-size:16px;
-}
-
-/* DEVIL ANIMATION SCREEN */
-#devilScreen{
-display:none;
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:black;
-justify-content:center;
-align-items:center;
-flex-direction:column;
-}
-
-/* DEVIL IMAGE */
-#devilFace{
-width:200px;
-opacity:0;
-transform:scale(0.2);
-animation:openDevil 2s forwards;
-filter:drop-shadow(0 0 20px red);
-}
-
-/* TEXT */
-#welcomeText{
-color:red;
-font-size:22px;
-margin-top:20px;
-opacity:0;
-animation:fadeIn 2s forwards 1s;
-}
-
-/* ANIMATIONS */
-@keyframes openDevil{
-0%{transform:scale(0.2) rotate(0deg);opacity:0;}
-50%{opacity:1;}
-100%{transform:scale(1.2) rotate(360deg);opacity:1;}
-}
-
-@keyframes fadeIn{
-from{opacity:0;}
-to{opacity:1;}
-}
-</style>
-</head>
-
-<body>
-
-<!-- LOGIN -->
-<div id="auth">
-<div class="box">
-<h2>💀 DEVIL LOGIN</h2>
-<button onclick="login()">LOGIN WITH GOOGLE</button>
-</div>
-</div>
-
-<!-- DEVIL ANIMATION -->
-<div id="devilScreen">
-<img id="devilFace" src="https://i.imgur.com/3ZQ3ZQm.png">
-<div id="welcomeText">🔥 WELCOME TO DEVIL WORLD 🔥</div>
-</div>
-
 <script type="module">
 
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-getAuth,
-GoogleAuthProvider,
-signInWithPopup
+  getAuth,
+  GoogleAuthProvider,
+  signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-const app = initializeApp({
-apiKey:"YOUR_API_KEY",
-authDomain:"YOUR_AUTH_DOMAIN",
-projectId:"YOUR_PROJECT_ID"
-});
+/* ✅ YOUR FIREBASE CONFIG (FIXED) */
+const firebaseConfig = {
+  apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
+  authDomain: "crimson-platform-92f67.firebaseapp.com",
+  projectId: "crimson-platform-92f67",
+  storageBucket: "crimson-platform-92f67.firebasestorage.app",
+  messagingSenderId: "7775873440",
+  appId: "1:7775873440:web:b81205d0d1e84e12f3dcc5"
+};
 
+const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const provider = new GoogleAuthProvider();
 
-/* LOGIN */
-window.login = async function(){
+/* 💀 SAFE LOGIN (NO BLACK SCREEN) */
+window.login = async function () {
 
-try{
+  try {
 
-const result = await signInWithPopup(auth, provider);
-const user = result.user;
+    // loading state (prevents blank screen)
+    document.getElementById("auth").innerHTML =
+      "<h2 style='color:red'>💀 Logging in...</h2>";
 
-/* HIDE LOGIN */
-document.getElementById("auth").style.display="none";
+    const result = await signInWithPopup(auth, provider);
+    const user = result.user;
 
-/* SHOW DEVIL ANIMATION */
-document.getElementById("devilScreen").style.display="flex";
+    console.log("LOGIN SUCCESS:", user.email);
 
-/* OPTIONAL ROLE CHECK */
-console.log("Logged in:", user.email);
+    // SAFE UI SWITCH
+    document.body.innerHTML = `
+      <div style="
+        background:black;
+        color:red;
+        height:100vh;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        flex-direction:column;
+        font-family:Arial;
+      ">
+        <h1>💀 DEVIL WORLD</h1>
+        <h2>Welcome ${user.displayName}</h2>
+        <p>${user.email}</p>
+      </div>
+    `;
 
-}catch(e){
-console.log(e);
-alert("Login Failed");
-}
+  } catch (e) {
+
+    console.log(e);
+
+    // ❌ NO BLACK SCREEN FIX
+    document.getElementById("auth").innerHTML = `
+      <h2 style="color:red">Login Failed</h2>
+      <button onclick="location.reload()"
+        style="padding:10px;background:red;color:white;border:none;">
+        RETRY
+      </button>
+    `;
+
+  }
 
 };
 
 </script>
-
-</body>
-</html>
