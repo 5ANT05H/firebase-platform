@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>CRIMSON DEVIL GOD MODE</title>
+<meta charset="utf-8">
+<title>CYBER DEVIL WORLD</title>
 
 <style>
 body{
@@ -76,12 +77,6 @@ background:black;
 color:red;
 border:1px solid red;
 cursor:pointer;
-transition:0.3s;
-}
-
-#sidebar button:hover{
-transform:scale(1.1);
-box-shadow:0 0 10px red;
 }
 
 /* MAIN */
@@ -126,48 +121,53 @@ transition:0.3s;
 transform:scale(1.2);
 box-shadow:0 0 15px red;
 }
-
-/* STORE */
-.card{
-border:1px solid red;
-padding:10px;
-margin:5px;
-background:#0d0d0d;
-}
 </style>
 
 </head>
 
 <body>
 
-<!-- TOP BAR -->
+<!-- TOP NEWS -->
 <div id="topBar">
-<marquee scrollamount="6">
-🔥 GTA V 2.2 | PRICE $29.99 |
-👑 DEVIL UPDATE LIVE |
-💀 CRIMSON GOD MODE ACTIVE |
-🎮 NEW SYSTEM ONLINE |
+<marquee id="newsBar" scrollamount="6">
+💀 CYBER DEVIL WORLD ACTIVE
 </marquee>
 </div>
 
-<!-- AUTH -->
+<!-- AUTH SYSTEM -->
 <div id="auth">
 
-<div class="box">
+<!-- REGISTER -->
+<div id="registerBox" class="box">
 
 <h2>REGISTER</h2>
+
 <input id="r_user" placeholder="username">
 <input id="r_pass" placeholder="password">
 <input id="r_cpass" placeholder="confirm password">
 <input id="r_email" placeholder="gmail">
+
 <button onclick="register()">REGISTER</button>
 
-<hr>
+<p onclick="showLogin()" style="color:red;cursor:pointer;">
+Already have account? LOGIN
+</p>
+
+</div>
+
+<!-- LOGIN -->
+<div id="loginBox" class="box" style="display:none;">
 
 <h2>LOGIN</h2>
+
 <input id="l_user" placeholder="username">
 <input id="l_pass" type="password" placeholder="password">
+
 <button onclick="login()">LOGIN</button>
+
+<p onclick="showRegister()" style="color:red;cursor:pointer;">
+Create new account? REGISTER
+</p>
 
 </div>
 
@@ -184,7 +184,6 @@ background:#0d0d0d;
 <button onclick="openChat('head')">👑</button>
 <button onclick="openStore()">🛒</button>
 <button onclick="openProfile()">👤</button>
-<button onclick="openAdmin()">⚙</button>
 </div>
 
 <div id="main">
@@ -197,37 +196,46 @@ background:#0d0d0d;
 <!-- PROFILE -->
 <div id="profile">
 <h3>PROFILE</h3>
-<img id="avatar" src="https://i.imgur.com/0y0y0y0.png">
+<img id="avatar" width="60" height="60">
 <div id="avatarGrid"></div>
 </div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
-getFirestore,
-doc,
-getDoc,
-setDoc,
-collection,
-addDoc,
-query,
-orderBy,
-onSnapshot
+getFirestore,doc,getDoc,setDoc,collection,addDoc,query,orderBy,onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-const firebaseConfig={
+const app=initializeApp({
 apiKey:"AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
-authDomain:"crimson-platform-92f67.firebaseapp.com",
 projectId:"crimson-platform-92f67"
-};
+});
 
-const app=initializeApp(firebaseConfig);
 const db=getFirestore(app);
 
 let currentUser=null;
 
-const HEAD="C4CRIMSON";
+/* AVATARS */
+const avatars=[
+"https://i.imgur.com/1.png",
+"https://i.imgur.com/2.png",
+"https://i.imgur.com/3.png",
+"https://i.imgur.com/4.png",
+"https://i.imgur.com/5.png",
+"https://i.imgur.com/devil.gif"
+];
+
+/* SWITCH */
+window.showLogin=function(){
+registerBox.style.display="none";
+loginBox.style.display="block";
+};
+
+window.showRegister=function(){
+loginBox.style.display="none";
+registerBox.style.display="block";
+};
 
 /* REGISTER */
 window.register=async function(){
@@ -242,10 +250,11 @@ username:r_user.value,
 password:r_pass.value,
 email:r_email.value,
 role:"USER",
-avatar:"https://i.imgur.com/0y0y0y0.png"
+avatar:avatars[0]
 });
 
 alert("REGISTER DONE ✔");
+showLogin();
 };
 
 /* LOGIN */
@@ -267,11 +276,11 @@ return;
 
 currentUser=d;
 
-start();
+startApp();
 };
 
 /* START */
-function start(){
+function startApp(){
 
 auth.style.display="none";
 app.style.display="block";
@@ -292,7 +301,7 @@ chatArea.innerHTML=`
 <div class="chatBox" id="box"></div>
 `;
 
-load(type);
+loadChat(type);
 };
 
 window.send=async function(type){
@@ -300,30 +309,25 @@ window.send=async function(type){
 await addDoc(collection(db,type),{
 text:msg.value,
 user:currentUser.username,
-role:currentUser.role,
 time:Date.now()
 });
 
 msg.value="";
 };
 
-function load(type){
+function loadChat(type){
 
 const q=query(collection(db,type),orderBy("time"));
 
 onSnapshot(q,snap=>{
 
-let html="";
+let h="";
 
 snap.forEach(d=>{
-
-let x=d.data();
-
-html+=`<p><b>${x.user}</b> (${x.role}): ${x.text}</p>`;
-
+h+=`<p><b>${d.data().user}</b>: ${d.data().text}</p>`;
 });
 
-box.innerHTML=html;
+box.innerHTML=h;
 
 });
 
@@ -333,9 +337,11 @@ box.innerHTML=html;
 window.openStore=function(){
 
 chatArea.innerHTML=`
-<div class="card">GTA V 2.2 - $29.99</div>
-<div class="card">PUBG MOD - $9.99</div>
-<div class="card">FREE FIRE ULTRA - $14.99</div>
+<div style="border:1px solid red;padding:10px">
+GTA V 2.2 - $29.99<br>
+PUBG MOD - $9.99<br>
+FREE FIRE - $14.99
+</div>
 `;
 
 }
@@ -345,22 +351,15 @@ window.openProfile=function(){
 
 profile.style.display="block";
 
-let avatars=[
-"https://i.imgur.com/1.png",
-"https://i.imgur.com/2.png",
-"https://i.imgur.com/3.png",
-"https://i.imgur.com/devil.gif"
-];
-
 let grid=document.getElementById("avatarGrid");
 grid.innerHTML="";
 
 avatars.forEach(a=>{
 
-let img=document.createElement("img");
-img.src=a;
+let i=document.createElement("img");
+i.src=a;
 
-img.onclick=async()=>{
+i.onclick=async()=>{
 
 avatar.src=a;
 
@@ -370,24 +369,9 @@ avatar:a
 
 };
 
-grid.appendChild(img);
+grid.appendChild(i);
 
 });
-
-}
-
-/* ADMIN */
-window.openAdmin=function(){
-
-if(currentUser.username!=="C4CRIMSON"){
-alert("HEAD ONLY");
-return;
-}
-
-let g=prompt("Game name");
-let p=prompt("Price");
-
-alert(g+" added with price "+p);
 
 }
 
