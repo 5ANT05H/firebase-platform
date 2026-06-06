@@ -1,149 +1,261 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>CRIMSON DEVIL WORLD</title>
+<title>DISCORD 2.0 CRIMSON</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background:#0b0b0b;
+  background:#0c0c0c;
   color:white;
 }
 
-.top{
-  padding:12px;
-  background:black;
-  border-bottom:2px solid red;
-  text-align:center;
-  font-weight:bold;
-  color:red;
+.container{
+  display:flex;
+  height:100vh;
 }
 
-#chat{
-  height:75vh;
+/* SIDEBAR */
+.left{
+  width:240px;
+  background:#1a1a1a;
+  padding:10px;
+}
+
+.menu{
+  padding:10px;
+  margin:6px 0;
+  background:#111;
+  cursor:pointer;
+}
+.menu:hover{background:#ff0000;}
+
+/* CHAT */
+.chat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+}
+
+#box{
+  flex:1;
   overflow:auto;
+  padding:10px;
+  background:#0b0b0b;
+}
+
+.msg{
+  margin:6px 0;
+  padding:8px;
+  background:#111;
+  border-left:3px solid red;
+}
+
+/* INPUT */
+.input{
+  display:flex;
   padding:10px;
   background:#111;
 }
 
-.msg{
-  background:black;
-  margin:6px 0;
-  padding:8px;
-  border-left:3px solid red;
-}
-
-.input{
-  display:flex;
-}
-
 input{
   flex:1;
-  padding:12px;
-  border:none;
-  outline:none;
+  padding:10px;
 }
 
 button{
-  padding:12px;
+  padding:10px;
   background:red;
-  border:none;
   color:white;
-  cursor:pointer;
+  border:none;
 }
 
-.badge{
-  font-size:10px;
-  padding:2px 6px;
-  margin-left:5px;
-  border-radius:4px;
+/* RIGHT */
+.right{
+  width:240px;
+  background:#1a1a1a;
+  padding:10px;
 }
 
-.owner{background:gold;color:black;}
-.admin{background:orange;}
-.user{background:gray;}
+.user{
+  padding:8px;
+  margin:5px;
+  background:#111;
+}
+
+/* DM BOX */
+.dmBox{
+  position:fixed;
+  bottom:10px;
+  right:10px;
+  width:250px;
+  height:300px;
+  background:#111;
+  border:1px solid red;
+  display:none;
+  flex-direction:column;
+}
+
+.dmHeader{
+  padding:6px;
+  background:#000;
+}
+
+.dmMessages{
+  flex:1;
+  overflow:auto;
+  padding:5px;
+}
+
+.dmInput{
+  display:flex;
+}
 </style>
 </head>
 
 <body>
 
-<div class="top">🔥 CRIMSON DEVIL WORLD - LIVE CHAT</div>
+<div class="container">
 
-<div id="chat"></div>
-
-<div class="input">
-  <input id="text" placeholder="Type message...">
-  <button onclick="sendMsg()">Send</button>
+<!-- LEFT -->
+<div class="left">
+<h3>MENU</h3>
+<div class="menu">🏠 Home</div>
+<div class="menu">💬 Chat</div>
+<div class="menu">💬 DM</div>
+<div class="menu">👑 Owner Panel</div>
+<div class="menu">🟢 Online</div>
 </div>
 
-<!-- Firebase -->
+<!-- CHAT -->
+<div class="chat">
+<div id="box"></div>
+
+<div class="input">
+<input id="text">
+<button onclick="sendMsg()">Send</button>
+</div>
+</div>
+
+<!-- RIGHT -->
+<div class="right">
+<h3>🟢 ONLINE</h3>
+<div id="users"></div>
+</div>
+
+</div>
+
+<!-- DM SYSTEM -->
+<div class="dmBox" id="dmBox">
+  <div class="dmHeader">💬 Private Chat</div>
+  <div class="dmMessages" id="dmMsgs"></div>
+  <div class="dmInput">
+    <input id="dmText">
+    <button onclick="sendDM()">Send</button>
+  </div>
+</div>
+
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
 <script>
-/* 🔥 FIREBASE CONFIG */
 const firebaseConfig = {
-  apiKey: "AlzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYKE",
+  apiKey: "YOUR_KEY",
   authDomain: "crimson-devil-world.firebaseapp.com",
   projectId: "crimson-devil-world",
+  databaseURL: "https://crimson-devil-world-default-rtdb.firebaseio.com",
   storageBucket: "crimson-devil-world.appspot.com",
   messagingSenderId: "625125480692",
-  appId: "1:625125480692:web:fcf6202469371862c66a1"
+  appId: "YOUR_APP_ID"
 };
 
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-/* 👤 USER SYSTEM */
+/* USER */
 let currentUser = {
+  uid: Math.random().toString(36).substr(2,9),
   name: "Santosh",
-  role: "owner"   // change: user / admin / owner
+  role: "owner"
 };
 
-/* 💬 SEND MESSAGE */
+let chatUser = null;
+
+/* CHAT */
 function sendMsg(){
-  let text = document.getElementById("text").value;
-  if(text.trim()=="") return;
+  let text=document.getElementById("text").value;
+  if(text=="") return;
 
   db.ref("messages").push({
-    name: currentUser.name,
-    role: currentUser.role,
-    text: text,
-    time: Date.now()
+    uid:currentUser.uid,
+    name:currentUser.name,
+    text:text,
+    time:Date.now()
   });
 
   document.getElementById("text").value="";
 }
 
-/* 🔥 LIVE CHAT */
+/* LIVE CHAT */
 db.ref("messages").on("value", snap=>{
-  let chat = document.getElementById("chat");
-  chat.innerHTML="";
+  let box=document.getElementById("box");
+  box.innerHTML="";
 
-  snap.forEach(child=>{
-    let d = child.val();
-
-    let badge="";
-    if(d.role==="owner") badge="👑 OWNER";
-    else if(d.role==="admin") badge="⚙ ADMIN";
-    else badge="USER";
-
-    let div = document.createElement("div");
+  snap.forEach(c=>{
+    let d=c.val();
+    let div=document.createElement("div");
     div.className="msg";
 
-    div.innerHTML=`
-      <b>${d.name}</b> <span class="badge">${badge}</span><br>
-      ${d.text}
-    `;
+    div.innerHTML=`<b>${d.name}</b><br>${d.text}
+    <button onclick="openDM('${d.uid}','${d.name}')">DM</button>`;
 
-    chat.appendChild(div);
+    box.appendChild(div);
+  });
+});
+
+/* ONLINE */
+db.ref("online").on("value", snap=>{
+  let u=document.getElementById("users");
+  u.innerHTML="";
+  snap.forEach(c=>{
+    let d=c.val();
+    let div=document.createElement("div");
+    div.className="user";
+    div.innerHTML=`${d.name} <button onclick="openDM('${d.uid}','${d.name}')">DM</button>`;
+    u.appendChild(div);
+  });
+});
+
+/* ONLINE UPDATE */
+setInterval(()=>{
+  db.ref("online/"+currentUser.uid).set({
+    name:currentUser.name,
+    time:Date.now()
+  });
+},5000);
+
+/* DM OPEN */
+function openDM(uid,name){
+  chatUser=uid;
+  document.getElementById("dmBox").style.display="flex";
+}
+
+/* SEND DM */
+function sendDM(){
+  let text=document.getElementById("dmText").value;
+  if(text=="") return;
+
+  db.ref("dms/"+currentUser.uid+"_"+chatUser).push({
+    from:currentUser.name,
+    text:text,
+    time:Date.now()
   });
 
-  chat.scrollTop = chat.scrollHeight;
-});
+  document.getElementById("dmText").value="";
+}
 </script>
 
 </body>
