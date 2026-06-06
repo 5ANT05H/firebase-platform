@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>DEVIL WORLD FULL SYSTEM</title>
+<title>DEVIL WORLD 7 OPTIONS FINAL</title>
 
 <style>
 body{
@@ -12,25 +12,31 @@ color:white;
 font-family:Arial;
 }
 
-#auth{
+/* MENU */
+#menu{
+position:fixed;
+left:0;
+top:0;
+width:220px;
 height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-flex-direction:column;
+background:#111;
+border-right:2px solid red;
+padding:10px;
 }
 
-button{
+#menu button{
+width:100%;
 padding:10px;
-margin:5px;
+margin:5px 0;
 background:red;
 color:white;
 border:none;
 cursor:pointer;
 }
 
+/* MAIN */
 #app{
-display:none;
+margin-left:230px;
 padding:20px;
 }
 
@@ -41,10 +47,13 @@ margin:10px;
 border:1px solid red;
 }
 
+.hidden{
+display:none;
+}
+
 #chatBox{
 height:200px;
 overflow:auto;
-background:#000;
 border:1px solid red;
 padding:10px;
 }
@@ -53,34 +62,72 @@ padding:10px;
 
 <body>
 
-<!-- LOGIN -->
-<div id="auth">
-<h2>💀 DEVIL WORLD</h2>
-<button onclick="login()">LOGIN WITH GOOGLE</button>
+<!-- MENU -->
+<div id="menu">
+<h3>💀 DEVIL MENU</h3>
+
+<button onclick="showTab('home')">🏠 Home</button>
+<button onclick="showTab('chat')">💬 Chat</button>
+<button onclick="showTab('vote')">🔥 Vote</button>
+<button onclick="showTab('profile')">👤 Profile</button>
+<button onclick="showTab('premium')">💎 Premium</button>
+<button onclick="showTab('admin')">⚙ Admin</button>
+<button onclick="showTab('dm')">🔒 DM</button>
+
 </div>
 
 <!-- APP -->
 <div id="app">
 
-<h3 id="userInfo"></h3>
+<h2 id="userInfo">💀 DEVIL WORLD</h2>
 
-<!-- VOTE -->
-<div class="card">
-<h3>🔥 VOTE SYSTEM</h3>
-<button onclick="vote('like')">👍 LIKE</button>
-<button onclick="vote('dislike')">👎 DISLIKE</button>
-<p id="votes"></p>
+<!-- HOME -->
+<div id="home" class="card">
+<h3>🏠 HOME</h3>
+<p>Welcome to DEVIL WORLD SYSTEM</p>
 </div>
 
 <!-- CHAT -->
-<div class="card">
+<div id="chat" class="card hidden">
 <h3>💬 PUBLIC CHAT</h3>
 
 <div id="chatBox"></div>
-
-<input id="msg" placeholder="type message">
+<input id="msg" placeholder="message">
 <button onclick="sendMsg()">SEND</button>
+</div>
 
+<!-- VOTE -->
+<div id="vote" class="card hidden">
+<h3>🔥 VOTE SYSTEM</h3>
+<button onclick="vote('like')">👍 LIKE</button>
+<button onclick="vote('dislike')">👎 DISLIKE</button>
+<p id="votes">Loading...</p>
+</div>
+
+<!-- PROFILE -->
+<div id="profile" class="card hidden">
+<h3>👤 PROFILE</h3>
+<p id="profileInfo"></p>
+</div>
+
+<!-- PREMIUM -->
+<div id="premium" class="card hidden">
+<h3>💎 PREMIUM</h3>
+<p>Premium system ready (future update)</p>
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="card hidden">
+<h3>⚙ ADMIN PANEL</h3>
+<p>Only Head Owner Access</p>
+<button onclick="clearChat()">CLEAR CHAT</button>
+<button onclick="resetVotes()">RESET VOTES</button>
+</div>
+
+<!-- DM -->
+<div id="dm" class="card hidden">
+<h3>🔒 PRIVATE DM</h3>
+<p>DM UI ready</p>
 </div>
 
 </div>
@@ -106,7 +153,9 @@ collection,
 addDoc,
 query,
 orderBy,
-onSnapshot
+onSnapshot,
+deleteDoc,
+getDocs
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 /* FIREBASE CONFIG */
@@ -121,14 +170,14 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-/* OWNER */
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
 let currentUser;
 
-/* LOGIN */
-window.login = async function(){
+/* AUTO LOGIN */
+window.addEventListener("load", async ()=>{
 
+try{
 const res = await signInWithPopup(auth, provider);
 const user = res.user;
 
@@ -137,51 +186,34 @@ currentUser = user;
 let role = "USER";
 if(user.email === OWNER_EMAIL){
 role = "HEAD OWNER 👑";
+document.getElementById("admin").style.display="block";
 }
-
-document.getElementById("auth").style.display="none";
-document.getElementById("app").style.display="block";
 
 document.getElementById("userInfo").innerText =
 user.displayName + " | " + role;
 
+document.getElementById("profileInfo").innerText =
+"Email: "+user.email;
+
 initVote();
 loadChat();
 
-};
-
-/* VOTE */
-async function initVote(){
-const ref = doc(db,"posts","main");
-const snap = await getDoc(ref);
-
-if(!snap.exists()){
-await setDoc(ref,{likes:0,dislikes:0});
+}catch(e){
+console.log("Login waiting...");
 }
 
-loadVoteUI();
-}
+});
 
-async function loadVoteUI(){
-const ref = doc(db,"posts","main");
-const snap = await getDoc(ref);
-let d = snap.data();
+/* TAB SYSTEM */
+window.showTab = function(tab){
 
-document.getElementById("votes").innerText =
-"👍 "+d.likes+" | 👎 "+d.dislikes;
-}
+let sections = ["home","chat","vote","profile","premium","admin","dm"];
 
-window.vote = async function(type){
+sections.forEach(id=>{
+document.getElementById(id).classList.add("hidden");
+});
 
-const ref = doc(db,"posts","main");
-
-if(type==="like"){
-await updateDoc(ref,{likes:increment(1)});
-}else{
-await updateDoc(ref,{dislikes:increment(1)});
-}
-
-loadVoteUI();
+document.getElementById(tab).classList.remove("hidden");
 
 };
 
@@ -192,7 +224,7 @@ let text = document.getElementById("msg").value;
 if(!text) return;
 
 await addDoc(collection(db,"chat"),{
-text:text,
+text,
 name:currentUser.displayName,
 time:Date.now()
 });
@@ -200,7 +232,6 @@ time:Date.now()
 document.getElementById("msg").value="";
 };
 
-/* LOAD CHAT */
 function loadChat(){
 
 const q = query(collection(db,"chat"),orderBy("time"));
@@ -219,6 +250,55 @@ document.getElementById("chatBox").innerHTML = html;
 });
 
 }
+
+/* VOTE */
+async function initVote(){
+const ref = doc(db,"posts","main");
+const snap = await getDoc(ref);
+
+if(!snap.exists()){
+await setDoc(ref,{likes:0,dislikes:0});
+}
+
+loadVotes();
+}
+
+async function loadVotes(){
+const ref = doc(db,"posts","main");
+const snap = await getDoc(ref);
+
+let d = snap.data();
+
+document.getElementById("votes").innerText =
+"👍 "+d.likes+" | 👎 "+d.dislikes;
+}
+
+window.vote = async function(type){
+
+const ref = doc(db,"posts","main");
+
+if(type==="like"){
+await updateDoc(ref,{likes:increment(1)});
+}else{
+await updateDoc(ref,{dislikes:increment(1)});
+}
+
+loadVotes();
+
+};
+
+/* ADMIN */
+window.clearChat = async function(){
+const snap = await getDocs(collection(db,"chat"));
+snap.forEach(async d=>{
+await deleteDoc(doc(db,"chat",d.id));
+});
+};
+
+window.resetVotes = async function(){
+await setDoc(doc(db,"posts","main"),{likes:0,dislikes:0});
+loadVotes();
+};
 
 </script>
 
