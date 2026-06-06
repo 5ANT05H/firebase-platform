@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>FULL FIREBASE PLATFORM</title>
+  <title>FIX LOGIN SYSTEM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body style="margin:0;font-family:Arial;background:#0b0b0b;color:white;">
+<body style="margin:0;background:#0a0a0a;color:white;font-family:Arial;">
 
 <div id="app">Loading...</div>
 
@@ -20,19 +20,7 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-import {
-  getFirestore,
-  doc,
-  getDoc,
-  setDoc,
-  collection,
-  addDoc,
-  query,
-  orderBy,
-  onSnapshot
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-/* FIREBASE CONFIG */
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
   authDomain: "crimson-platform-92f67.firebaseapp.com",
@@ -43,144 +31,62 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
-const db = getFirestore(app);
 
 const appDiv = document.getElementById("app");
 
-const OWNER = "tksantosh0@gmail.com";
-
-/* CREATE USER */
-async function createUser(user){
-
-  const ref = doc(db,"users",user.email);
-  const snap = await getDoc(ref);
-
-  if(!snap.exists()){
-    await setDoc(ref,{
-      email:user.email,
-      role:"USER",
-      premium:false,
-      createdAt:Date.now()
-    });
-  }
-
-  return (await getDoc(ref)).data();
-}
-
-/* LOGIN UI */
-function loginUI(){
-
+/* SHOW LOGIN */
+function showLogin(){
   appDiv.innerHTML = `
-    <h1>🔥 LOGIN</h1>
-    <button id="loginBtn">Login with Google</button>
+    <h1>🔥 LOGIN PAGE</h1>
+
+    <button id="loginBtn" style="padding:10px;">
+      Login with Google
+    </button>
+
+    <p id="status">Not logged in</p>
   `;
 
   document.getElementById("loginBtn").onclick = async () => {
-    const provider = new GoogleAuthProvider();
-    await signInWithPopup(auth, provider);
+    try {
+      const provider = new GoogleAuthProvider();
+      await signInWithPopup(auth, provider);
+    } catch (e) {
+      alert("Login Error: " + e.message);
+    }
   };
 }
 
 /* DASHBOARD */
-function dashboard(user,data){
-
-  let role = "USER";
-  if(user.email === OWNER) role = "OWNER";
-  else if(data.role === "ADMIN") role = "ADMIN";
+function showDashboard(user){
 
   appDiv.innerHTML = `
-    <h2>👤 ${user.email}</h2>
-    <h3>Role: ${role}</h3>
-    <h3>💎 Premium: ${data.premium ? "YES" : "NO"}</h3>
+    <h1>🔥 DASHBOARD</h1>
+
+    <h3>👤 ${user.email}</h3>
+
+    <p>Status: ONLINE 🟢</p>
 
     <button onclick="logout()">Logout</button>
-
-    <hr>
-
-    <h2>💬 CHAT</h2>
-
-    <input id="msg" placeholder="type message">
-    <button onclick="sendMsg()">Send</button>
-
-    <div id="chatBox"></div>
-
-    <hr>
-
-    <button onclick="makePremium()">Make Premium</button>
-    <button onclick="makeAdmin()">Make Admin</button>
   `;
-
-  loadChat();
 }
 
-/* AUTH */
-onAuthStateChanged(auth, async (user)=>{
+/* LOGOUT */
+window.logout = function(){
+  signOut(auth);
+};
+
+/* AUTH STATE FIX */
+onAuthStateChanged(auth, (user) => {
+
+  console.log("AUTH STATE:", user);
 
   if(user){
-    const data = await createUser(user);
-    dashboard(user,data);
+    showDashboard(user);
   } else {
-    loginUI();
+    showLogin();
   }
 
 });
-
-/* LOGOUT */
-window.logout = () => signOut(auth);
-
-/* SEND MSG */
-window.sendMsg = async function(){
-
-  let msg = document.getElementById("msg").value;
-  if(!msg) return;
-
-  await addDoc(collection(db,"chat"),{
-    text:msg,
-    email:auth.currentUser.email,
-    time:Date.now()
-  });
-
-  document.getElementById("msg").value="";
-};
-
-/* LOAD CHAT */
-function loadChat(){
-
-  const q = query(collection(db,"chat"),orderBy("time"));
-
-  onSnapshot(q,(snap)=>{
-
-    let html="";
-
-    snap.forEach(d=>{
-      html += `<p><b>${d.data().email}:</b> ${d.data().text}</p>`;
-    });
-
-    document.getElementById("chatBox").innerHTML = html;
-
-  });
-
-}
-
-/* PREMIUM */
-window.makePremium = async function(){
-
-  await setDoc(doc(db,"users",auth.currentUser.email),{
-    premium:true
-  },{merge:true});
-
-  alert("Premium Activated ✔");
-};
-
-/* ADMIN */
-window.makeAdmin = async function(){
-
-  await setDoc(doc(db,"users",auth.currentUser.email),{
-    role:"ADMIN"
-  },{merge:true});
-
-  alert("Admin Activated ✔");
-};
 
 </script>
 
