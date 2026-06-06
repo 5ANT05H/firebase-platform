@@ -2,195 +2,149 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<title>CRIMSON DEVIL WORLD</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CRIMSON DEVIL WORLD UI</title>
 
 <style>
 body{
   margin:0;
   font-family:Arial;
-  background:#0a0a0a;
+  background:#0b0b0b;
   color:white;
 }
 
-/* TOP BAR */
-.topbar{
-  height:55px;
-  background:#000;
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  padding:0 15px;
-  border-bottom:2px solid red;
-}
-
-.logo{
-  color:red;
-  font-weight:bold;
-}
-
-/* MAIN LAYOUT */
-.container{
-  display:flex;
-  height:calc(100vh - 55px);
-}
-
-/* LEFT SIDEBAR */
-.left{
-  width:240px;
-  background:#111;
-  border-right:2px solid red;
-  padding:10px;
-  overflow:auto;
-}
-
-.menu-item{
+.top{
   padding:12px;
-  margin:5px 0;
-  background:#000;
-  border:1px solid #222;
-  cursor:pointer;
+  background:black;
+  border-bottom:2px solid red;
+  text-align:center;
+  font-weight:bold;
+  color:red;
 }
 
-.menu-item:hover{
-  background:red;
-}
-
-/* CHAT AREA */
-.chat{
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  padding:10px;
-}
-
-.chat-box{
-  flex:1;
-  background:#111;
-  border:1px solid red;
-  padding:10px;
+#chat{
+  height:75vh;
   overflow:auto;
+  padding:10px;
+  background:#111;
 }
 
 .msg{
-  margin:8px 0;
+  background:black;
+  margin:6px 0;
   padding:8px;
-  background:#000;
   border-left:3px solid red;
 }
 
-/* INPUT */
-.input-box{
+.input{
   display:flex;
-  margin-top:10px;
 }
 
 input{
   flex:1;
   padding:12px;
-  background:#000;
-  border:1px solid red;
-  color:white;
+  border:none;
+  outline:none;
 }
 
 button{
-  padding:12px 15px;
+  padding:12px;
   background:red;
   border:none;
   color:white;
   cursor:pointer;
 }
 
-/* RIGHT PANEL */
-.right{
-  width:280px;
-  background:#111;
-  border-left:2px solid red;
-  padding:10px;
-  overflow:auto;
-}
-
-.user{
-  padding:10px;
-  background:#000;
-  margin:5px 0;
-  border:1px solid #222;
-}
-
 .badge{
-  font-size:11px;
-  padding:3px 6px;
-  border-radius:4px;
+  font-size:10px;
+  padding:2px 6px;
   margin-left:5px;
+  border-radius:4px;
 }
 
 .owner{background:gold;color:black;}
 .admin{background:orange;}
-.userb{background:gray;}
-
-/* PANEL BOX */
-.panel{
-  margin-top:15px;
-  padding:10px;
-  background:#000;
-  border:1px solid red;
-}
+.user{background:gray;}
 </style>
 </head>
 
 <body>
 
-<div class="topbar">
-  <div class="logo">🔥 CRIMSON DEVIL WORLD</div>
-  <div>🟢 LIVE</div>
+<div class="top">🔥 CRIMSON DEVIL WORLD - LIVE CHAT</div>
+
+<div id="chat"></div>
+
+<div class="input">
+  <input id="text" placeholder="Type message...">
+  <button onclick="sendMsg()">Send</button>
 </div>
 
-<div class="container">
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-database-compat.js"></script>
 
-  <!-- LEFT -->
-  <div class="left">
-    <div class="menu-item">🏠 Home</div>
-    <div class="menu-item">🌍 Public Chat</div>
-    <div class="menu-item">⚙ Admin Chat</div>
-    <div class="menu-item">👑 Owner Chat</div>
-    <div class="menu-item">💎 Premium</div>
-    <div class="menu-item">📦 Mods</div>
-  </div>
+<script>
+/* 🔥 FIREBASE CONFIG */
+const firebaseConfig = {
+  apiKey: "AlzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYKE",
+  authDomain: "crimson-devil-world.firebaseapp.com",
+  projectId: "crimson-devil-world",
+  storageBucket: "crimson-devil-world.appspot.com",
+  messagingSenderId: "625125480692",
+  appId: "1:625125480692:web:fcf6202469371862c66a1"
+};
 
-  <!-- CHAT -->
-  <div class="chat">
-    <div class="chat-box" id="box">
-      <div class="msg"><b>Owner:</b> Welcome to CRIMSON DEVIL WORLD 🔥</div>
-      <div class="msg"><b>Admin:</b> Mods uploaded ✔</div>
-      <div class="msg"><b>User:</b> Nice UI bro 💯</div>
-    </div>
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
-    <div class="input-box">
-      <input placeholder="Type message...">
-      <button>Send</button>
-    </div>
-  </div>
+/* 👤 USER SYSTEM */
+let currentUser = {
+  name: "Santosh",
+  role: "owner"   // change: user / admin / owner
+};
 
-  <!-- RIGHT -->
-  <div class="right">
+/* 💬 SEND MESSAGE */
+function sendMsg(){
+  let text = document.getElementById("text").value;
+  if(text.trim()=="") return;
 
-    <h3>🟢 Online Users</h3>
+  db.ref("messages").push({
+    name: currentUser.name,
+    role: currentUser.role,
+    text: text,
+    time: Date.now()
+  });
 
-    <div class="user">CRIMSON OWNER <span class="badge owner">OWNER</span></div>
-    <div class="user">Shadow Ninja <span class="badge admin">ADMIN</span></div>
-    <div class="user">Devil Hunter <span class="badge userb">USER</span></div>
-    <div class="user">Silent Killer <span class="badge userb">USER</span></div>
+  document.getElementById("text").value="";
+}
 
-    <div class="panel">
-      <h4>👑 Owner Panel</h4>
-      <button style="width:100%;margin:5px 0;">Ban User</button>
-      <button style="width:100%;margin:5px 0;">Unban User</button>
-      <button style="width:100%;margin:5px 0;">Delete Msg</button>
-    </div>
+/* 🔥 LIVE CHAT */
+db.ref("messages").on("value", snap=>{
+  let chat = document.getElementById("chat");
+  chat.innerHTML="";
 
-  </div>
+  snap.forEach(child=>{
+    let d = child.val();
 
-</div>
+    let badge="";
+    if(d.role==="owner") badge="👑 OWNER";
+    else if(d.role==="admin") badge="⚙ ADMIN";
+    else badge="USER";
+
+    let div = document.createElement("div");
+    div.className="msg";
+
+    div.innerHTML=`
+      <b>${d.name}</b> <span class="badge">${badge}</span><br>
+      ${d.text}
+    `;
+
+    chat.appendChild(div);
+  });
+
+  chat.scrollTop = chat.scrollHeight;
+});
+</script>
 
 </body>
 </html>
