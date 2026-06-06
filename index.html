@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>CRIMSON FIXED PLATFORM</title>
+  <title>FULL FIREBASE PLATFORM</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 
-<body style="margin:0;font-family:Arial;background:#0a0a0a;color:white;">
+<body style="margin:0;font-family:Arial;background:#0b0b0b;color:white;">
 
 <div id="app">Loading...</div>
 
@@ -14,6 +14,8 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
 import {
   getAuth,
+  GoogleAuthProvider,
+  signInWithPopup,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
@@ -30,7 +32,7 @@ import {
   onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
-/* FIREBASE */
+/* FIREBASE CONFIG */
 const firebaseConfig = {
   apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
   authDomain: "crimson-platform-92f67.firebaseapp.com",
@@ -45,10 +47,10 @@ const db = getFirestore(app);
 
 const appDiv = document.getElementById("app");
 
-const HEAD_OWNER = "tksantosh0@gmail.com";
+const OWNER = "tksantosh0@gmail.com";
 
 /* CREATE USER */
-async function ensureUser(user){
+async function createUser(user){
 
   const ref = doc(db,"users",user.email);
   const snap = await getDoc(ref);
@@ -65,22 +67,31 @@ async function ensureUser(user){
   return (await getDoc(ref)).data();
 }
 
-/* DASHBOARD UI */
-function loadUI(user,data){
-
-  let role = "USER";
-
-  if(user.email === HEAD_OWNER) role = "HEAD OWNER";
-  else if(data.role === "ADMIN") role = "ADMIN";
-
-  let premium = data.premium;
+/* LOGIN UI */
+function loginUI(){
 
   appDiv.innerHTML = `
-    <h1>💀 CRIMSON PLATFORM</h1>
+    <h1>🔥 LOGIN</h1>
+    <button id="loginBtn">Login with Google</button>
+  `;
 
-    <h3>👤 ${user.email}</h3>
+  document.getElementById("loginBtn").onclick = async () => {
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
+  };
+}
+
+/* DASHBOARD */
+function dashboard(user,data){
+
+  let role = "USER";
+  if(user.email === OWNER) role = "OWNER";
+  else if(data.role === "ADMIN") role = "ADMIN";
+
+  appDiv.innerHTML = `
+    <h2>👤 ${user.email}</h2>
     <h3>Role: ${role}</h3>
-    <h3>Premium: ${premium ? "💎 YES" : "NO"}</h3>
+    <h3>💎 Premium: ${data.premium ? "YES" : "NO"}</h3>
 
     <button onclick="logout()">Logout</button>
 
@@ -95,8 +106,8 @@ function loadUI(user,data){
 
     <hr>
 
-    <button onclick="makePremium()">💎 Make Premium</button>
-    <button onclick="makeAdmin()">🛡️ Make Admin</button>
+    <button onclick="makePremium()">Make Premium</button>
+    <button onclick="makeAdmin()">Make Admin</button>
   `;
 
   loadChat();
@@ -106,20 +117,18 @@ function loadUI(user,data){
 onAuthStateChanged(auth, async (user)=>{
 
   if(user){
-    const data = await ensureUser(user);
-    loadUI(user,data);
+    const data = await createUser(user);
+    dashboard(user,data);
   } else {
-    appDiv.innerHTML = "<h2>LOGIN REQUIRED</h2>";
+    loginUI();
   }
 
 });
 
 /* LOGOUT */
-window.logout = function(){
-  signOut(auth);
-};
+window.logout = () => signOut(auth);
 
-/* SEND CHAT */
+/* SEND MSG */
 window.sendMsg = async function(){
 
   let msg = document.getElementById("msg").value;
@@ -131,7 +140,7 @@ window.sendMsg = async function(){
     time:Date.now()
   });
 
-  document.getElementById("msg").value = "";
+  document.getElementById("msg").value="";
 };
 
 /* LOAD CHAT */
@@ -141,7 +150,7 @@ function loadChat(){
 
   onSnapshot(q,(snap)=>{
 
-    let html = "";
+    let html="";
 
     snap.forEach(d=>{
       html += `<p><b>${d.data().email}:</b> ${d.data().text}</p>`;
