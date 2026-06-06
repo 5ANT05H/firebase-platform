@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CRIMSON DEVIL WORLD</title>
+<title>CRIMSON DEVIL WORLD FULL</title>
 
 <style>
 body{
@@ -29,12 +29,13 @@ background:red;
 color:white;
 border:none;
 cursor:pointer;
+border-radius:5px;
 }
 
 .card{
 background:#111;
-margin:10px;
-padding:15px;
+margin:15px;
+padding:20px;
 border:1px solid red;
 display:inline-block;
 }
@@ -49,19 +50,19 @@ display:inline-block;
 <button onclick="login()">LOGIN WITH GOOGLE</button>
 </div>
 
-<!-- DASHBOARD -->
+<!-- APP -->
 <div id="app" style="display:none">
 
 <h2 id="userInfo"></h2>
 
 <div class="card">
-<h3>🔥 POST SYSTEM</h3>
-<p>Devil System Active</p>
+<h3>🔥 LIVE POST</h3>
 
-<button onclick="voteUp()">👍 LIKE</button>
-<button onclick="voteDown()">👎 DISLIKE</button>
+<button onclick="vote('like')">👍 LIKE</button>
+<button onclick="vote('dislike')">👎 DISLIKE</button>
 
-<p id="votes">Likes: 0 | Dislikes: 0</p>
+<p id="votes">Loading...</p>
+
 </div>
 
 </div>
@@ -69,13 +70,23 @@ display:inline-block;
 <script type="module">
 
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
+
 import {
 getAuth,
 GoogleAuthProvider,
 signInWithPopup
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
 
-/* YOUR FIREBASE CONFIG */
+import {
+getFirestore,
+doc,
+getDoc,
+setDoc,
+updateDoc,
+increment
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
+
+/* FIREBASE CONFIG */
 const firebaseConfig = {
 apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
 authDomain: "crimson-platform-92f67.firebaseapp.com",
@@ -84,10 +95,13 @@ projectId: "crimson-platform-92f67"
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
 /* HEAD OWNER */
 const OWNER_EMAIL = "tksantosh0@gmail.com";
+
+let currentUser = null;
 
 /* LOGIN */
 window.login = async function(){
@@ -97,17 +111,23 @@ try{
 const result = await signInWithPopup(auth, provider);
 const user = result.user;
 
-let role = "USER";
+currentUser = user;
 
+/* ROLE */
+let role = "USER";
 if(user.email === OWNER_EMAIL){
 role = "HEAD OWNER 👑";
 }
 
+/* UI */
 document.getElementById("auth").style.display="none";
 document.getElementById("app").style.display="block";
 
 document.getElementById("userInfo").innerText =
 "👤 " + user.displayName + " | " + role;
+
+/* INIT POST */
+initPost();
 
 }catch(e){
 console.log(e);
@@ -116,24 +136,55 @@ alert("Login Failed");
 
 };
 
-/* VOTE SYSTEM (LOCAL DEMO) */
-let likes = 0;
-let dislikes = 0;
+/* CREATE POST IF NOT EXISTS */
+async function initPost(){
 
-window.voteUp = function(){
-likes++;
-updateVotes();
-};
+const ref = doc(db,"posts","main");
 
-window.voteDown = function(){
-dislikes++;
-updateVotes();
-};
+const snap = await getDoc(ref);
 
-function updateVotes(){
-document.getElementById("votes").innerText =
-"Likes: " + likes + " | Dislikes: " + dislikes;
+if(!snap.exists()){
+await setDoc(ref,{
+likes:0,
+dislikes:0
+});
 }
+
+loadVotes();
+
+}
+
+/* LOAD VOTES */
+async function loadVotes(){
+
+const ref = doc(db,"posts","main");
+const snap = await getDoc(ref);
+
+let data = snap.data();
+
+document.getElementById("votes").innerText =
+"👍 Likes: " + data.likes + " | 👎 Dislikes: " + data.dislikes;
+
+}
+
+/* VOTE SYSTEM */
+window.vote = async function(type){
+
+const ref = doc(db,"posts","main");
+
+if(type === "like"){
+await updateDoc(ref,{
+likes: increment(1)
+});
+}else{
+await updateDoc(ref,{
+dislikes: increment(1)
+});
+}
+
+loadVotes();
+
+};
 
 </script>
 
