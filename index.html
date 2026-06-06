@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="utf-8">
-<title>CRIMSON DEVIL WORLD FULL</title>
+<title>DEVIL WORLD FULL SYSTEM</title>
 
 <style>
 body{
@@ -10,7 +10,6 @@ margin:0;
 background:black;
 color:white;
 font-family:Arial;
-text-align:center;
 }
 
 #auth{
@@ -22,46 +21,65 @@ flex-direction:column;
 }
 
 button{
-padding:12px;
-margin:10px;
-width:220px;
+padding:10px;
+margin:5px;
 background:red;
 color:white;
 border:none;
 cursor:pointer;
-border-radius:5px;
+}
+
+#app{
+display:none;
+padding:20px;
 }
 
 .card{
 background:#111;
-margin:15px;
-padding:20px;
+padding:15px;
+margin:10px;
 border:1px solid red;
-display:inline-block;
+}
+
+#chatBox{
+height:200px;
+overflow:auto;
+background:#000;
+border:1px solid red;
+padding:10px;
 }
 </style>
 </head>
 
 <body>
 
-<!-- AUTH -->
+<!-- LOGIN -->
 <div id="auth">
-<h1>💀 DEVIL WORLD LOGIN</h1>
+<h2>💀 DEVIL WORLD</h2>
 <button onclick="login()">LOGIN WITH GOOGLE</button>
 </div>
 
 <!-- APP -->
-<div id="app" style="display:none">
+<div id="app">
 
-<h2 id="userInfo"></h2>
+<h3 id="userInfo"></h3>
 
+<!-- VOTE -->
 <div class="card">
-<h3>🔥 LIVE POST</h3>
-
+<h3>🔥 VOTE SYSTEM</h3>
 <button onclick="vote('like')">👍 LIKE</button>
 <button onclick="vote('dislike')">👎 DISLIKE</button>
+<p id="votes"></p>
+</div>
 
-<p id="votes">Loading...</p>
+<!-- CHAT -->
+<div class="card">
+<h3>💬 PUBLIC CHAT</h3>
+
+<div id="chatBox"></div>
+
+<input id="msg" placeholder="type message">
+<button onclick="sendMsg()">SEND</button>
 
 </div>
 
@@ -80,10 +98,15 @@ signInWithPopup
 import {
 getFirestore,
 doc,
-getDoc,
 setDoc,
+getDoc,
 updateDoc,
-increment
+increment,
+collection,
+addDoc,
+query,
+orderBy,
+onSnapshot
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 /* FIREBASE CONFIG */
@@ -98,93 +121,104 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 const provider = new GoogleAuthProvider();
 
-/* HEAD OWNER */
+/* OWNER */
 const OWNER_EMAIL = "tksantosh0@gmail.com";
 
-let currentUser = null;
+let currentUser;
 
 /* LOGIN */
 window.login = async function(){
 
-try{
-
-const result = await signInWithPopup(auth, provider);
-const user = result.user;
+const res = await signInWithPopup(auth, provider);
+const user = res.user;
 
 currentUser = user;
 
-/* ROLE */
 let role = "USER";
 if(user.email === OWNER_EMAIL){
 role = "HEAD OWNER 👑";
 }
 
-/* UI */
 document.getElementById("auth").style.display="none";
 document.getElementById("app").style.display="block";
 
 document.getElementById("userInfo").innerText =
-"👤 " + user.displayName + " | " + role;
+user.displayName + " | " + role;
 
-/* INIT POST */
-initPost();
-
-}catch(e){
-console.log(e);
-alert("Login Failed");
-}
+initVote();
+loadChat();
 
 };
 
-/* CREATE POST IF NOT EXISTS */
-async function initPost(){
-
+/* VOTE */
+async function initVote(){
 const ref = doc(db,"posts","main");
-
 const snap = await getDoc(ref);
 
 if(!snap.exists()){
-await setDoc(ref,{
-likes:0,
-dislikes:0
-});
+await setDoc(ref,{likes:0,dislikes:0});
 }
 
-loadVotes();
-
+loadVoteUI();
 }
 
-/* LOAD VOTES */
-async function loadVotes(){
-
+async function loadVoteUI(){
 const ref = doc(db,"posts","main");
 const snap = await getDoc(ref);
-
-let data = snap.data();
+let d = snap.data();
 
 document.getElementById("votes").innerText =
-"👍 Likes: " + data.likes + " | 👎 Dislikes: " + data.dislikes;
-
+"👍 "+d.likes+" | 👎 "+d.dislikes;
 }
 
-/* VOTE SYSTEM */
 window.vote = async function(type){
 
 const ref = doc(db,"posts","main");
 
-if(type === "like"){
-await updateDoc(ref,{
-likes: increment(1)
-});
+if(type==="like"){
+await updateDoc(ref,{likes:increment(1)});
 }else{
-await updateDoc(ref,{
-dislikes: increment(1)
-});
+await updateDoc(ref,{dislikes:increment(1)});
 }
 
-loadVotes();
+loadVoteUI();
 
 };
+
+/* CHAT */
+window.sendMsg = async function(){
+
+let text = document.getElementById("msg").value;
+if(!text) return;
+
+await addDoc(collection(db,"chat"),{
+text:text,
+name:currentUser.displayName,
+time:Date.now()
+});
+
+document.getElementById("msg").value="";
+};
+
+/* LOAD CHAT */
+function loadChat(){
+
+const q = query(collection(db,"chat"),orderBy("time"));
+
+onSnapshot(q,(snap)=>{
+
+let html="";
+
+snap.forEach(doc=>{
+let d=doc.data();
+html += `<p><b>${d.name}:</b> ${d.text}</p>`;
+});
+
+document.getElementById("chatBox").innerHTML = html;
+
+});
+
+}
 
 </script>
 
