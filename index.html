@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>STABLE LOGIN FIX</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CRIMSON CHAT SYSTEM</title>
 </head>
 
 <body style="margin:0;background:#0a0a0a;color:white;font-family:Arial;">
@@ -16,11 +15,18 @@ import {
   getAuth,
   GoogleAuthProvider,
   signInWithPopup,
-  setPersistence,
-  browserLocalPersistence,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  query,
+  orderBy,
+  onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
 
 /* FIREBASE */
 const firebaseConfig = {
@@ -33,32 +39,20 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const db = getFirestore(app);
 
 const appDiv = document.getElementById("app");
 
-/* 🔥 FORCE LOGIN PERSISTENCE */
-setPersistence(auth, browserLocalPersistence);
-
-/* LOGIN UI */
+/* LOGIN */
 function loginUI(){
-
   appDiv.innerHTML = `
     <h1>🔥 LOGIN</h1>
-
     <button id="loginBtn">Login with Google</button>
-
-    <p>Click to login</p>
   `;
 
   document.getElementById("loginBtn").onclick = async () => {
-
-    try {
-      const provider = new GoogleAuthProvider();
-      await signInWithPopup(auth, provider);
-    } catch (e) {
-      alert("Login Error: " + e.message);
-    }
-
+    const provider = new GoogleAuthProvider();
+    await signInWithPopup(auth, provider);
   };
 }
 
@@ -66,14 +60,55 @@ function loginUI(){
 function dashboard(user){
 
   appDiv.innerHTML = `
-    <h1>🔥 DASHBOARD</h1>
-
-    <h3>👤 ${user.email}</h3>
-
-    <p>Status: ONLINE 🟢</p>
-
+    <h2>👤 ${user.email}</h2>
     <button onclick="logout()">Logout</button>
+
+    <hr>
+
+    <h2>💬 LIVE CHAT</h2>
+
+    <input id="msg" placeholder="type message">
+    <button onclick="sendMsg()">Send</button>
+
+    <div id="chatBox"></div>
   `;
+
+  loadChat();
+}
+
+/* SEND MESSAGE */
+window.sendMsg = async function(){
+
+  let msg = document.getElementById("msg").value;
+  if(!msg) return;
+
+  await addDoc(collection(db,"chat"),{
+    text:msg,
+    email:auth.currentUser.email,
+    time:Date.now()
+  });
+
+  document.getElementById("msg").value = "";
+};
+
+/* LOAD CHAT (REAL TIME) */
+function loadChat(){
+
+  const q = query(collection(db,"chat"),orderBy("time"));
+
+  onSnapshot(q,(snap)=>{
+
+    let html = "";
+
+    snap.forEach(doc=>{
+      let d = doc.data();
+      html += `<p><b>${d.email}:</b> ${d.text}</p>`;
+    });
+
+    document.getElementById("chatBox").innerHTML = html;
+
+  });
+
 }
 
 /* LOGOUT */
@@ -82,9 +117,7 @@ window.logout = function(){
 };
 
 /* AUTH STATE */
-onAuthStateChanged(auth, (user) => {
-
-  console.log("AUTH:", user);
+onAuthStateChanged(auth, (user)=>{
 
   if(user){
     dashboard(user);
