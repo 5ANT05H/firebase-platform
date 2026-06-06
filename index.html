@@ -1,306 +1,196 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<title>DEVIL WORLD 7 OPTIONS FINAL</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRIMSON DEVIL WORLD UI</title>
 
 <style>
 body{
-margin:0;
-background:black;
-color:white;
-font-family:Arial;
+  margin:0;
+  font-family:Arial;
+  background:#0a0a0a;
+  color:white;
 }
 
-/* MENU */
-#menu{
-position:fixed;
-left:0;
-top:0;
-width:220px;
-height:100vh;
-background:#111;
-border-right:2px solid red;
-padding:10px;
+/* TOP BAR */
+.topbar{
+  height:55px;
+  background:#000;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:0 15px;
+  border-bottom:2px solid red;
 }
 
-#menu button{
-width:100%;
-padding:10px;
-margin:5px 0;
-background:red;
-color:white;
-border:none;
-cursor:pointer;
+.logo{
+  color:red;
+  font-weight:bold;
 }
 
-/* MAIN */
-#app{
-margin-left:230px;
-padding:20px;
+/* MAIN LAYOUT */
+.container{
+  display:flex;
+  height:calc(100vh - 55px);
 }
 
-.card{
-background:#111;
-padding:15px;
-margin:10px;
-border:1px solid red;
+/* LEFT SIDEBAR */
+.left{
+  width:240px;
+  background:#111;
+  border-right:2px solid red;
+  padding:10px;
+  overflow:auto;
 }
 
-.hidden{
-display:none;
+.menu-item{
+  padding:12px;
+  margin:5px 0;
+  background:#000;
+  border:1px solid #222;
+  cursor:pointer;
 }
 
-#chatBox{
-height:200px;
-overflow:auto;
-border:1px solid red;
-padding:10px;
+.menu-item:hover{
+  background:red;
+}
+
+/* CHAT AREA */
+.chat{
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  padding:10px;
+}
+
+.chat-box{
+  flex:1;
+  background:#111;
+  border:1px solid red;
+  padding:10px;
+  overflow:auto;
+}
+
+.msg{
+  margin:8px 0;
+  padding:8px;
+  background:#000;
+  border-left:3px solid red;
+}
+
+/* INPUT */
+.input-box{
+  display:flex;
+  margin-top:10px;
+}
+
+input{
+  flex:1;
+  padding:12px;
+  background:#000;
+  border:1px solid red;
+  color:white;
+}
+
+button{
+  padding:12px 15px;
+  background:red;
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+
+/* RIGHT PANEL */
+.right{
+  width:280px;
+  background:#111;
+  border-left:2px solid red;
+  padding:10px;
+  overflow:auto;
+}
+
+.user{
+  padding:10px;
+  background:#000;
+  margin:5px 0;
+  border:1px solid #222;
+}
+
+.badge{
+  font-size:11px;
+  padding:3px 6px;
+  border-radius:4px;
+  margin-left:5px;
+}
+
+.owner{background:gold;color:black;}
+.admin{background:orange;}
+.userb{background:gray;}
+
+/* PANEL BOX */
+.panel{
+  margin-top:15px;
+  padding:10px;
+  background:#000;
+  border:1px solid red;
 }
 </style>
 </head>
 
 <body>
 
-<!-- MENU -->
-<div id="menu">
-<h3>💀 DEVIL MENU</h3>
-
-<button onclick="showTab('home')">🏠 Home</button>
-<button onclick="showTab('chat')">💬 Chat</button>
-<button onclick="showTab('vote')">🔥 Vote</button>
-<button onclick="showTab('profile')">👤 Profile</button>
-<button onclick="showTab('premium')">💎 Premium</button>
-<button onclick="showTab('admin')">⚙ Admin</button>
-<button onclick="showTab('dm')">🔒 DM</button>
-
+<div class="topbar">
+  <div class="logo">🔥 CRIMSON DEVIL WORLD</div>
+  <div>🟢 LIVE</div>
 </div>
 
-<!-- APP -->
-<div id="app">
+<div class="container">
 
-<h2 id="userInfo">💀 DEVIL WORLD</h2>
+  <!-- LEFT -->
+  <div class="left">
+    <div class="menu-item">🏠 Home</div>
+    <div class="menu-item">🌍 Public Chat</div>
+    <div class="menu-item">⚙ Admin Chat</div>
+    <div class="menu-item">👑 Owner Chat</div>
+    <div class="menu-item">💎 Premium</div>
+    <div class="menu-item">📦 Mods</div>
+  </div>
 
-<!-- HOME -->
-<div id="home" class="card">
-<h3>🏠 HOME</h3>
-<p>Welcome to DEVIL WORLD SYSTEM</p>
-</div>
+  <!-- CHAT -->
+  <div class="chat">
+    <div class="chat-box" id="box">
+      <div class="msg"><b>Owner:</b> Welcome to CRIMSON DEVIL WORLD 🔥</div>
+      <div class="msg"><b>Admin:</b> Mods uploaded ✔</div>
+      <div class="msg"><b>User:</b> Nice UI bro 💯</div>
+    </div>
 
-<!-- CHAT -->
-<div id="chat" class="card hidden">
-<h3>💬 PUBLIC CHAT</h3>
+    <div class="input-box">
+      <input placeholder="Type message...">
+      <button>Send</button>
+    </div>
+  </div>
 
-<div id="chatBox"></div>
-<input id="msg" placeholder="message">
-<button onclick="sendMsg()">SEND</button>
-</div>
+  <!-- RIGHT -->
+  <div class="right">
 
-<!-- VOTE -->
-<div id="vote" class="card hidden">
-<h3>🔥 VOTE SYSTEM</h3>
-<button onclick="vote('like')">👍 LIKE</button>
-<button onclick="vote('dislike')">👎 DISLIKE</button>
-<p id="votes">Loading...</p>
-</div>
+    <h3>🟢 Online Users</h3>
 
-<!-- PROFILE -->
-<div id="profile" class="card hidden">
-<h3>👤 PROFILE</h3>
-<p id="profileInfo"></p>
-</div>
+    <div class="user">CRIMSON OWNER <span class="badge owner">OWNER</span></div>
+    <div class="user">Shadow Ninja <span class="badge admin">ADMIN</span></div>
+    <div class="user">Devil Hunter <span class="badge userb">USER</span></div>
+    <div class="user">Silent Killer <span class="badge userb">USER</span></div>
 
-<!-- PREMIUM -->
-<div id="premium" class="card hidden">
-<h3>💎 PREMIUM</h3>
-<p>Premium system ready (future update)</p>
-</div>
+    <div class="panel">
+      <h4>👑 Owner Panel</h4>
+      <button style="width:100%;margin:5px 0;">Ban User</button>
+      <button style="width:100%;margin:5px 0;">Unban User</button>
+      <button style="width:100%;margin:5px 0;">Delete Msg</button>
+    </div>
 
-<!-- ADMIN -->
-<div id="admin" class="card hidden">
-<h3>⚙ ADMIN PANEL</h3>
-<p>Only Head Owner Access</p>
-<button onclick="clearChat()">CLEAR CHAT</button>
-<button onclick="resetVotes()">RESET VOTES</button>
-</div>
-
-<!-- DM -->
-<div id="dm" class="card hidden">
-<h3>🔒 PRIVATE DM</h3>
-<p>DM UI ready</p>
-</div>
+  </div>
 
 </div>
-
-<script type="module">
-
-import {initializeApp} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-app.js";
-
-import {
-getAuth,
-GoogleAuthProvider,
-signInWithPopup
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-auth.js";
-
-import {
-getFirestore,
-doc,
-setDoc,
-getDoc,
-updateDoc,
-increment,
-collection,
-addDoc,
-query,
-orderBy,
-onSnapshot,
-deleteDoc,
-getDocs
-} from "https://www.gstatic.com/firebasejs/12.14.0/firebase-firestore.js";
-
-/* FIREBASE CONFIG */
-const firebaseConfig = {
-apiKey: "AIzaSyAwyFcuUfpvu4DcXRMF-7VNPr6v39MniRU",
-authDomain: "crimson-platform-92f67.firebaseapp.com",
-projectId: "crimson-platform-92f67"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-const provider = new GoogleAuthProvider();
-
-const OWNER_EMAIL = "tksantosh0@gmail.com";
-
-let currentUser;
-
-/* AUTO LOGIN */
-window.addEventListener("load", async ()=>{
-
-try{
-const res = await signInWithPopup(auth, provider);
-const user = res.user;
-
-currentUser = user;
-
-let role = "USER";
-if(user.email === OWNER_EMAIL){
-role = "HEAD OWNER 👑";
-document.getElementById("admin").style.display="block";
-}
-
-document.getElementById("userInfo").innerText =
-user.displayName + " | " + role;
-
-document.getElementById("profileInfo").innerText =
-"Email: "+user.email;
-
-initVote();
-loadChat();
-
-}catch(e){
-console.log("Login waiting...");
-}
-
-});
-
-/* TAB SYSTEM */
-window.showTab = function(tab){
-
-let sections = ["home","chat","vote","profile","premium","admin","dm"];
-
-sections.forEach(id=>{
-document.getElementById(id).classList.add("hidden");
-});
-
-document.getElementById(tab).classList.remove("hidden");
-
-};
-
-/* CHAT */
-window.sendMsg = async function(){
-
-let text = document.getElementById("msg").value;
-if(!text) return;
-
-await addDoc(collection(db,"chat"),{
-text,
-name:currentUser.displayName,
-time:Date.now()
-});
-
-document.getElementById("msg").value="";
-};
-
-function loadChat(){
-
-const q = query(collection(db,"chat"),orderBy("time"));
-
-onSnapshot(q,(snap)=>{
-
-let html="";
-
-snap.forEach(doc=>{
-let d=doc.data();
-html += `<p><b>${d.name}:</b> ${d.text}</p>`;
-});
-
-document.getElementById("chatBox").innerHTML = html;
-
-});
-
-}
-
-/* VOTE */
-async function initVote(){
-const ref = doc(db,"posts","main");
-const snap = await getDoc(ref);
-
-if(!snap.exists()){
-await setDoc(ref,{likes:0,dislikes:0});
-}
-
-loadVotes();
-}
-
-async function loadVotes(){
-const ref = doc(db,"posts","main");
-const snap = await getDoc(ref);
-
-let d = snap.data();
-
-document.getElementById("votes").innerText =
-"👍 "+d.likes+" | 👎 "+d.dislikes;
-}
-
-window.vote = async function(type){
-
-const ref = doc(db,"posts","main");
-
-if(type==="like"){
-await updateDoc(ref,{likes:increment(1)});
-}else{
-await updateDoc(ref,{dislikes:increment(1)});
-}
-
-loadVotes();
-
-};
-
-/* ADMIN */
-window.clearChat = async function(){
-const snap = await getDocs(collection(db,"chat"));
-snap.forEach(async d=>{
-await deleteDoc(doc(db,"chat",d.id));
-});
-};
-
-window.resetVotes = async function(){
-await setDoc(doc(db,"posts","main"),{likes:0,dislikes:0});
-loadVotes();
-};
-
-</script>
 
 </body>
 </html>
