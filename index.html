@@ -7,9 +7,8 @@
     body{
       margin:0;
       font-family:Arial;
-      background:black;
+      background:#0a0a0a;
       color:white;
-      overflow:hidden;
     }
 
     /* INTRO */
@@ -27,18 +26,11 @@
 
     #intro h1{
       color:red;
-      text-shadow:0 0 20px red,0 0 40px darkred;
-      font-size:30px;
-      animation:glow 1s infinite alternate;
+      text-shadow:0 0 20px red;
     }
 
-    @keyframes glow{
-      from{transform:scale(1);}
-      to{transform:scale(1.1);}
-    }
-
-    /* APP */
-    #app{
+    /* AUTH SCREEN */
+    #auth{
       display:none;
       height:100vh;
       justify-content:center;
@@ -49,46 +41,82 @@
       background:#111;
       padding:20px;
       border:1px solid red;
-      box-shadow:0 0 25px red;
-      border-radius:10px;
-      text-align:center;
       width:280px;
+      text-align:center;
     }
 
-    input{
-      width:90%;
+    input,button{
       padding:10px;
       margin:5px;
-      background:black;
-      border:1px solid red;
-      color:white;
-      outline:none;
+      width:90%;
     }
 
     button{
-      padding:10px;
-      margin:5px;
-      width:100%;
       background:red;
-      border:none;
       color:white;
+      border:none;
       cursor:pointer;
-      box-shadow:0 0 10px red;
     }
 
-    /* DASHBOARD */
-    #dashboard{
+    /* APP */
+    #app{
       display:none;
-      padding:20px;
+      display:flex;
+    }
+
+    /* SIDEBAR */
+    #sidebar{
+      width:70px;
+      background:#111;
+      height:100vh;
+      border-right:1px solid red;
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      padding-top:10px;
+    }
+
+    #sidebar button{
+      width:45px;
+      height:45px;
+      margin:8px;
+      background:black;
+      color:red;
+      border:1px solid red;
+    }
+
+    /* MAIN */
+    #main{
+      flex:1;
+      padding:10px;
     }
 
     .chatBox{
-      height:200px;
+      height:250px;
       overflow:auto;
       border:1px solid red;
       padding:10px;
-      margin-top:10px;
       background:#111;
+    }
+
+    /* PROFILE */
+    #profile{
+      display:none;
+      position:fixed;
+      right:0;
+      top:0;
+      width:250px;
+      height:100%;
+      background:#111;
+      border-left:1px solid red;
+      padding:10px;
+    }
+
+    img{
+      width:80px;
+      height:80px;
+      border-radius:50%;
+      border:2px solid red;
     }
   </style>
 </head>
@@ -101,35 +129,60 @@
   <p>Welcome to Dark System</p>
 </div>
 
-<!-- LOGIN -->
-<div id="app">
+<!-- AUTH -->
+<div id="auth">
+
   <div class="box">
+
+    <h2>SIGNUP</h2>
+
+    <input id="su_user" placeholder="username">
+    <input id="su_pass" placeholder="password">
+
+    <button onclick="signup()">SIGNUP</button>
+
+    <hr>
+
     <h2>LOGIN</h2>
 
-    <input id="username" placeholder="username">
-    <input id="password" type="password" placeholder="password">
+    <input id="li_user" placeholder="username">
+    <input id="li_pass" placeholder="password">
 
     <button onclick="login()">LOGIN</button>
-    <button onclick="signup()">SIGNUP</button>
+
   </div>
+
 </div>
 
-<!-- DASHBOARD -->
-<div id="dashboard">
+<!-- APP -->
+<div id="app">
 
-  <h2 id="userInfo"></h2>
+  <div id="sidebar">
+    <button onclick="openChat('public')">P</button>
+    <button onclick="openChat('help')">H</button>
+    <button onclick="openChat('admin')">A</button>
+    <button onclick="openChat('owner')">O</button>
+    <button onclick="openChat('head')">👑</button>
+    <button onclick="toggleProfile()">👤</button>
+  </div>
 
-  <button onclick="logout()">LOGOUT</button>
+  <div id="main">
+    <h3 id="userInfo"></h3>
+    <div id="chatArea"></div>
+  </div>
 
-  <hr>
+</div>
 
-  <h3>💬 CHAT</h3>
+<!-- PROFILE -->
+<div id="profile">
+  <h3>PROFILE</h3>
 
-  <input id="msg" placeholder="message">
-  <button onclick="sendMsg()">SEND</button>
+  <img id="avatar" src="https://i.imgur.com/0y0y0y0.png">
 
-  <div class="chatBox" id="chatBox"></div>
+  <input id="nameEdit" placeholder="name">
+  <input id="avatarEdit" placeholder="avatar url">
 
+  <button onclick="saveProfile()">SAVE</button>
 </div>
 
 <script type="module">
@@ -160,23 +213,20 @@ const db = getFirestore(app);
 
 let currentUser = null;
 
-/* INTRO FIX */
+const HEAD_OWNER = "C4CRIMSON";
+const HEAD_PASS = "55479535@Sk";
+
+/* INTRO FLOW */
 setTimeout(()=>{
   document.getElementById("intro").style.display="none";
-  document.getElementById("app").style.display="flex";
+  document.getElementById("auth").style.display="flex";
 },2500);
-
-/* HEAD OWNER FIX */
-const HEAD_OWNER = {
-  username: "C4CRIMSON",
-  password: "55479535@Sk"
-};
 
 /* SIGNUP */
 window.signup = async function(){
 
-  let u = username.value;
-  let p = password.value;
+  let u = su_user.value;
+  let p = su_pass.value;
 
   if(!u || !p) return alert("Fill fields");
 
@@ -189,7 +239,8 @@ window.signup = async function(){
     username:u,
     password:p,
     role:"USER",
-    premium:false
+    premium:false,
+    avatar:"https://i.imgur.com/0y0y0y0.png"
   });
 
   alert("Signup success ✔");
@@ -198,15 +249,17 @@ window.signup = async function(){
 /* LOGIN */
 window.login = async function(){
 
-  let u = username.value;
-  let p = password.value;
+  let u = li_user.value;
+  let p = li_pass.value;
 
-  if(u === HEAD_OWNER.username && p === HEAD_OWNER.password){
+  // HEAD OWNER LOGIN
+  if(u === HEAD_OWNER && p === HEAD_PASS){
     currentUser = {
       username:u,
-      role:"HEAD OWNER"
+      role:"HEAD OWNER",
+      premium:true
     };
-    openDashboard();
+    enterApp();
     return;
   }
 
@@ -221,58 +274,111 @@ window.login = async function(){
 
   currentUser = data;
 
-  openDashboard();
+  enterApp();
 };
 
-/* DASHBOARD */
-function openDashboard(){
+/* ENTER APP */
+function enterApp(){
 
-  document.getElementById("app").style.display="none";
-  document.getElementById("dashboard").style.display="block";
+  document.getElementById("auth").style.display="none";
+  document.getElementById("app").style.display="flex";
 
   document.getElementById("userInfo").innerText =
-    `👤 ${currentUser.username} | ${currentUser.role || "USER"}`;
+    `👤 ${currentUser.username} | ${currentUser.role}`;
 
-  loadChat();
+  openChat("public");
 }
 
-/* LOGOUT */
-window.logout = function(){
-  location.reload();
+/* PROFILE */
+window.toggleProfile = function(){
+  let p = document.getElementById("profile");
+  p.style.display = p.style.display === "block" ? "none" : "block";
 };
 
+window.saveProfile = async function(){
+
+  await setDoc(doc(db,"users",currentUser.username),{
+    username: nameEdit.value,
+    avatar: avatarEdit.value
+  },{merge:true});
+
+  alert("Profile updated ✔");
+};
+
+/* PERMISSION */
+function check(type){
+
+  if(type === "head"){
+    if(currentUser.username !== HEAD_OWNER){
+      alert("HEAD LOCK 🔒");
+      return false;
+    }
+  }
+
+  if(type === "owner"){
+    if(!(currentUser.role === "OWNER" || currentUser.role === "ADMIN" || currentUser.username === HEAD_OWNER)){
+      alert("OWNER LOCK 🔒");
+      return false;
+    }
+  }
+
+  return true;
+}
+
 /* CHAT */
-window.sendMsg = async function(){
+window.openChat = function(type){
+
+  if(!check(type)) return;
+
+  document.getElementById("chatArea").innerHTML = `
+    <h3>${type.toUpperCase()} CHAT</h3>
+
+    <input id="msg">
+    <button onclick="send('${type}')">SEND</button>
+
+    <div class="chatBox" id="box"></div>
+  `;
+
+  load(type);
+};
+
+window.send = async function(type){
 
   let m = msg.value;
   if(!m) return;
 
-  await addDoc(collection(db,"chat"),{
+  await addDoc(collection(db,type),{
     text:m,
     user:currentUser.username,
+    role:currentUser.role,
     time:Date.now()
   });
 
   msg.value="";
 };
 
-/* LOAD CHAT */
-function loadChat(){
+function load(type){
 
-  const q = query(collection(db,"chat"),orderBy("time"));
+  const q = query(collection(db,type),orderBy("time"));
 
   onSnapshot(q,(snap)=>{
 
     let html="";
 
     snap.forEach(d=>{
-      html += `<p><b>${d.data().user}:</b> ${d.data().text}</p>`;
+      let x = d.data();
+
+      html += `
+        <p>
+          <b>${x.user}</b>
+          (${x.role}): ${x.text}
+        </p>
+      `;
     });
 
-    document.getElementById("chatBox").innerHTML = html;
+    document.getElementById("box").innerHTML = html;
 
   });
-
 }
 
 </script>
