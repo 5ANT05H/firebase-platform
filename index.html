@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <meta name="theme-color" content="#0a0000">
+  <meta name="description" content="Crimson Devil World — Premium Devil Community Platform">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Crimson Devil">
+
+  <title>CRIMSON DEVIL WORLD</title>
+
+  <!-- PWA Manifest (create manifest.json separately for full PWA) -->
+  <!-- <link rel="manifest" href="manifest.json"> -->
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>😈</text></svg>">
+
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     TOAST NOTIFICATION CONTAINER
+═════════════════════════════════════════════════════════════════ -->
+<div id="toast-container" aria-live="polite" aria-atomic="true"></div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     NAVIGATION BAR
+═════════════════════════════════════════════════════════════════ -->
+<nav id="navbar">
+  <a href="#" class="nav-logo" aria-label="Crimson Devil World Home">
+    <div class="nav-logo-icon" aria-hidden="true">😈</div>
+    <div class="nav-logo-text">
+      CRIMSON<br><span>DEVIL</span> WORLD
+    </div>
+  </a>
+
+  <!-- Desktop Nav Links -->
+  <ul class="nav-links" role="navigation">
+    <li><a href="#home" class="active">Home</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#offers">Offers</a></li>
+    <li><a href="#announcements">Announcements</a></li>
+  </ul>
+
+  <!-- Right side: user info + logout -->
+  <div class="nav-right">
+    <div class="nav-user" id="nav-user-area">
+      <img src="assets/default-avatar.png" alt="Avatar" class="nav-avatar" id="header-avatar"
+           onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 40 40%22><rect width=%2240%22 height=%2240%22 fill=%22%23330000%22/><text x=%2250%%22 y=%2255%%22 text-anchor=%22middle%22 font-size=%2220%22>👤</text></svg>'">
+      <div>
+        <div class="nav-username" id="header-username">Loading…</div>
+        <div class="nav-role" id="header-role">—</div>
+      </div>
+    </div>
+    <button id="logout-btn" aria-label="Logout">⏻ Logout</button>
+
+    <!-- Mobile Sidebar Toggle -->
+    <button id="sidebar-toggle" aria-label="Toggle Sidebar" aria-expanded="false">☰</button>
+  </div>
+</nav>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     AUTH SCREEN (Login / Sign Up)
+═════════════════════════════════════════════════════════════════ -->
+<div id="auth-screen" role="main" aria-label="Authentication">
+  <!-- Animated Background Orbs -->
+  <div class="auth-bg" aria-hidden="true">
+    <div class="auth-bg-orb auth-bg-orb-1"></div>
+    <div class="auth-bg-orb auth-bg-orb-2"></div>
+  </div>
+
+  <!-- Auth Card -->
+  <div class="auth-card glass animate-fadeup" role="dialog" aria-labelledby="auth-heading">
+    <!-- Logo -->
+    <div class="auth-logo">
+      <span class="auth-logo-icon" aria-hidden="true">😈</span>
+      <h1 id="auth-heading">CRIMSON DEVIL WORLD</h1>
+      <p style="color:var(--text-muted);font-size:0.82rem;margin-top:6px;">
+        Enter the underworld.
+      </p>
+    </div>
+
+    <!-- Login / Sign Up Tabs -->
+    <div class="auth-tabs" role="tablist">
+      <button class="auth-tab active" role="tab" aria-selected="true"
+              onclick="switchAuthTab('login', this)">
+        LOGIN
+      </button>
+      <button class="auth-tab" role="tab" aria-selected="false"
+              onclick="switchAuthTab('signup', this)">
+        SIGN UP
+      </button>
+    </div>
+
+    <!-- Login Form -->
+    <div class="auth-form active" id="auth-login" role="tabpanel">
+      <div class="form-group">
+        <label for="login-email">Email</label>
+        <input type="email" id="login-email" class="input-field"
+               placeholder="devil@example.com" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="login-password">Password</label>
+        <input type="password" id="login-password" class="input-field"
+               placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <button class="btn-glow auth-submit" id="login-btn" onclick="handleLogin()">
+        <span>⚡ ENTER THE REALM</span>
+      </button>
+    </div>
+
+    <!-- Sign Up Form -->
+    <div class="auth-form" id="auth-signup" role="tabpanel">
+      <div class="form-group">
+        <label for="signup-username">Username</label>
+        <input type="text" id="signup-username" class="input-field"
+               placeholder="CrimsonDevil" autocomplete="username" required
+               minlength="3" maxlength="24">
+      </div>
+      <div class="form-group">
+        <label for="signup-email">Email</label>
+        <input type="email" id="signup-email" class="input-field"
+               placeholder="devil@example.com" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="signup-password">Password <span style="color:var(--text-muted);font-size:0.7em">(min. 6 chars)</span></label>
+        <input type="password" id="signup-password" class="input-field"
+               placeholder="••••••••" autocomplete="new-password" required minlength="6">
+      </div>
+      <button class="btn-glow auth-submit" id="signup-btn" onclick="handleSignup()">
+        <span>😈 JOIN THE DEVIL WORLD</span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════════════════
+     DASHBOARD SCREEN (shown after login)
+═════════════════════════════════════════════════════════════════ -->
+<div id="dashboard-screen" style="display:none;" role="main">
+  <div class="dashboard-body">
+
+    <!-- ───────────────────────────────────────────────────────────
+         SIDEBAR (Discord-style)
+    ─────────────────────────────────────────────────────────────── -->
+    <aside id="sidebar" role="complementary" aria-label="Server Sidebar">
+
+      <!-- Text Channels -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">💬 Text Channels</div>
+
+        <div class="channel-item" data-channel="public" role="button" tabindex="0">
+          <span class="channel-icon">＃</span>
+          <span>public</span>
+          <span class="channel-badge">NEW</span>
+        </div>
+
+        <div class="channel-item" data-channel="admin" role="button" tabindex="0">
+          <span class="channel-icon">🛡</span>
+          <span>admin-chat</span>
+        </div>
+
+        <div class="channel-item" data-channel="owner" role="button" tabindex="0">
+          <span class="channel-icon">👑</span>
+          <span>owner-chat</span>
+        </div>
+
+        <div class="channel-item" data-channel="headowner" role="button" tabindex="0">
+          <span class="channel-icon">🔱</span>
+          <span>head-owner</span>
+        </div>
+      </div>
+
+      <!-- Voice Channels -->
+      <div class="sidebar-section">
+        <div class="sidebar-section-title">🔊 Voice Channels</div>
+
+        <div class="voice-channel" data-voice="General" tabindex="0" role="button"
+             onclick="handleJoinVoice('General')">
+          <span>🔊</span>
+          <span>General</span>
+        </div>
+        <div class="voice-channel" data-voice="Devils Lair" tabindex="0" role="button"
+             onclick="handleJoinVoice('Devils Lair')">
+          <span>🔊</span>
+          <span>Devil's Lair</span>
+        </div>
+        <div class="voice-channel" data-voice="Command Room" tabindex="0" role="button"
+             onclick="handleJoinVoice('Command Room')">
+          <span>🔊</span>
+          <span>Command Room</span>
+        </div>
+      </div>
+
+      <!-- Info Panel -->
+      <div class="sidebar-section" style="margin-top:auto; padding-bottom:20px;">
+        <div class="sidebar-section-title">🌐 Server</div>
+        <div style="padding: 0 8px;">
+          <div style="font-family:var(--font-tech);font-size:0.68rem;color:var(--text-muted);line-height:2;">
+            <div>😈 CRIMSON DEVIL WORLD</div>
+            <div style="color:var(--crimson);">● Online</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ───────────────────────────────────────────────────────────
+         MAIN CONTENT
+    ─────────────────────────────────────────────────────────────── -->
+    <main id="main-content">
+
+      <!-- HERO BANNER (auto-sliding) -->
+      <section class="hero-banner" id="home" aria-label="Hero Banner">
+        <div class="banner-track">
+
+          <!-- Slide 1 -->
+          <div class="banner-slide banner-slide-1 active">
+            <div class="banner-content">
+              <div class="banner-eyebrow">Welcome to the Underworld</div>
+              <h2 class="banner-title">CRIMSON <span>DEVIL</span><br>WORLD</h2>
+              <p class="banner-subtitle">The most elite devil community on the web.</p>
+              <button class="btn-glow" onclick="scrollToSection('chat-panel-anchor')">
+                <span>⚡ Join the Chat</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="banner-slide banner-slide-2">
+            <div class="banner-content">
+              <div class="banner-eyebrow">Exclusive Roles</div>
+              <h2 class="banner-title">RISE<br>THROUGH THE <span>RANKS</span></h2>
+              <p class="banner-subtitle">From Member to Head Owner — earn your place.</p>
+              <button class="btn-glow" onclick="scrollToSection('announcements')">
+                <span>👑 View Roles</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="banner-slide banner-slide-3">
+            <div class="banner-content">
+              <div class="banner-eyebrow">Exclusive Deals</div>
+              <h2 class="banner-title">OFFERS <span>INCOMING</span></h2>
+              <p class="banner-subtitle">Stay alert — exclusive deals drop without warning.</p>
+              <button class="btn-glow" onclick="scrollToSection('offers')">
+                <span>🔥 View Offers</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner navigation -->
+        <button class="banner-nav banner-prev" aria-label="Previous slide">‹</button>
+        <button class="banner-nav banner-next" aria-label="Next slide">›</button>
+        <div class="banner-controls" aria-label="Slide indicators">
+          <button class="banner-dot" aria-label="Slide 1"></button>
+          <button class="banner-dot" aria-label="Slide 2"></button>
+          <button class="banner-dot" aria-label="Slide 3"></button>
+        </div>
+      </section>
+
+      <!-- CONTENT GRID -->
+      <div class="content-grid" id="chat-panel-anchor">
+
+        <!-- CHAT PANEL -->
+        <section class="chat-panel" aria-label="Chat">
+          <!-- Tabs -->
+          <div class="main-tabs" role="tablist">
+            <button class="main-tab active" onclick="switchMainTab('chat', this)">💬 Chat</button>
+            <button class="main-tab" onclick="switchMainTab('announcements', this)">📢 Announcements</button>
+            <button class="main-tab" onclick="switchMainTab('offers', this)">🔥 Offers</button>
+          </div>
+
+          <!-- Chat View -->
+          <div id="tab-chat">
+            <div class="chat-header">
+              <span class="chat-header-icon">＃</span>
+              <span id="chat-channel-name"># public</span>
+              <span class="chat-header-divider"></span>
+              <span class="chat-header-desc">Community chat</span>
+            </div>
+
+            <div id="chat-messages" aria-live="polite" aria-label="Chat messages">
+              <div class="chat-loading">Connecting to channel…</div>
+            </div>
+
+            <div class="chat-input-area">
+              <div class="chat-input-wrapper">
+                <textarea id="chat-input" rows="1"
+                  placeholder="Message # public…"
+                  aria-label="Chat message input"
+                  maxlength="2000"></textarea>
+                <button id="send-btn" aria-label="Send message">➤</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Announcements View -->
+          <div id="tab-announcements" style="display:none;flex-direction:column;flex:1;overflow:hidden;">
+            <div style="padding:20px;flex:1;overflow-y:auto;">
+              <div id="announcements-list" aria-live="polite">
+                <div class="loading-spin"></div>
+              </div>
+
+              <!-- Admin-only post form (shown/hidden by JS) -->
+              <div id="ann-form-section" style="display:none;margin-top:20px;">
+                <div class="panel-section-title" style="padding:0;margin-bottom:10px;">
+                  ✍️ Post Announcement
+                </div>
+                <div class="ann-form">
+                  <input type="text" id="ann-title-input" class="input-field"
+                         placeholder="Announcement Title" maxlength="100">
+                  <textarea id="ann-body-input" class="input-field"
+                            placeholder="Write your announcement here…" maxlength="1000"></textarea>
+                  <button class="btn-glow" id="ann-submit-btn">
+                    <span>📢 Post Announcement</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Offers View -->
+          <div id="tab-offers" style="display:none;flex-direction:column;flex:1;overflow:hidden;" id="offers">
+            <div style="padding:20px;flex:1;overflow-y:auto;">
+              <div id="offers-container">
+                <!-- Default COMING SOON fallback — replaced by JS if offers exist in Firestore -->
+                <div class="coming-soon-card">
+                  <div class="coming-soon-icon">🔥</div>
+                  <div class="coming-soon-title">OFFER COMING SOON</div>
+                  <p class="coming-soon-sub">
+                    Something big is on the way.<br>
+                    Stay tuned to <strong style="color:var(--crimson);">Crimson Devil World</strong>.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT PANEL -->
+        <aside class="right-panel" aria-label="Server Info">
+
+          <!-- Announcements (quick peek) -->
+          <div class="panel-section" id="announcements">
+            <div class="panel-section-title">📢 Latest News</div>
+            <div id="side-announcements-list">
+              <div class="loading-spin"></div>
+            </div>
+          </div>
+
+          <!-- Offers -->
+          <div class="panel-section offers-section">
+            <div class="panel-section-title">🔥 Offers</div>
+            <div id="side-offers-container">
+              <div class="coming-soon-card" style="padding:16px;">
+                <div class="coming-soon-icon" style="font-size:1.8rem;">🔥</div>
+                <div class="coming-soon-title">COMING SOON</div>
+                <div class="coming-soon-sub">Stay tuned.</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Role Legend -->
+          <div class="panel-section">
+            <div class="panel-section-title">🎖 Roles</div>
+            <div style="display:flex;flex-direction:column;gap:8px;">
+              <div class="member-item">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--role-head);box-shadow:0 0 8px var(--role-head);flex-shrink:0;"></div>
+                <span style="font-family:var(--font-tech);font-size:0.75rem;color:var(--role-head);">HEAD OWNER</span>
+                <span style="margin-left:auto;font-size:0.7rem;color:var(--text-muted);">C4CRIMSON</span>
+              </div>
+              <div class="member-item">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--role-owner);box-shadow:0 0 8px var(--role-owner);flex-shrink:0;"></div>
+                <span style="font-family:var(--font-tech);font-size:0.75rem;color:var(--role-owner);">OWNER</span>
+              </div>
+              <div class="member-item">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--role-admin);box-shadow:0 0 8px var(--role-admin);flex-shrink:0;"></div>
+                <span style="font-family:var(--font-tech);font-size:0.75rem;color:var(--role-admin);">ADMIN</span>
+              </div>
+              <div class="member-item">
+                <div style="width:10px;height:10px;border-radius:50%;background:var(--role-member);flex-shrink:0;"></div>
+                <span style="font-family:var(--font-tech);font-size:0.75rem;color:var(--role-member);">MEMBER</span>
+              </div>
+            </div>
+          </div>
+        </aside>
+      </div><!-- /content-grid -->
+    </main>
+  </div><!-- /dashboard-body -->
+</div><!-- /dashboard-screen -->
+
+<!-- ═══════════════════════════════════════════════════════════════
+     INLINE SCRIPTS (UI helpers — no Firebase logic here)
+═════════════════════════════════════════════════════════════════ -->
+<script>
+  // ─── Auth Tab Switcher ───────────────────────────────────────
+  function switchAuthTab(tab, btn) {
+    document.querySelectorAll('.auth-tab').forEach(t => {
+      t.classList.remove('active');
+      t.setAttribute('aria-selected', 'false');
+    });
+    document.querySelectorAll('.auth-form').forEach(f => f.classList.remove('active'));
+
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected', 'true');
+    document.getElementById('auth-' + tab).classList.add('active');
+  }
+
+  // ─── Main Dashboard Tab Switcher ────────────────────────────
+  function switchMainTab(tab, btn) {
+    document.querySelectorAll('.main-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    const panels = ['chat', 'announcements', 'offers'];
+    panels.forEach(p => {
+      const el = document.getElementById('tab-' + p);
+      if (el) el.style.display = (p === tab) ? 'flex' : 'none';
+    });
+
+    if (tab === 'chat') {
+      const chatEl = document.getElementById('tab-chat');
+      if (chatEl) chatEl.style.display = 'flex';
+      chatEl.style.flexDirection = 'column';
+      chatEl.style.flex = '1';
+      chatEl.style.overflow = 'hidden';
+    }
+  }
+
+  // ─── Login Handler (bridges to auth module) ──────────────────
+  async function handleLogin() {
+    const btn = document.getElementById('login-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ Logging in…</span>';
+    try {
+      const { login } = await import('./auth.js');
+      const email = document.getElementById('login-email').value.trim();
+      const pass  = document.getElementById('login-password').value;
+      await login(email, pass);
+    } catch(e) {
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>⚡ ENTER THE REALM</span>';
+    }
+  }
+
+  // ─── Signup Handler ──────────────────────────────────────────
+  async function handleSignup() {
+    const btn = document.getElementById('signup-btn');
+    btn.disabled = true;
+    btn.innerHTML = '<span>⏳ Creating account…</span>';
+    try {
+      const { signUp } = await import('./auth.js');
+      const username = document.getElementById('signup-username').value.trim();
+      const email    = document.getElementById('signup-email').value.trim();
+      const pass     = document.getElementById('signup-password').value;
+      await signUp(username, email, pass);
+    } catch(e) {
+      console.error(e);
+    } finally {
+      btn.disabled = false;
+      btn.innerHTML = '<span>😈 JOIN THE DEVIL WORLD</span>';
+    }
+  }
+
+  // ─── Voice Channel Handler ───────────────────────────────────
+  async function handleJoinVoice(channelName) {
+    const { joinVoiceChannel } = await import('./dashboard.js');
+    joinVoiceChannel(channelName);
+  }
+
+  // ─── Scroll Helper ───────────────────────────────────────────
+  function scrollToSection(id) {
+    document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+  }
+
+  // ─── Mobile sidebar overlay close ────────────────────────────
+  document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('sidebar');
+    const toggle  = document.getElementById('sidebar-toggle');
+    if (sidebar?.classList.contains('open') && !sidebar.contains(e.target) && e.target !== toggle) {
+      sidebar.classList.remove('open');
+    }
+  });
+
+  // ─── Sidebar toggle accessibility ────────────────────────────
+  document.getElementById('sidebar-toggle')?.addEventListener('click', function() {
+    const sidebar = document.getElementById('sidebar');
+    const isOpen  = sidebar.classList.toggle('open');
+    this.setAttribute('aria-expanded', isOpen);
+  });
+
+  // ─── Auto-resize chat textarea ───────────────────────────────
+  document.addEventListener('DOMContentLoaded', () => {
+    const ta = document.getElementById('chat-input');
+    if (ta) {
+      ta.addEventListener('input', () => {
+        ta.style.height = 'auto';
+        ta.style.height = Math.min(ta.scrollHeight, 120) + 'px';
+      });
+    }
+
+    // Tab: initial chat panel setup
+    const chatPanel = document.getElementById('tab-chat');
+    if (chatPanel) {
+      chatPanel.style.display = 'flex';
+      chatPanel.style.flexDirection = 'column';
+      chatPanel.style.flex = '1';
+      chatPanel.style.overflow = 'hidden';
+    }
+  });
+</script>
+
+<!-- ─── Firebase + Dashboard Bootstrap (ES Modules) ─────────── -->
+<!--
+  HOW TO USE:
+  1. Fill in YOUR Firebase config in firebase-config.js
+  2. Make sure Firebase is enabled (Auth, Firestore, Storage) in your project
+  3. Serve this from a web server (not file://) — use VS Code Live Server or Firebase Hosting
+  4. The modules below will auto-initialize on load
+-->
+<script type="module">
+  import { initDashboard } from './dashboard.js';
+  initDashboard();
+</script>
+
+<!--
+  PWA: To convert to PWA, create a manifest.json:
+  {
+    "name": "Crimson Devil World",
+    "short_name": "CrimsonDevil",
+    "start_url": "/",
+    "display": "standalone",
+    "background_color": "#030303",
+    "theme_color": "#cc0000",
+    "icons": [{ "src": "icon-192.png", "sizes": "192x192", "type": "image/png" }]
+  }
+  Then add a service-worker.js for offline caching.
+  For Android WebView: load index.html in a WebViewActivity.
+-->
+</body>
+</html>
