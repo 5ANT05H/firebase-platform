@@ -99,6 +99,9 @@ export async function login(email, password) {
   try {
     await signInWithEmailAndPassword(auth, email, password);
     showToast("Login successful. Welcome back!", "success");
+    document.getElementById('dashboard-screen').style.display = 'block';
+    document.getElementById('login-screen').style.display = 'none';
+
     return true;
   } catch (err) {
     const messages = {
