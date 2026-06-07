@@ -18,15 +18,15 @@ import { getStorage } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-
 
 // ─── REPLACE THIS OBJECT WITH YOUR FIREBASE CONFIG ───────────────────────────
 const firebaseConfig = {
-    apiKey: "AIzaSyBKpXQ9MWJ-6a1NSnKlhrLdxXfu8i6BYkE",
-    authDomain: "crimson-devil-world.firebaseapp.com",
-    databaseURL: "https://crimson-devil-world-default-rtdb.firebaseio.com",
-    projectId: "crimson-devil-world",
-    storageBucket: "crimson-devil-world.firebasestorage.app",
-    messagingSenderId: "625125480692",
-    appId: "1:625125480692:web:a13a13488fab88532c66a1",
-    measurementId: "G-Z2JEB3TCFN"
+    apiKey: "AIzaSyDsZ_cmsZGAP5w3WVxgpbJ3dCN4HRIxsMc",
+    authDomain: "c4crimson.firebaseapp.com",
+    projectId: "c4crimson",
+    storageBucket: "c4crimson.firebasestorage.app",
+    messagingSenderId: "58187881604",
+    appId: "1:58187881604:web:9dd3f979e311af7169f6d1",
+    measurementId: "G-1G9VVVJS6E"
   };
+
 // ─────────────────────────────────────────────────────────────────────────────
 
 // Initialize Firebase

@@ -49,8 +49,8 @@ function showAuthScreen() {
 }
 
 function showDashboard() {
-  $("auth-screen").style.display = "none";
-  $("dashboard-screen").style.display = "flex";
+  ("auth-screen").style.display = "none";
+  ("dashboard-screen").style.display = "flex";
 }
 
 // ─── User Header Setup ────────────────────────────────────────────────────────
